@@ -4,21 +4,39 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
+/**
+ * A basic representation of a graph. Used to generate A* paths.
+ * @author Sawyer
+ *
+ */
 public class Graph {
 
-	private ArrayList<Node> _nodes;
+	private ArrayList<Node> _nodes = new ArrayList<Node>(10000);
 	private Heuristic _heur;
 	
+	/**
+	 * Contructor.
+	 * @param heur
+	 */
 	public Graph(Heuristic heur) {
-		// TODO Auto-generated constructor stub
-		_nodes = new ArrayList<Node>(10000);
 		_heur = heur;
 	}
 	
+	/**
+	 * Adds the given node to the graph
+	 * @param n
+	 */
 	public void addNode(Node n) {
 		_nodes.add(n);
 	}
 	
+	/**
+	 * Finds the fastest path from one node to another, using the A* algorithm.
+	 * Returns the end node, which will have a prev pointer that can be followed to get a path.
+	 * @param src
+	 * @param end
+	 * @return
+	 */
 	public Stack<Node> getAStar(Node src, Node end) {
 		PriorityQueue<Node> pq = new PriorityQueue<Node>(10, new NodeComparator());
 		boolean found = false;

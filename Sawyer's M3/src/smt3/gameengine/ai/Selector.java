@@ -1,11 +1,10 @@
 package smt3.gameengine.ai;
 
 public class Selector extends Composite {
-	
-	public Selector() {
-		
-	}
 
+	/**
+	 * @return Status with value PASS, RUNNING, or FAIL
+	 */
 	@Override
 	public Status update(float seconds) {
 		// TODO Auto-generated method stub

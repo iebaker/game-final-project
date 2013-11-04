@@ -2,9 +2,14 @@ package smt3.gameengine.ai;
 
 import java.util.ArrayList;
 
+/**
+ * A basic node. Used for A*-finding.
+ * @author Sawyer
+ *
+ */
 public class Node {
 
-	private ArrayList<Node> _neighbors;
+	private ArrayList<Node> _neighbors = new ArrayList<Node>(10);
 	private int _dist;
 	private Node _prev;
 	private int _heur;
@@ -12,33 +17,52 @@ public class Node {
 	private int _dec2;
 	private int _dec3;
 	private int _dec4;
-	private boolean _active;
+	private boolean _active = true;
 	
-	public Node() {
-		_neighbors = new ArrayList<Node>(10);
-		_active = true;
-	}
-	
+	/**
+	 * Adds a new neighbor node
+	 * @param neighbor
+	 */
 	public void addNeighbor(Node neighbor) {
 		_neighbors.add(neighbor);
 	}
 	
+	/**
+	 * 
+	 * @return ArrayList of all neighboring nodes
+	 */
 	public ArrayList<Node> getNeighbors() {
 		return _neighbors;
 	}
 
+	/**
+	 * 
+	 * @return integer representing the distance decorator
+	 */
 	public int getDist() {
 		return _dist;
 	}
 
+	/**
+	 * Sets the distance decorator
+	 * @param _dist
+	 */
 	public void setDist(int _dist) {
 		this._dist = _dist;
 	}
 
+	/**
+	 * 
+	 * @return the previous node decorator
+	 */
 	public Node getPrev() {
 		return _prev;
 	}
 
+	/**
+	 * Sets the previous node decorator.
+	 * @param src
+	 */
 	public void setPrev(Node src) {
 		this._prev = src;
 	}

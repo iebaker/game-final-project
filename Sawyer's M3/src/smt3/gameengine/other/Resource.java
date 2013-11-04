@@ -18,15 +18,21 @@ import javax.xml.stream.XMLStreamReader;
 //This way of reading XMLs is taken from an article by Mohamed Sanualla that can be found here:
 //http://www.javacodegeeks.com/2013/05/parsing-xml-using-dom-sax-and-stax-parser-in-java.html#stax
 
-/*BufferedImage img = null;
-try {
-    img = ImageIO.read(new File("strawberry.jpg"));
-} catch (IOException e) {
-}*/
+/**
+ * This way of reading XMLs is taken from an article by Mohamed Sanualla that can be found here:
+ * http://www.javacodegeeks.com/2013/05/parsing-xml-using-dom-sax-and-stax-parser-in-java.html#stax
+ * @author Sawyer
+ *
+ */
 public class Resource {
 	
 	private Hashtable<String, Sprite> _spriteHash;
 
+	/**
+	 * Reads the input file and stores its values in a series of hashtables.
+	 * @param toRead
+	 * @param images
+	 */
 	public Resource(String toRead, ArrayList<String> images) {
 		// TODO Auto-generated constructor stub
 		Hashtable<String, Image> sheetHash = new Hashtable<String, Image>();
@@ -125,10 +131,19 @@ public class Resource {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return Hashtable of strings to sprites
+	 */
 	public Hashtable<String, Sprite> getSpriteHash() {
 		return _spriteHash;
 	}
 	
+	/**
+	 * 
+	 * @param ID
+	 * @return Sprite stored at the given ID
+	 */
 	public Sprite getSprite(int ID) {
 		return _spriteHash.get(ID);
 	}

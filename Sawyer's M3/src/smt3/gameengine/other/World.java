@@ -27,23 +27,31 @@ import smt3.gameengine.ui.Background;
 import smt3.m.Bound;
 import smt3.m.Player;
 
+/**
+ * A world class. Populates the world, controls a basic array of entities in the world, and stores information like world size
+ * @author Sawyer
+ *
+ */
 public abstract class World {
 	private Background _bg;
-	private ArrayList<Entity> _entities;
+	private ArrayList<Entity> _entities = new ArrayList<Entity>();;
 	private Vec2f _gameCoords;
 	private Vec2f _gameDims;
-	private ArrayList<Entity> _toRemove;
-	private ArrayList<Entity> _toAdd;
+	private ArrayList<Entity> _toRemove = new ArrayList<Entity>();;
+	private ArrayList<Entity> _toAdd = new ArrayList<Entity>();;
 	private Application _app;
 	private Viewport _vp;
 	private HashMap<String, Entity> _entityMap = new HashMap<String, Entity>();
 	
+	/**
+	 * Populates the world
+	 * @param gameCoords
+	 * @param gameDims
+	 * @param app
+	 */
 	public World(Vec2f gameCoords, Vec2f gameDims, Application app) {
 		_gameCoords = gameCoords;
 		_gameDims = gameDims;
-		_entities = new ArrayList<Entity>();
-		_toRemove = new ArrayList<Entity>();
-		_toAdd = new ArrayList<Entity>();
 		_app = app;
 		
 		LevelData data;
@@ -134,11 +142,15 @@ public abstract class World {
 		}
 		return toReturn;
 	}
-	
+
 	public void addEntity(Entity e) {
 		_toAdd.add(e);
 	}
 	
+	/**
+	 * Draws each entity
+	 * @param g
+	 */
 	public void onDraw(Graphics2D g) {
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
@@ -148,6 +160,10 @@ public abstract class World {
 		}
 	}
 	
+	/**
+	 * Ticks each entity
+	 * @param nanosSinceLastTick
+	 */
 	public void onTick(long nanosSinceLastTick) {
 		for(Entity e : _entities) {
 			e.onTick(nanosSinceLastTick);

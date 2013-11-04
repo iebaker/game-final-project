@@ -2,10 +2,10 @@ package smt3.gameengine.ai;
 
 public class Sequence extends Composite {
 
-	public Sequence() {
-		
-	}
 
+	/**
+	 * @return Status representing the current state of the sequence
+	 */
 	@Override
 	public Status update(float seconds) {
 		// TODO Auto-generated method stub
