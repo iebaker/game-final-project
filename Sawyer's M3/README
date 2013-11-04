@@ -1,0 +1,29 @@
+M2
+Sawyer Thompson (smt3)
+
+Time spent: ~15 hours
+
+Verifying requirements:
+
+***********
+ENGINE REQS
+***********
+Restitution: 
+	This is covered in the smt3.gamengine.physics classes. Entities have coefficients of restitution and they're applied during collisions.
+Raycasting: 
+	You can witness this by clicking the mouse during the game. Individual shape classes have raycast methods.
+
+
+*********
+GAME REQS
+*********
+Collisions:
+	Elastic: The ball and the triangular platform are both perfectly elastic
+	Inelastic: The boxes are partially elastic.
+	Perfectly Inelastic: The purple balls are perfectly inelastic.
+Firing Bullets:
+	They're more like lasers, really. Click in any direction to fire a laser there. It will apply an impulse to the first entity in its path, other than its source.
+Tossing Grenades:
+	Press shift to fire a grenade in the direction of the mouse. I iterated around in a circle, shooting out 100 rays (instead of just checking individual objects), because then things that are more in the blast-path get propelled more.
+Jumping Correctly:
+	Try jumping around by pressing space. It seems to work pretty well. The code is in the player class (using the last MTV, stored in the Entity class)
