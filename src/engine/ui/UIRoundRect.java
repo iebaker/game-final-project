@@ -89,8 +89,7 @@ public class UIRoundRect extends Shape {
 	 * Resizes the width, height, and coord
 	 * 
 	 * @param coord
-	 * @param width
-	 * @param height
+	 * @param endCoord
 	 */
 	public void updatePosition(Vec2f coord, Vec2f endCoord) {
 		rect.setRoundRect(coord.x, coord.y, endCoord.x - coord.x, endCoord.y - coord.y, this.round, this.round);

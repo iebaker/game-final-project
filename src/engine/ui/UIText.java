@@ -62,7 +62,7 @@ public class UIText extends Shape {
 	 * Resizes the text by setting a new coord and preferred width
 	 * 
 	 * @param dim
-	 * @param preferredWidth
+	 * @param preferredHeight
 	 */
 	public void resizeText(Vec2f dim, float preferredHeight) {
 		this.coord = dim;

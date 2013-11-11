@@ -22,8 +22,7 @@ public class UIRect extends Shape {
 	 * Creates a UIRect object with dim, width, height, color, and stroke
 	 * 
 	 * @param coord
-	 * @param width
-	 * @param height
+	 * @param endCoord
 	 * @param c
 	 * @param stk
 	 */
@@ -36,9 +35,8 @@ public class UIRect extends Shape {
 	/**
 	 * Creates a UIRect object with dim, width, and height
 	 * 
-	 * @param coord
-	 * @param width
-	 * @param height
+	 * @param sdim
+	 * @param dim
 	 */
 	public UIRect(Vec2f sdim, Vec2f dim) {
 		rect = new Rectangle2D.Float(sdim.x, sdim.y, dim.x - sdim.x, dim.y - sdim.y);
@@ -81,9 +79,8 @@ public class UIRect extends Shape {
 	/**
 	 * Resizes the width, height, and coord
 	 * 
-	 * @param coord
-	 * @param width
-	 * @param height
+	 * @param sdim
+	 * @param dim
 	 */
 	public void updatePosition(Vec2f sdim, Vec2f dim) {
 		rect.setRect(sdim.x, sdim.y, dim.x - sdim.x, dim.y - sdim.y);

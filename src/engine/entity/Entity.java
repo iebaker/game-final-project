@@ -55,8 +55,8 @@ public abstract class Entity {
 	/**
 	 * Constructor for Entity with all fields (calculates mass automatically)
 	 * 
-	 * @param start
-	 *            the start position
+	 * @param shape
+	 *            the shape of the entity
 	 * @param width
 	 *            the width of the entity
 	 * @param height
@@ -245,7 +245,7 @@ public abstract class Entity {
 	/**
 	 * Applies gravity, updates velocity, then position, then resets force and impulse
 	 * 
-	 * @param secs
+	 * @param t
 	 *            Nanoseconds since last tick
 	 */
 	public void onTick(float t) {
