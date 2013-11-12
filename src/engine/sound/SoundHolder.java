@@ -11,15 +11,19 @@ import javax.xml.stream.XMLStreamReader;
 
 /**
  * A setup to make sound management a little bit easier.
- * Should be instantiated when the game starts, and all of the sound files should be added to the hashtable
+ * Should be instantiated when the game starts, and the filename of the XML should be passed in
  * 
  * @author smt3
  *
  */
 public class SoundHolder {
 
-	public static final Hashtable<String, Sound> sounds = new Hashtable<String, Sound>();
+	public static final Hashtable<String, Sound> soundTable = new Hashtable<String, Sound>();
 	
+	/**
+	 * Consturctor. Takes in the path of an XML to parse
+	 * @param toRead
+	 */
 	public SoundHolder(String toRead) {
 		String tagContent = null;
 		XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -42,13 +46,13 @@ public class SoundHolder {
 				case XMLStreamConstants.END_ELEMENT:
 					String name = reader.getLocalName();
 					if(name == "file") {
-						sounds.put(currSoundID, new Sound(tagContent));
+						soundTable.put(currSoundID, new Sound(tagContent));
 					}
 				}
 			}
 		
 		} catch (XMLStreamException e) {
-			System.out.println("Could not read XML");
+			System.out.println("XML is improperly formatted");
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			System.out.println("Could not locate file");

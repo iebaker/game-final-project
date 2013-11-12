@@ -52,6 +52,14 @@ public class Sound implements Runnable
         audiostream = openAudioStream(audioFileFullURL,null,null);
         clip = makeClip(audiostream);
     }
+    
+    /**
+     * Creates a new Sound from the same file 
+     * @return A copy of this Sound file
+     */
+    public Sound duplicate() {
+    	return new Sound(soundFilename);
+    }
 
     /**
      * Open the audio stream using the specified URL
@@ -231,7 +239,7 @@ public class Sound implements Runnable
      */
     float currDB = 0F;
     float targetDB = 0F;
-    float fadePerStep = 1;   // .1 works for applets, 1 is okay for apps
+    float fadePerStep = 0.1f;   // .1 works for applets, 1 is okay for apps
     boolean fading = false;
 
     public void shiftVolumeTo(double value) {

@@ -158,14 +158,22 @@ public class Circle extends Shape implements CollisionShape {
 	 * Updates position of the Circle based on previous location in game
 	 */
 	public void move(Vec2f move) {
-		changeLocation(getLocation().plus(move));
+		changeLocation(getCenter().plus(move));
 	}
 	
 	@Override
 	/**
-	 * Returns the location
+	 * Returns the location of the upper left of a bounding box of the circle
 	 */
 	public Vec2f getLocation() {
+		return this.center.minus(radius, radius);
+	}
+	
+	@Override
+	/**
+	 * Returns the location of the center of the circle
+	 */
+	public Vec2f getCenter() {
 		return this.center;
 	}
 	

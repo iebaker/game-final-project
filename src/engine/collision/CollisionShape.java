@@ -117,10 +117,17 @@ public interface CollisionShape {
 	public void move(Vec2f move);
 	
 	/**
-	 * Public getter for location
+	 * Public getter for location (top left of bounding box)
 	 * 
-	 * @return the location of the shape
+	 * @return the location of the shape (top left of bounding box)
 	 */
 	public Vec2f getLocation();
+	
+	/**
+	 * Public getter for center location
+	 * 
+	 * @return the location of the center of the shape
+	 */
+	public Vec2f getCenter();
 	
 }
