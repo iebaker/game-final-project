@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-
-<sounds src="Sprites1.png">
+<sounds>
 	<sound id="beep">
 		<file>beep-1.wav</file>
 	</sound>
