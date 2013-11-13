@@ -75,4 +75,13 @@ public class UIText extends Shape {
 	public void updatePosition(Vec2f start, Vec2f end) {
 		resizeText(start, end.y);
 	}
+	
+	/**
+	 * Tells whether the UIText is empty or not
+	 * 
+	 * @return if the string drawn by the UIText is empty
+	 */
+	public boolean isEmpty() {
+		return (s.length() == 0);
+	}
 }

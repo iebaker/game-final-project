@@ -1,5 +1,12 @@
 package engine.entity;
 
+import java.util.Map;
+
+import cs195n.LevelData.EntityData;
+import cs195n.Vec2f;
+import engine.GameWorld;
+import engine.connections.Input;
+
 /**
  * Empty Entity subclass to support classification of enemies
  * 
@@ -8,4 +15,32 @@ package engine.entity;
  */
 public class EnemyEntity extends Entity {
 	
+	private float	damage;
+	
+	@Override
+	public void setProperties(EntityData ed, GameWorld world) {
+		super.setProperties(ed, world);
+		this.damage = Float.parseFloat(create("damage", "20", ed));
+		
+		/**
+		 * Makes the enemy stop being static and start closing in on player
+		 */
+		inputs.put("startClose", new Input() {
+			
+			@Override
+			public void run(Map<String, String> args) {
+				startClose();
+				
+			}
+		});
+	}
+	
+	private void startClose() {
+		isStatic = false;
+		applyForce(new Vec2f(0, -2000000));
+	}
+	
+	public float getDamage() {
+		return damage;
+	}
 }

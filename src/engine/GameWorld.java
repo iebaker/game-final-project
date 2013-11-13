@@ -255,4 +255,16 @@ public abstract class GameWorld {
 		return bgColor;
 	}
 	
+	/**
+	 * Returns gravity value for the world (-x for up, x for down)
+	 * 
+	 * @return the gravity value for this world
+	 */
+	public abstract float gravity();
+	
+	/**
+	 * Flips the gravity of this world
+	 */
+	public abstract void flipGravity();
+	
 }

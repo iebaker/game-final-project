@@ -169,6 +169,14 @@ public class Circle extends Shape implements CollisionShape {
 		return this.center;
 	}
 	
+	@Override
+	/**
+	 * Returns the center of this shape
+	 */
+	public Vec2f getCenter() {
+		return this.center;
+	}
+	
 	/**
 	 * String representation of a circle
 	 */

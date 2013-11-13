@@ -172,6 +172,14 @@ public class AAB extends Shape implements CollisionShape {
 		return this.min;
 	}
 	
+	@Override
+	/**
+	 * Returns the center of this shape
+	 */
+	public Vec2f getCenter() {
+		return this.min.plus(this.max.minus(min).sdiv(2));
+	}
+	
 	/**
 	 * Returns a string representing this AAB
 	 */

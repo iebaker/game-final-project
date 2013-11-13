@@ -37,6 +37,9 @@ public abstract class Entity {
 	private Vec2f					impulse;
 	private Vec2f					force;
 	protected Vec2f					velocity;
+	protected float					disappearing;
+	private boolean					shootable;
+	private int						shotsNeeded;
 	protected Map<String, Input>	inputs;
 	protected Map<String, Output>	outputs;
 	
@@ -122,6 +125,9 @@ public abstract class Entity {
 		}
 		this.restitution = Float.parseFloat(create("restitution", "1", ed));
 		this.mass = (float) (Float.parseFloat(create("density", "1", ed)) * (Math.sqrt(width * height)));
+		this.disappearing = Float.parseFloat(create("disappearing", "0", ed));
+		this.shotsNeeded = Integer.parseInt(create("shotsNeeded", "0", ed));
+		this.shootable = (getShotsNeeded() > 0);
 		this.world = world;
 	}
 	
@@ -249,7 +255,7 @@ public abstract class Entity {
 	 *            Nanoseconds since last tick
 	 */
 	public void onTick(float t) {
-		applyForce(new Vec2f(0, 250 * mass)); // apply gravity
+		applyForce(new Vec2f(0, world.gravity() * mass)); // apply gravity
 		if (mass != 0) {
 			velocity = getVelocity().plus(force.sdiv(mass).smult(t).plus(impulse.sdiv(mass))); // new velocity
 			if (shape != null) {
@@ -323,5 +329,33 @@ public abstract class Entity {
 	 */
 	public void afterCollision() {
 		
+	}
+	
+	/**
+	 * Returns if the entity is shootable
+	 * 
+	 * @return if entity is shootable
+	 */
+	public boolean isShootable() {
+		return shootable;
+	}
+	
+	/**
+	 * Public getter for shotsNeeded
+	 * 
+	 * @return how many shots needed until entity dies
+	 */
+	public int getShotsNeeded() {
+		return shotsNeeded;
+	}
+	
+	/**
+	 * Sets shotsNeeded
+	 * 
+	 * @param shotsNeeded
+	 *            how many shots needed until entity dies
+	 */
+	public void setShotsNeeded(int shotsNeeded) {
+		this.shotsNeeded = shotsNeeded;
 	}
 }

@@ -123,4 +123,11 @@ public interface CollisionShape {
 	 */
 	public Vec2f getLocation();
 	
+	/**
+	 * Public getter for center of shape
+	 * 
+	 * @return the location of the center of the shape
+	 */
+	public Vec2f getCenter();
+	
 }
