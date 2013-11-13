@@ -1,6 +1,7 @@
 package game;
 
 import engine.Application;
+import engine.sound.SoundHolder;
 import game.screens.MainScreen;
 
 /**
@@ -22,6 +23,7 @@ public class M {
 		Application a = new Application("M", false);
 		a.pushScreen(new MainScreen(a));
 		a.startup();
+		new SoundHolder("testSounds.xml");
 	}
 	
 }
