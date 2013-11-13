@@ -4,4 +4,5 @@ engine.astar
 engine.collision
 engine.connections
 engine.entity
+engine.sound
 engine.ui

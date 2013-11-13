@@ -52,7 +52,7 @@
             *.swp
             *~.nib
             local.properties
-            .classpath
+            .class-path
             .settings/
             .loadpath
             /src/main/resources/rebel.xml
@@ -67,3 +67,7 @@
                
 # PDT-specific
                .buildpath
+
+*.class
+
+bin/engine/entity/Entity.class

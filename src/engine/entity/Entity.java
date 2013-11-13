@@ -2,6 +2,7 @@ package engine.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,8 @@ import engine.collision.CollisionShape;
 import engine.collision.Poly;
 import engine.connections.Input;
 import engine.connections.Output;
+import engine.sound.Sound;
+import engine.sound.SoundHolder;
 
 /**
  * Abstract Entity class for GameWorld
@@ -42,6 +45,7 @@ public abstract class Entity {
 	private int						shotsNeeded;
 	protected Map<String, Input>	inputs;
 	protected Map<String, Output>	outputs;
+	private ArrayList<Sound> currentSounds;
 	
 	/**
 	 * Empty constructor - sets default values
@@ -53,13 +57,22 @@ public abstract class Entity {
 		this.hp = fullHP();
 		this.inputs = new HashMap<String, Input>();
 		this.outputs = new HashMap<String, Output>();
+		this.inputs.put("playSound", new Input() {
+			@Override
+			public void run(Map<String, String> args) {
+				//gets the sound file passed as an argument and plays it.
+				Sound newSound = SoundHolder.soundTable.get(args.get("source")).duplicate();
+				newSound.play();
+				currentSounds.add(newSound);
+			}
+		});
 	}
 	
 	/**
 	 * Constructor for Entity with all fields (calculates mass automatically)
 	 * 
-	 * @param start
-	 *            the start position
+	 * @param shape
+	 *            the shape of the entity
 	 * @param width
 	 *            the width of the entity
 	 * @param height
@@ -250,8 +263,9 @@ public abstract class Entity {
 	
 	/**
 	 * Applies gravity, updates velocity, then position, then resets force and impulse
+	 * Also updates active sounds and removes completed tracks
 	 * 
-	 * @param secs
+	 * @param t
 	 *            Nanoseconds since last tick
 	 */
 	public void onTick(float t) {
@@ -265,6 +279,24 @@ public abstract class Entity {
 		
 		force = new Vec2f(0, 0);
 		impulse = new Vec2f(0, 0);
+		
+		//update each playing sound
+		for(int i=currentSounds.size()-1; i>=0; i--) {
+			Sound s = currentSounds.get(i);
+			//calculate how far the source of the sound is from the player
+			Float dist = world.getPlayer().getCenterPosition().minus(shape.getCenter()).mag();
+			//TODO play with this number! 1000 is probably not right
+			if(dist < 1000) {
+				s.shiftVolumeTo((1000-dist)/1000);
+			}
+			else {
+				s.shiftVolumeTo(0);
+			}
+			//stop the sound if it has finished
+			if(!s.isPlaying()) {
+				currentSounds.remove(s);
+			}
+		}
 	}
 	
 	/**

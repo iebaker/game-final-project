@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<sounds>
+	<sound id="beep">
+		<file>beep-1.wav</file>
+	</sound>
+</sounds>
