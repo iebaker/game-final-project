@@ -27,6 +27,7 @@ public class Sound implements Runnable {
     private boolean doLoop = false;
     private long pausePosition = 0L;
     private FloatControl gainControl;  // for volume
+    private boolean paused = false;
 
 
     /**
@@ -123,7 +124,6 @@ public class Sound implements Runnable {
     {
         Clip aClip = null;
         try {
-            //System.out.println(audiosource.getFormat());
             DataLine.Info dataLineInfo = new DataLine.Info( Clip.class, audioIn.getFormat() );
             aClip = (Clip) AudioSystem.getLine(dataLineInfo);
             aClip.open( audioIn );
@@ -176,6 +176,7 @@ public class Sound implements Runnable {
         if (stop) {
             pausePosition = clip.getMicrosecondPosition();
             clip.stop();
+            paused = true;
         }
         else if(!isPlaying()) {
             play(pausePosition);
@@ -202,15 +203,14 @@ public class Sound implements Runnable {
             System.out.println("already looping sound " + soundFilename);
         }
         else if (doLoop) {
-            System.out.println("Playing sound " + soundFilename + " continuously.");
             clip.loop( Clip.LOOP_CONTINUOUSLY );
             looping = true;
         }
         else {
-            System.out.println("Play sound " + soundFilename + " once.");
             clip.setMicrosecondPosition( playPosition );
             clip.loop(0);
         }
+        paused = false;
     }
 
     /**
@@ -276,5 +276,9 @@ public class Sound implements Runnable {
         }
         fading = false;
         currDB = targetDB;  // now sound is at this volume level
+    }
+    
+    public boolean isPaused() {
+    	return paused;
     }
 }

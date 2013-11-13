@@ -46,7 +46,6 @@ public abstract class Entity {
 	protected Map<String, Input>	inputs;
 	protected Map<String, Output>	outputs;
 	private ArrayList<Sound> currentSounds = new ArrayList<Sound>();
-	private float timerCountdown = 5;
 	
 	/**
 	 * Empty constructor - sets default values
@@ -62,16 +61,14 @@ public abstract class Entity {
 			Sound thisSound;
 			@Override
 			public void run(Map<String, String> args) {
-				System.out.println("running");
 				//gets the sound file passed as an argument and plays it.
 				if(thisSound == null || !currentSounds.contains(thisSound)) {
-					System.out.println("adding sound");
 					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
 					currentSounds.add(thisSound);
 				}
 			}
 		});
-		this.outputs.put("onTimer", new Output());
+		this.outputs.put("onTick", new Output());
 	}
 	
 	/**
@@ -287,12 +284,8 @@ public abstract class Entity {
 		impulse = new Vec2f(0, 0);
 		
 		//see if new sounds should be played
-		if(this.outputs.get("onTimer").hasConnection()) {
-			timerCountdown -= t;
-			if(this.timerCountdown <= 0) {
-				this.outputs.get("onTimer").run();
-				this.timerCountdown = 5;
-			}
+		if(this.outputs.get("onTick").hasConnection()) {
+			this.outputs.get("onTick").run();
 		}
 		
 		if(!currentSounds.isEmpty()) {
@@ -300,22 +293,15 @@ public abstract class Entity {
 				Sound s = currentSounds.get(i);
 				//calculate how far the source of the sound is from the player
 				Float dist = world.getPlayer().getCenterPosition().minus(shape.getCenter()).mag();
-				//TODO play with this number! 1000 is probably not right
-				if(dist < 1000) {
+				if(dist < 1500) {
 					s.pause(false);
 					if(!s.isPlaying()) {
-						System.out.println(s.isPlaying());
 						s.play();
 					}
-					s.setVolume((1000-dist)/1000);
+					s.setVolume((1500-dist)/1500);
 				}
 				else {
 					s.pause(true);
-					System.out.println(s.isPlaying());
-				}
-				//stop the sound if it has finished
-				if(!s.isPlaying()) {
-					currentSounds.remove(s);
 				}
 			}
 		}
