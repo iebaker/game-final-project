@@ -28,12 +28,13 @@ import engine.sound.SoundHolder;
  */
 public abstract class Entity {
 	
-	protected World				world;
+	protected World					world;
 	public CollisionShape			shape;
 	protected float					width;
 	protected float					height;
 	protected float					mass;
 	protected float					restitution;
+	protected float					friction;
 	public boolean					isStatic;
 	protected Color					c;
 	public float					hp;
@@ -45,8 +46,8 @@ public abstract class Entity {
 	private int						shotsNeeded;
 	protected Map<String, Input>	inputs;
 	protected Map<String, Output>	outputs;
-	private ArrayList<Sound> currentSounds = new ArrayList<Sound>();
-	private float timerCountdown = 5;
+	private ArrayList<Sound>		currentSounds	= new ArrayList<Sound>();
+	private float					timerCountdown	= 5;
 	
 	/**
 	 * Empty constructor - sets default values
@@ -59,12 +60,13 @@ public abstract class Entity {
 		this.inputs = new HashMap<String, Input>();
 		this.outputs = new HashMap<String, Output>();
 		this.inputs.put("playSound", new Input() {
-			Sound thisSound;
+			Sound	thisSound;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				System.out.println("running");
-				//gets the sound file passed as an argument and plays it.
-				if(thisSound == null || !currentSounds.contains(thisSound)) {
+				// gets the sound file passed as an argument and plays it.
+				if (thisSound == null || !currentSounds.contains(thisSound)) {
 					System.out.println("adding sound");
 					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
 					currentSounds.add(thisSound);
@@ -143,6 +145,7 @@ public abstract class Entity {
 			this.isStatic = ((stat != null && stat.equals("true")) || ed.getEntityClass().contains("Static"));
 		}
 		this.restitution = Float.parseFloat(create("restitution", "1", ed));
+		this.friction = Float.parseFloat(create("friction", "0.5", ed));
 		this.mass = (float) (Float.parseFloat(create("density", "1", ed)) * (Math.sqrt(width * height)));
 		this.disappearing = Float.parseFloat(create("disappearing", "0", ed));
 		this.shotsNeeded = Integer.parseInt(create("shotsNeeded", "0", ed));
@@ -268,8 +271,8 @@ public abstract class Entity {
 	}
 	
 	/**
-	 * Applies gravity, updates velocity, then position, then resets force and impulse
-	 * Also updates active sounds and removes completed tracks
+	 * Applies gravity, updates velocity, then position, then resets force and impulse Also updates active sounds and
+	 * removes completed tracks
 	 * 
 	 * @param t
 	 *            Nanoseconds since last tick
@@ -286,35 +289,34 @@ public abstract class Entity {
 		force = new Vec2f(0, 0);
 		impulse = new Vec2f(0, 0);
 		
-		//see if new sounds should be played
-		if(this.outputs.get("onTimer").hasConnection()) {
+		// see if new sounds should be played
+		if (this.outputs.get("onTimer").hasConnection()) {
 			timerCountdown -= t;
-			if(this.timerCountdown <= 0) {
+			if (this.timerCountdown <= 0) {
 				this.outputs.get("onTimer").run();
 				this.timerCountdown = 5;
 			}
 		}
 		
-		if(!currentSounds.isEmpty()) {
-			for(int i=currentSounds.size()-1; i>=0; i--) {
+		if (!currentSounds.isEmpty()) {
+			for (int i = currentSounds.size() - 1; i >= 0; i--) {
 				Sound s = currentSounds.get(i);
-				//calculate how far the source of the sound is from the player
+				// calculate how far the source of the sound is from the player
 				Float dist = world.getPlayer().getCenterPosition().minus(shape.getCenter()).mag();
-				//TODO play with this number! 1000 is probably not right
-				if(dist < 1000) {
+				// TODO play with this number! 1000 is probably not right
+				if (dist < 1000) {
 					s.pause(false);
-					if(!s.isPlaying()) {
+					if (!s.isPlaying()) {
 						System.out.println(s.isPlaying());
 						s.play();
 					}
-					s.setVolume((1000-dist)/1000);
-				}
-				else {
+					s.setVolume((1000 - dist) / 1000);
+				} else {
 					s.pause(true);
 					System.out.println(s.isPlaying());
 				}
-				//stop the sound if it has finished
-				if(!s.isPlaying()) {
+				// stop the sound if it has finished
+				if (!s.isPlaying()) {
 					currentSounds.remove(s);
 				}
 			}
@@ -369,6 +371,17 @@ public abstract class Entity {
 		// Impulse - apply
 		o1.applyImpulse(impA);
 		o2.applyImpulse(impB);
+		
+		// Friction
+		float COF = (float) Math.sqrt(o1.friction * o2.friction);
+		float urel = ub.dot(mtv.perpendicular()) - ua.dot(mtv.perpendicular());
+		float k2 = 10;
+		Vec2f f = mtv.perpendicular().smult((k2 * COF) * impA.mag() * Math.signum(urel));
+		
+		// Friction - apply
+		o1.applyForce(f);
+		o2.applyForce(f.smult(-1));
+		if (!f.isZero()) System.out.println(f);
 	}
 	
 	/**

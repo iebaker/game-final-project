@@ -82,6 +82,6 @@ public class UIText extends Shape {
 	 * @return if the string drawn by the UIText is empty
 	 */
 	public boolean isEmpty() {
-		return (s.length() == 0);
+		return (s == null) || (s.length() == 0);
 	}
 }
