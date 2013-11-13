@@ -24,8 +24,8 @@ import engine.Viewport;
 import engine.ui.UIButton;
 import engine.ui.UIRect;
 import engine.ui.UIText;
-import game.MGameWorld;
-import game.MGameWorld.GameState;
+import game.GameWorld;
+import game.GameWorld.GameState;
 
 /**
  * A Screen subclass supporting playing the game - creates viewport with gameworld and starts new game
@@ -38,7 +38,7 @@ public class GameScreen extends Screen {
 	private UIRect		bkgrd;
 	private Viewport	view;
 	private Vec2f		mouseLocation;
-	private MGameWorld	world;
+	private GameWorld	world;
 	private UIButton	newGame;
 	private UIText		gameStatusText;
 	private GameState	gameStatus;
@@ -63,7 +63,7 @@ public class GameScreen extends Screen {
 		try {
 			LevelData data = CS195NLevelReader.readLevel(new File("Level1.nlf"));
 			String[] dimensions = data.getProperties().get("dimensions").split("[,]");
-			this.world = new MGameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])));
+			this.world = new GameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])));
 			this.bkgrd = new UIRect(zVec, zVec, world.getBGColor(), new BasicStroke(0f));
 			this.view = new Viewport(a, this.world);
 			this.newGame = new UIButton("New Game", zVec, zVec, new Color(0, 195, 0), Color.white,

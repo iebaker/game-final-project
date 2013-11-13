@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import cs195n.Vec2f;
-import engine.GameWorld;
+import engine.World;
 import engine.collision.CollisionInfo;
 import engine.collision.Ray;
 import engine.entity.EnemyEntity;
@@ -24,7 +24,7 @@ import engine.entity.StaticEntity;
  * 
  * @author dgattey
  */
-public class MGameWorld extends GameWorld {
+public class GameWorld extends World {
 	
 	/**
 	 * Enum for game state that displays a message
@@ -99,7 +99,7 @@ public class MGameWorld extends GameWorld {
 	 * 
 	 * @param dim
 	 */
-	public MGameWorld(Vec2f dim) {
+	public GameWorld(Vec2f dim) {
 		super(dim);
 		numLevels = 2;
 		

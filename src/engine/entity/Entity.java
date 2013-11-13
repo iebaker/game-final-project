@@ -9,7 +9,7 @@ import java.util.Map;
 import cs195n.LevelData.EntityData;
 import cs195n.LevelData.ShapeData;
 import cs195n.Vec2f;
-import engine.GameWorld;
+import engine.World;
 import engine.collision.AAB;
 import engine.collision.Circle;
 import engine.collision.CollisionInfo;
@@ -28,7 +28,7 @@ import engine.sound.SoundHolder;
  */
 public abstract class Entity {
 	
-	protected GameWorld				world;
+	protected World				world;
 	public CollisionShape			shape;
 	protected float					width;
 	protected float					height;
@@ -89,7 +89,7 @@ public abstract class Entity {
 	 *            the world the entity appears in
 	 */
 	public Entity(CollisionShape shape, float width, float height, float density, float restitution, boolean isStatic,
-			Color c, GameWorld world) {
+			Color c, World world) {
 		this(); // sets defaults
 		this.width = width;
 		this.height = height;
@@ -108,7 +108,7 @@ public abstract class Entity {
 	 * @param world
 	 *            the GameWorld in which this entity should be placed
 	 */
-	public void setProperties(EntityData ed, GameWorld world) {
+	public void setProperties(EntityData ed, World world) {
 		if (!ed.getShapes().isEmpty()) {
 			ShapeData shapeData = ed.getShapes().get(0);
 			String[] shapeColor = shapeData.getProperties().get("color").split("[,]");

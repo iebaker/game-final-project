@@ -27,7 +27,7 @@ import engine.entity.PlayerEntity;
  * @author dgattey
  * 
  */
-public abstract class GameWorld {
+public abstract class World {
 	
 	public Viewport					v;
 	protected Vec2f					dim;
@@ -44,7 +44,7 @@ public abstract class GameWorld {
 	 * 
 	 * @param dim
 	 */
-	public GameWorld(Vec2f dim) {
+	public World(Vec2f dim) {
 		this.dim = dim;
 		this.sDim = new Vec2f(0, 0);
 		this.removeList = new ArrayList<Entity>();
@@ -58,7 +58,7 @@ public abstract class GameWorld {
 	 * 
 	 * @param fileName
 	 */
-	public void loadLevelFromFile(String fileName, HashMap<String, Class<? extends Entity>> classes, GameWorld world) {
+	public void loadLevelFromFile(String fileName, HashMap<String, Class<? extends Entity>> classes, World world) {
 		try {
 			LevelData data = CS195NLevelReader.readLevel(new File(fileName));
 			String[] bg = this.create("backgroundColor", "255,255,255", data).split("[,]");

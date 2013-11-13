@@ -26,7 +26,7 @@ public class Viewport {
 	private float		maxZoom;
 	private Color		c;
 	private BasicStroke	stk;
-	private GameWorld	game;
+	private World	game;
 	private boolean		viewChanged;
 	
 	/**
@@ -45,13 +45,13 @@ public class Viewport {
 	 * @param maxZoom
 	 *            Maximum zoom
 	 */
-	public Viewport(Application a, Color c, GameWorld game) {
+	public Viewport(Application a, Color c, World game) {
 		this(a, game);
 		this.stk = new BasicStroke(10f);
 		this.c = c;
 	}
 	
-	public Viewport(Application a, GameWorld game) {
+	public Viewport(Application a, World game) {
 		this.a = a;
 		this.game = game;
 		this.getGame().setPort(this);
@@ -204,7 +204,7 @@ public class Viewport {
 	 * 
 	 * @return The gameWorld
 	 */
-	public GameWorld getGame() {
+	public World getGame() {
 		return game;
 	}
 	

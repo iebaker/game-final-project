@@ -1,6 +1,6 @@
 # Directories #
   /build/
-  /bin/
+  /bin/*
   target/
  
 # Build Files #
@@ -67,7 +67,3 @@
                
 # PDT-specific
                .buildpath
-
-*.class
-
-bin/engine/entity/Entity.class

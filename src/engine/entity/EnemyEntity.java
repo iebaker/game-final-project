@@ -4,7 +4,7 @@ import java.util.Map;
 
 import cs195n.LevelData.EntityData;
 import cs195n.Vec2f;
-import engine.GameWorld;
+import engine.World;
 import engine.connections.Input;
 
 /**
@@ -18,7 +18,7 @@ public class EnemyEntity extends Entity {
 	private float	damage;
 	
 	@Override
-	public void setProperties(EntityData ed, GameWorld world) {
+	public void setProperties(EntityData ed, World world) {
 		super.setProperties(ed, world);
 		this.damage = Float.parseFloat(create("damage", "20", ed));
 		
