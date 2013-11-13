@@ -17,8 +17,8 @@ import java.net.MalformedURLException;
  * @author smt3
  * 
  */
-public class Sound implements Runnable
-{
+public class Sound implements Runnable {
+	
     private AudioInputStream audiostream;
     private Clip clip;
     private URL completeURL;
