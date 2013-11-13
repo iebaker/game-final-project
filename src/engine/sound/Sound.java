@@ -177,7 +177,7 @@ public class Sound implements Runnable {
             pausePosition = clip.getMicrosecondPosition();
             clip.stop();
         }
-        else {
+        else if(!isPlaying()) {
             play(pausePosition);
         }
     }

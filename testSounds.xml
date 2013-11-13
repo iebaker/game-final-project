@@ -3,4 +3,10 @@
 	<sound id="beep">
 		<file>beep-1.wav</file>
 	</sound>
+	<sound id="water">
+		<file>water.wav</file>
+	</sound>
+	<sound id="loudwater">
+		<file>loudwater.wav</file>
+	</sound>
 </sounds>

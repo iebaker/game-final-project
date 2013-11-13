@@ -19,7 +19,7 @@ import engine.connections.Connection;
 import engine.connections.Input;
 import engine.connections.Output;
 import engine.entity.Entity;
-import engine.entity.PlayerEntity;
+import game.Player;
 
 /**
  * Abstract class for a Game World
@@ -36,8 +36,8 @@ public abstract class World {
 	private List<Entity>			removeList;
 	private List<Entity>			addList;
 	private Color					bgColor;
-	private PlayerEntity			player;
 	private HashMap<String, Entity>	entityMap;
+	protected Player player;
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))
@@ -83,7 +83,6 @@ public abstract class World {
 				// The entities in question
 				Entity source = entityMap.get(cd.getSource());
 				Entity target = entityMap.get(cd.getTarget());
-				
 				// Connect the inputs and outputs
 				Output o = source.getOutputByName(cd.getSourceOutput());
 				Input i = target.getInputByName(cd.getTargetInput());
@@ -226,7 +225,7 @@ public abstract class World {
 	 * 
 	 * @return the player
 	 */
-	public PlayerEntity getPlayer() {
+	public Player getPlayer() {
 		return player;
 	}
 	

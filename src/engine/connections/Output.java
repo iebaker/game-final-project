@@ -32,4 +32,11 @@ public class Output {
 			c.run();
 	}
 	
+	public boolean hasConnection() {
+		if(connections != null) {
+			return true;
+		}
+		return false;
+	}
+	
 }

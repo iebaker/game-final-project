@@ -13,12 +13,12 @@ import engine.entity.Entity;
  * @author dgattey
  * 
  */
-public class PlayerEntity extends Entity {
+public class Player extends Entity {
 	
 	public Vec2f	goalVelocity;
 	private long	time;
 	
-	public PlayerEntity() {
+	public Player() {
 		super();
 		this.goalVelocity = new Vec2f(0, 0);
 		this.time = 0;
@@ -83,6 +83,10 @@ public class PlayerEntity extends Entity {
 	public void jump() {
 		time = 0;
 		applyImpulse(new Vec2f(0, world.gravity() * -25));
+	}
+
+	public Vec2f getCenterPosition() {
+		return this.shape.getCenter();
 	}
 	
 }

@@ -80,7 +80,6 @@ public class GameWorld extends World {
 	
 	private static final float							TICK_LENGTH	= 0.005f;
 	public Level										level;
-	private PlayerEntity								player;
 	private String										message;
 	private float										countdown;
 	private boolean										paused;
@@ -105,7 +104,7 @@ public class GameWorld extends World {
 		
 		// Classes map
 		classes = new HashMap<String, Class<? extends Entity>>();
-		classes.put("PlayerEntity", PlayerEntity.class);
+		classes.put("PlayerEntity", Player.class);
 		classes.put("StaticEntity", StaticEntity.class);
 		classes.put("EnemyEntity", EnemyEntity.class);
 		classes.put("Entity", Entity.class);
@@ -228,9 +227,9 @@ public class GameWorld extends World {
 				Entity a = entityStack.get(i);
 				Entity b = entityStack.get(j);
 				
-				if (a instanceof EnemyEntity && b instanceof PlayerEntity && a.collideWithEntity(b)) {
+				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
 					b.hp -= ((EnemyEntity) a).getDamage();
-				} else if (b instanceof EnemyEntity && a instanceof PlayerEntity && b.collideWithEntity(a)) {
+				} else if (b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
 					a.hp -= ((EnemyEntity) b).getDamage();
 				}
 				if (a.collideWithEntity(b)) {
@@ -419,7 +418,7 @@ public class GameWorld extends World {
 	 * Public setter for player
 	 */
 	public void setPlayer(Entity e) {
-		if (e instanceof PlayerEntity) player = (PlayerEntity) e;
+		if (e instanceof Player) player = (Player) e;
 	}
 	
 }
