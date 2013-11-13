@@ -69,3 +69,7 @@
                
 # PDT-specific
                .buildpath
+
+bin/engine/entity/Entity.class
+
+bin/engine/entity/Entity$1.class

@@ -46,8 +46,12 @@ public abstract class Entity {
 	private int						shotsNeeded;
 	protected Map<String, Input>	inputs;
 	protected Map<String, Output>	outputs;
+<<<<<<< HEAD
 	private ArrayList<Sound>		currentSounds	= new ArrayList<Sound>();
 	private float					timerCountdown	= 5;
+=======
+	private ArrayList<Sound> currentSounds = new ArrayList<Sound>();
+>>>>>>> 94157d3e929df521fd053a169f9e45fa6bc7bbeb
 	
 	/**
 	 * Empty constructor - sets default values
@@ -64,16 +68,21 @@ public abstract class Entity {
 			
 			@Override
 			public void run(Map<String, String> args) {
+<<<<<<< HEAD
 				System.out.println("running");
 				// gets the sound file passed as an argument and plays it.
 				if (thisSound == null || !currentSounds.contains(thisSound)) {
 					System.out.println("adding sound");
+=======
+				//gets the sound file passed as an argument and plays it.
+				if(thisSound == null || !currentSounds.contains(thisSound)) {
+>>>>>>> 94157d3e929df521fd053a169f9e45fa6bc7bbeb
 					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
 					currentSounds.add(thisSound);
 				}
 			}
 		});
-		this.outputs.put("onTimer", new Output());
+		this.outputs.put("onTick", new Output());
 	}
 	
 	/**
@@ -289,6 +298,7 @@ public abstract class Entity {
 		force = new Vec2f(0, 0);
 		impulse = new Vec2f(0, 0);
 		
+<<<<<<< HEAD
 		// see if new sounds should be played
 		if (this.outputs.get("onTimer").hasConnection()) {
 			timerCountdown -= t;
@@ -296,6 +306,11 @@ public abstract class Entity {
 				this.outputs.get("onTimer").run();
 				this.timerCountdown = 5;
 			}
+=======
+		//see if new sounds should be played
+		if(this.outputs.get("onTick").hasConnection()) {
+			this.outputs.get("onTick").run();
+>>>>>>> 94157d3e929df521fd053a169f9e45fa6bc7bbeb
 		}
 		
 		if (!currentSounds.isEmpty()) {
@@ -303,6 +318,7 @@ public abstract class Entity {
 				Sound s = currentSounds.get(i);
 				// calculate how far the source of the sound is from the player
 				Float dist = world.getPlayer().getCenterPosition().minus(shape.getCenter()).mag();
+<<<<<<< HEAD
 				// TODO play with this number! 1000 is probably not right
 				if (dist < 1000) {
 					s.pause(false);
@@ -318,6 +334,17 @@ public abstract class Entity {
 				// stop the sound if it has finished
 				if (!s.isPlaying()) {
 					currentSounds.remove(s);
+=======
+				if(dist < 1500) {
+					s.pause(false);
+					if(!s.isPlaying()) {
+						s.play();
+					}
+					s.setVolume((1500-dist)/1500);
+				}
+				else {
+					s.pause(true);
+>>>>>>> 94157d3e929df521fd053a169f9e45fa6bc7bbeb
 				}
 			}
 		}
