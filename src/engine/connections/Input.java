@@ -1,5 +1,6 @@
 package engine.connections;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -8,7 +9,9 @@ import java.util.Map;
  * @author dgattey
  * 
  */
-abstract public class Input {
+abstract public class Input implements Serializable {
+	
+	private static final long	serialVersionUID	= 2779555456243816855L;
 	
 	/**
 	 * Run the input with the given arguments

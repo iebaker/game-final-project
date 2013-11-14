@@ -16,10 +16,11 @@ import engine.Shape;
  */
 public class UIButton extends Shape {
 	
-	private Vec2f		coord;
-	private Vec2f		endCoord;
-	private UIRoundRect	rect;
-	private UIText		uiText;
+	private static final long	serialVersionUID	= 5381343888146705086L;
+	private Vec2f				coord;
+	private Vec2f				endCoord;
+	private UIRoundRect			rect;
+	private UIText				uiText;
 	
 	/**
 	 * Creates a button with a message, start and end coordinate, background color, and stroke

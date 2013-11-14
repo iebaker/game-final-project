@@ -15,8 +15,9 @@ import engine.entity.Entity;
  */
 public class Player extends Entity {
 	
-	public Vec2f	goalVelocity;
-	private long	time;
+	private static final long	serialVersionUID	= 1654501146675497149L;
+	public Vec2f				goalVelocity;
+	private long				time;
 	
 	public Player() {
 		super();
@@ -27,6 +28,8 @@ public class Player extends Entity {
 		 * Switches gravity
 		 */
 		inputs.put("switchGravity", new Input() {
+			
+			private static final long	serialVersionUID	= -7065159977438010815L;
 			
 			@Override
 			public void run(Map<String, String> args) {
@@ -84,7 +87,7 @@ public class Player extends Entity {
 		time = 0;
 		applyImpulse(new Vec2f(0, world.gravity() * -25));
 	}
-
+	
 	public Vec2f getCenterPosition() {
 		return this.shape.getCenter();
 	}

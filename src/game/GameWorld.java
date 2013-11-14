@@ -27,6 +27,11 @@ import engine.entity.StaticEntity;
 public class GameWorld extends World {
 	
 	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 8517693487746187871L;
+	
+	/**
 	 * Enum for game state that displays a message
 	 * 
 	 * @author dgattey
@@ -142,7 +147,7 @@ public class GameWorld extends World {
 		// Actually load the level
 		loadLevelFromFile("Level" + lvl + ".nlf", classes, this);
 		if (hp > 0) player.hp = hp;
-		if (lvl == 1) setMessage("Game starts in 3", 3.5f);
+		if (lvl == 1) setMessage("Game starts in 3", 0.5f);
 		
 	}
 	
@@ -170,7 +175,7 @@ public class GameWorld extends World {
 			this.v.setOffset(player.shape.getLocation().minus(v.screenPtToGameForOffset(v.getDim().sdiv(2))));
 		
 		// Draws the line for bullets
-		if (line != null && lineCt < 20) {
+		if (line != null && player != null && lineCt < 20) {
 			g.setColor(Color.blue);
 			g.setStroke(new BasicStroke(5f));
 			Vec2f p1 = v.gamePtToScreen(player.shape.getLocation().plus(8, 8));
@@ -316,6 +321,7 @@ public class GameWorld extends World {
 		lose = true;
 		if (player.hp < 0) player.hp = 0;
 		GameState.LOSE.setMessage(msg);
+		player = null;
 	}
 	
 	/**
@@ -338,6 +344,18 @@ public class GameWorld extends World {
 	 */
 	public void onKeyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
+		case (49): // 1 - Load level 1
+			if (player != null) {
+				newGame(1);
+				player = null;
+			}
+			break;
+		case (50): // 2 - Load level 2
+			if (player != null) {
+				newGame(2);
+				player = null;
+			}
+			break;
 		case (80): // Pause
 			if (player != null && !lose && !win)
 				paused = !paused;
@@ -346,15 +364,15 @@ public class GameWorld extends World {
 			break;
 		case (87): // W
 		case (32): // Jump
-			if (player.canJump()) player.jump();
+			if (player != null && !lose && !win && player.canJump()) player.jump();
 			break;
 		case (65): // A
 		case (37): // Left
-			player.goalVelocity = new Vec2f(-800, 0);
+			if (player != null && !lose && !win) player.goalVelocity = new Vec2f(-800, 0);
 			break;
 		case (68): // D
 		case (39): // Right
-			player.goalVelocity = new Vec2f(800, 0);
+			if (player != null && !lose && !win) player.goalVelocity = new Vec2f(800, 0);
 			break;
 		default:
 			break;
@@ -372,7 +390,7 @@ public class GameWorld extends World {
 		case (39): // Right
 		case (65): // A
 		case (68): // D
-			player.goalVelocity = new Vec2f(0, 0);
+			if (player != null && !lose && !win) player.goalVelocity = new Vec2f(0, 0);
 			break;
 		default:
 			break;

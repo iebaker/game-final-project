@@ -1,5 +1,6 @@
 package engine.connections;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -8,8 +9,9 @@ import java.util.Map;
  * @author dgattey
  * 
  */
-public class Connection {
+public class Connection implements Serializable {
 	
+	private static final long			serialVersionUID	= 5396046908985397086L;
 	private final Input					target;
 	private final Map<String, String>	args;
 	

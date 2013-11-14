@@ -10,7 +10,8 @@ import engine.connections.Output;
  */
 public class SensorEntity extends StaticEntity {
 	
-	private Output	onCollide;
+	private static final long	serialVersionUID	= -308280903550886181L;
+	private Output				onCollide;
 	
 	/**
 	 * Empty constructor, making a new output from onCollide

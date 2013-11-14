@@ -5,6 +5,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import cs195n.Vec2f;
 
@@ -26,7 +31,7 @@ public class Viewport {
 	private float		maxZoom;
 	private Color		c;
 	private BasicStroke	stk;
-	private World	game;
+	private World		game;
 	private boolean		viewChanged;
 	
 	/**
@@ -206,6 +211,56 @@ public class Viewport {
 	 */
 	public World getGame() {
 		return game;
+	}
+	
+	/**
+	 * Serializes game world to save the game to the passed in string
+	 * 
+	 * @param fileName
+	 *            the file to save to
+	 */
+	public void saveGame(String fileName) {
+		try {
+			FileOutputStream fileOut = new FileOutputStream(fileName);
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(this.game);
+			out.close();
+			fileOut.close();
+			System.out.println("Game data saved in " + fileName);
+		} catch (IOException i) {
+			System.err.println("Game couldn't be saved - see stack trace");
+			i.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Loads game world from file and makes the game that
+	 * 
+	 * @param fileName
+	 *            the file to load game from
+	 */
+	public void loadGame(String fileName) {
+		World tempGame = null;
+		try {
+			FileInputStream fileIn = new FileInputStream(fileName);
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			tempGame = (World) in.readObject(); // Or GameWorld instead???? How do I cast to the right object
+			in.close();
+			fileIn.close();
+		} catch (IOException i) {
+			System.err.println("I/O issue in loading game: ");
+			i.printStackTrace();
+			return;
+		} catch (ClassNotFoundException c) {
+			System.err.println("World class not found");
+			c.printStackTrace();
+			return;
+		}
+		if (tempGame != null) {
+			tempGame.v = this;
+			game = tempGame;
+			System.out.println("Game data loaded from " + fileName);
+		}
 	}
 	
 	/**

@@ -17,9 +17,10 @@ import engine.Viewport;
  */
 public class Poly extends Shape implements CollisionShape {
 	
-	private final Vec2f[]	points;
-	private Vec2f[]			pointsToDraw;
-	private Vec2f			location;
+	private static final long	serialVersionUID	= -4767626718090673350L;
+	private final Vec2f[]		points;
+	private Vec2f[]				pointsToDraw;
+	private Vec2f				location;
 	
 	/**
 	 * Public constructor, taking a list of Vec2fs representing the points of the polygon in counterclockwise order

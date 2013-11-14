@@ -15,17 +15,20 @@ import engine.connections.Input;
  */
 public class EnemyEntity extends Entity {
 	
-	private float	damage;
+	private static final long	serialVersionUID	= -6022185589322028097L;
+	private float				damage;
 	
 	@Override
 	public void setProperties(EntityData ed, World world) {
 		super.setProperties(ed, world);
-		this.damage = Float.parseFloat(create("damage", "20", ed));
+		this.damage = Float.parseFloat(create("damage", "0", ed));
 		
 		/**
 		 * Makes the enemy stop being static and start closing in on player
 		 */
 		inputs.put("startClose", new Input() {
+			
+			private static final long	serialVersionUID	= -6313273253448519746L;
 			
 			@Override
 			public void run(Map<String, String> args) {

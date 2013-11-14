@@ -1,8 +1,8 @@
 package engine.entity;
 
+import java.io.Serializable;
 import java.util.Map;
 
-import cs195n.Vec2f;
 import engine.collision.CollisionShape;
 import engine.connections.Input;
 
@@ -12,10 +12,10 @@ import engine.connections.Input;
  * @author dgattey
  * 
  */
-public class StaticEntity extends Entity {
+public class StaticEntity extends Entity implements Serializable {
 	
-	private final Vec2f		zVec;
-	private CollisionShape	last;
+	private static final long	serialVersionUID	= 7765213139897853879L;
+	private CollisionShape		last;
 	
 	/**
 	 * Empty constructor, sets zVec and makes an input for hiding/showing the wall
@@ -27,6 +27,8 @@ public class StaticEntity extends Entity {
 		 * Hides wall
 		 */
 		inputs.put("doHide", new Input() {
+			
+			private static final long	serialVersionUID	= 8399600977246421801L;
 			
 			@Override
 			public void run(Map<String, String> args) {
@@ -40,38 +42,14 @@ public class StaticEntity extends Entity {
 		 */
 		inputs.put("doShow", new Input() {
 			
+			private static final long	serialVersionUID	= 5192386216627791599L;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				shape = last;
 				last = null;
 			}
 		});
-		
-		this.zVec = new Vec2f(0, 0);
-	}
-	
-	@Override
-	/**
-	 * Should never move
-	 */
-	protected Vec2f getVelocity() {
-		return zVec;
-	}
-	
-	@Override
-	/**
-	 * No forces can apply
-	 */
-	public void applyForce(Vec2f f) {
-		return;
-	}
-	
-	@Override
-	/**
-	 * No impulses can apply
-	 */
-	public void applyImpulse(Vec2f p) {
-		return;
 	}
 	
 }

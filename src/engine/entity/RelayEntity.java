@@ -1,5 +1,6 @@
 package engine.entity;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import engine.connections.Input;
@@ -11,10 +12,11 @@ import engine.connections.Output;
  * @author dgattey
  * 
  */
-public class RelayEntity extends Entity {
+public class RelayEntity extends Entity implements Serializable {
 	
-	private Output	onFire;
-	private boolean	enabled;
+	private static final long	serialVersionUID	= 2172401312771803173L;
+	private Output				onFire;
+	private boolean				enabled;
 	
 	/**
 	 * Constructor, setting default values and making doEnable, doDisable, and doFire new Inputs to use
@@ -29,6 +31,9 @@ public class RelayEntity extends Entity {
 		 * Enables the Relay
 		 */
 		inputs.put("doEnable", new Input() {
+			
+			private static final long	serialVersionUID	= 6651623307949153240L;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				enabled = true;
@@ -39,6 +44,9 @@ public class RelayEntity extends Entity {
 		 * Disables the Relay
 		 */
 		inputs.put("doDisable", new Input() {
+			
+			private static final long	serialVersionUID	= -4138126148907001922L;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				enabled = false;
@@ -49,6 +57,9 @@ public class RelayEntity extends Entity {
 		 * Fires Relay only if already enabled
 		 */
 		inputs.put("doFire", new Input() {
+			
+			private static final long	serialVersionUID	= 8677937332575671941L;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				if (enabled) fire();
