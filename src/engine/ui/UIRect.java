@@ -16,7 +16,8 @@ import engine.Shape;
  */
 public class UIRect extends Shape {
 	
-	private Rectangle2D	rect;
+	private static final long	serialVersionUID	= 4337470195115901749L;
+	private Rectangle2D			rect;
 	
 	/**
 	 * Creates a UIRect object with dim, width, height, color, and stroke

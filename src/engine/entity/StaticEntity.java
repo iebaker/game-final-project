@@ -1,5 +1,6 @@
 package engine.entity;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import engine.collision.CollisionShape;
@@ -11,9 +12,10 @@ import engine.connections.Input;
  * @author dgattey
  * 
  */
-public class StaticEntity extends Entity {
+public class StaticEntity extends Entity implements Serializable {
 	
-	private CollisionShape	last;
+	private static final long	serialVersionUID	= 7765213139897853879L;
+	private CollisionShape		last;
 	
 	/**
 	 * Empty constructor, sets zVec and makes an input for hiding/showing the wall

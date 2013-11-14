@@ -16,9 +16,10 @@ import engine.Viewport;
  */
 public class Circle extends Shape implements CollisionShape {
 	
-	private Ellipse2D	circ;
-	protected float		radius;
-	protected Vec2f		center;
+	private static final long	serialVersionUID	= 6451380434234857918L;
+	private Ellipse2D			circ;
+	protected float				radius;
+	protected Vec2f				center;
 	
 	/**
 	 * Constructor takes sdim, a radius, and a color

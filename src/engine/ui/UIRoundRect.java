@@ -16,6 +16,7 @@ import engine.Shape;
  */
 public class UIRoundRect extends Shape {
 	
+	private static final long	serialVersionUID	= -2940009164281465539L;
 	private RoundRectangle2D	rect;
 	private float				round;
 	

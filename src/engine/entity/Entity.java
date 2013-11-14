@@ -2,6 +2,7 @@ package engine.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ import engine.connections.Input;
 import engine.connections.Output;
 import engine.sound.Sound;
 import engine.sound.SoundHolder;
+import game.Player;
 
 /**
  * Abstract Entity class for GameWorld
@@ -26,8 +28,9 @@ import engine.sound.SoundHolder;
  * @author dgattey
  * 
  */
-public abstract class Entity {
+public abstract class Entity implements Serializable {
 	
+	private static final long		serialVersionUID	= -427222487694569405L;
 	protected World					world;
 	public CollisionShape			shape;
 	protected float					width;
@@ -46,7 +49,7 @@ public abstract class Entity {
 	private int						shotsNeeded;
 	protected Map<String, Input>	inputs;
 	protected Map<String, Output>	outputs;
-	private ArrayList<Sound>		currentSounds	= new ArrayList<Sound>();
+	private ArrayList<Sound>		currentSounds		= new ArrayList<Sound>();
 	
 	/**
 	 * Empty constructor - sets default values
@@ -369,6 +372,15 @@ public abstract class Entity {
 		float urel = ubf - uaf;
 		float k2 = 50;
 		Vec2f f = mtv.perpendicular().smult((k2 * COF) * impA.mag() * (Math.signum(urel)));
+		if (o1 instanceof Player || o2 instanceof Player) {
+			// System.out.println("MTV: " + mtv);
+			// System.out.println("UA: " + ua);
+			// System.out.println("UB: " + ub);
+			// System.out.println("UAF: " + uaf);
+			// System.out.println("UBF: " + ubf);
+			// System.out.println("URel: " + urel);
+			// System.out.println("Force: " + f + "\n");
+		}
 		assert (f.normalized().perpendicular().equals(mtv.normalized()));
 		
 		// Friction - apply

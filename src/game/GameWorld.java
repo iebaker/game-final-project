@@ -27,6 +27,11 @@ import engine.entity.StaticEntity;
 public class GameWorld extends World {
 	
 	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 8517693487746187871L;
+	
+	/**
 	 * Enum for game state that displays a message
 	 * 
 	 * @author dgattey

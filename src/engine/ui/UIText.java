@@ -15,10 +15,11 @@ import engine.Shape;
  */
 public class UIText extends Shape {
 	
-	private String	s;
-	private Font	f;
-	private Vec2f	coord;
-	private float	preferredHeight;
+	private static final long	serialVersionUID	= -8030025571448950556L;
+	private String				s;
+	private Font				f;
+	private Vec2f				coord;
+	private float				preferredHeight;
 	
 	/**
 	 * Creates a new text shape with the desired text, coordinates, and preferred width

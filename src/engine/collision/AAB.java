@@ -17,9 +17,10 @@ import engine.Viewport;
  */
 public class AAB extends Shape implements CollisionShape {
 	
-	private Rectangle2D	rect;
-	protected Vec2f		min;
-	protected Vec2f		max;
+	private static final long	serialVersionUID	= 3574516190006117924L;
+	private Rectangle2D			rect;
+	protected Vec2f				min;
+	protected Vec2f				max;
 	
 	/**
 	 * Constructor takes sdim, dim, a color

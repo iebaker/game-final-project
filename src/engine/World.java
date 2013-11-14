@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +28,9 @@ import game.Player;
  * @author dgattey
  * 
  */
-public abstract class World {
+public abstract class World implements Serializable {
 	
+	private static final long		serialVersionUID	= 8819430167695167366L;
 	public Viewport					v;
 	protected Vec2f					dim;
 	protected Vec2f					sDim;
@@ -37,7 +39,7 @@ public abstract class World {
 	private List<Entity>			addList;
 	private Color					bgColor;
 	private HashMap<String, Entity>	entityMap;
-	protected Player player;
+	protected Player				player;
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))

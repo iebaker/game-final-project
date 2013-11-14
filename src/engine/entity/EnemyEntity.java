@@ -15,7 +15,8 @@ import engine.connections.Input;
  */
 public class EnemyEntity extends Entity {
 	
-	private float	damage;
+	private static final long	serialVersionUID	= -6022185589322028097L;
+	private float				damage;
 	
 	@Override
 	public void setProperties(EntityData ed, World world) {

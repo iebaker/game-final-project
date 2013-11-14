@@ -13,8 +13,9 @@ import engine.Shape;
  */
 public abstract class Point extends Shape implements CollisionShape {
 	
-	protected float	x;
-	protected float	y;
+	private static final long	serialVersionUID	= 4089374759818821624L;
+	protected float				x;
+	protected float				y;
 	
 	/**
 	 * Constructor, taking a point

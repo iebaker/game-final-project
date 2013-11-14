@@ -3,6 +3,7 @@ package engine;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.io.Serializable;
 
 /**
  * An abstract Shape class designed to be subclassed to draw shapes onscreen
@@ -10,10 +11,11 @@ import java.awt.Stroke;
  * @author dgattey
  * 
  */
-public abstract class Shape {
+public abstract class Shape implements Serializable {
 	
-	protected Color		c;
-	protected Stroke	stk;
+	private static final long	serialVersionUID	= 2603943546880126544L;
+	protected Color				c;
+	protected Stroke			stk;
 	
 	/**
 	 * Sets the color and sets the stroke

@@ -1,5 +1,6 @@
 package engine.entity;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import engine.connections.Input;
@@ -11,10 +12,11 @@ import engine.connections.Output;
  * @author dgattey
  * 
  */
-public class RelayEntity extends Entity {
+public class RelayEntity extends Entity implements Serializable {
 	
-	private Output	onFire;
-	private boolean	enabled;
+	private static final long	serialVersionUID	= 2172401312771803173L;
+	private Output				onFire;
+	private boolean				enabled;
 	
 	/**
 	 * Constructor, setting default values and making doEnable, doDisable, and doFire new Inputs to use

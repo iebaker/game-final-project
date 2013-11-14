@@ -186,6 +186,12 @@ public class GameScreen extends Screen {
 		case (81): // Q pressed (quit)
 			a.popScreen();
 			break;
+		case (51): // 3 pressed, save game
+			view.saveGame("save.gme");
+			break;
+		case (52): // 4 pressed, load game
+			view.loadGame("save.gme");
+			break;
 		default:
 			world.onKeyPressed(e);
 			break;
