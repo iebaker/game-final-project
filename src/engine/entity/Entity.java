@@ -63,7 +63,7 @@ public abstract class Entity {
 			
 			@Override
 			public void run(Map<String, String> args) {
-				System.out.println("running");
+				// System.out.println("running");
 				// gets the sound file passed as an argument and plays it.
 				if (thisSound == null || !currentSounds.contains(thisSound)) {
 					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
@@ -235,7 +235,7 @@ public abstract class Entity {
 	 *            the force to apply
 	 */
 	public void applyForce(Vec2f f) {
-		this.force = this.force.plus(f);
+		if (!isStatic) this.force = this.force.plus(f);
 	}
 	
 	/**
@@ -245,7 +245,7 @@ public abstract class Entity {
 	 *            the impulse to apply
 	 */
 	public void applyImpulse(Vec2f p) {
-		this.impulse = this.impulse.plus(p);
+		if (!isStatic) this.impulse = this.impulse.plus(p);
 	}
 	
 	/**
@@ -260,12 +260,15 @@ public abstract class Entity {
 	}
 	
 	/**
-	 * Returns velocity for the entity (overriden in StaticEntity)
+	 * Returns velocity for the entity (0 if static)
 	 * 
 	 * @return
 	 */
 	protected Vec2f getVelocity() {
-		return velocity;
+		if (isStatic)
+			return new Vec2f(0, 0);
+		else
+			return velocity;
 	}
 	
 	/**
@@ -292,7 +295,7 @@ public abstract class Entity {
 			this.outputs.get("onTick").run();
 		}
 		
-		if (!currentSounds.isEmpty()) {
+		if (!currentSounds.isEmpty() && world.getPlayer() != null) {
 			for (int i = currentSounds.size() - 1; i >= 0; i--) {
 				Sound s = currentSounds.get(i);
 				// calculate how far the source of the sound is from the player
@@ -361,14 +364,16 @@ public abstract class Entity {
 		
 		// Friction
 		float COF = (float) Math.sqrt(o1.friction * o2.friction);
-		float urel = ub.dot(mtv.perpendicular()) - ua.dot(mtv.perpendicular());
-		float k2 = 10;
-		Vec2f f = mtv.perpendicular().smult((k2 * COF) * impA.mag() * Math.signum(urel));
+		float uaf = ua.dot(mtv.normalized().perpendicular());
+		float ubf = ub.dot(mtv.normalized().perpendicular());
+		float urel = ubf - uaf;
+		float k2 = 50;
+		Vec2f f = mtv.perpendicular().smult((k2 * COF) * impA.mag() * (Math.signum(urel)));
+		assert (f.normalized().perpendicular().equals(mtv.normalized()));
 		
 		// Friction - apply
 		o1.applyForce(f);
 		o2.applyForce(f.smult(-1));
-		if (!f.isZero()) System.out.println(f);
 	}
 	
 	/**

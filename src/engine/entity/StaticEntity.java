@@ -2,7 +2,6 @@ package engine.entity;
 
 import java.util.Map;
 
-import cs195n.Vec2f;
 import engine.collision.CollisionShape;
 import engine.connections.Input;
 
@@ -14,7 +13,6 @@ import engine.connections.Input;
  */
 public class StaticEntity extends Entity {
 	
-	private final Vec2f		zVec;
 	private CollisionShape	last;
 	
 	/**
@@ -46,32 +44,6 @@ public class StaticEntity extends Entity {
 				last = null;
 			}
 		});
-		
-		this.zVec = new Vec2f(0, 0);
-	}
-	
-	@Override
-	/**
-	 * Should never move
-	 */
-	protected Vec2f getVelocity() {
-		return zVec;
-	}
-	
-	@Override
-	/**
-	 * No forces can apply
-	 */
-	public void applyForce(Vec2f f) {
-		return;
-	}
-	
-	@Override
-	/**
-	 * No impulses can apply
-	 */
-	public void applyImpulse(Vec2f p) {
-		return;
 	}
 	
 }
