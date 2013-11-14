@@ -31,6 +31,9 @@ public class RelayEntity extends Entity implements Serializable {
 		 * Enables the Relay
 		 */
 		inputs.put("doEnable", new Input() {
+			
+			private static final long	serialVersionUID	= 6651623307949153240L;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				enabled = true;
@@ -41,6 +44,9 @@ public class RelayEntity extends Entity implements Serializable {
 		 * Disables the Relay
 		 */
 		inputs.put("doDisable", new Input() {
+			
+			private static final long	serialVersionUID	= -4138126148907001922L;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				enabled = false;
@@ -51,6 +57,9 @@ public class RelayEntity extends Entity implements Serializable {
 		 * Fires Relay only if already enabled
 		 */
 		inputs.put("doFire", new Input() {
+			
+			private static final long	serialVersionUID	= 8677937332575671941L;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				if (enabled) fire();

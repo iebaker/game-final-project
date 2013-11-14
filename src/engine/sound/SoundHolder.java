@@ -2,6 +2,7 @@ package engine.sound;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.Hashtable;
 
 import javax.xml.stream.XMLInputFactory;
@@ -10,18 +11,20 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
- * A setup to make sound management a little bit easier.
- * Should be instantiated when the game starts, and the filename of the XML should be passed in
+ * A setup to make sound management a little bit easier. Should be instantiated when the game starts, and the filename
+ * of the XML should be passed in
  * 
  * @author smt3
- *
+ * 
  */
-public class SoundHolder {
-
-	public static final Hashtable<String, Sound> soundTable = new Hashtable<String, Sound>();
+public class SoundHolder implements Serializable {
+	
+	private static final long						serialVersionUID	= 4473977635865953863L;
+	public static final Hashtable<String, Sound>	soundTable			= new Hashtable<String, Sound>();
 	
 	/**
 	 * Consturctor. Takes in the path of an XML to parse
+	 * 
 	 * @param toRead
 	 */
 	public SoundHolder(String toRead) {
@@ -30,11 +33,11 @@ public class SoundHolder {
 		try {
 			XMLStreamReader reader = factory.createXMLStreamReader(toRead, new FileInputStream(toRead));
 			String currSoundID = null;
-			while(reader.hasNext()) {
-				int event = reader.next();				
-				switch(event) {
+			while (reader.hasNext()) {
+				int event = reader.next();
+				switch (event) {
 				case XMLStreamConstants.START_ELEMENT:
-					if("sound".equals(reader.getLocalName())) {
+					if ("sound".equals(reader.getLocalName())) {
 						currSoundID = reader.getAttributeValue(0);
 					}
 					break;
@@ -45,12 +48,12 @@ public class SoundHolder {
 				
 				case XMLStreamConstants.END_ELEMENT:
 					String name = reader.getLocalName();
-					if(name == "file") {
+					if (name == "file") {
 						soundTable.put(currSoundID, new Sound(tagContent));
 					}
 				}
 			}
-		
+			
 		} catch (XMLStreamException e) {
 			System.out.println("XML is improperly formatted");
 			e.printStackTrace();

@@ -62,7 +62,9 @@ public abstract class Entity implements Serializable {
 		this.inputs = new HashMap<String, Input>();
 		this.outputs = new HashMap<String, Output>();
 		this.inputs.put("playSound", new Input() {
-			Sound	thisSound;
+			
+			private static final long	serialVersionUID	= -6139328109470836482L;
+			Sound						thisSound;
 			
 			@Override
 			public void run(Map<String, String> args) {

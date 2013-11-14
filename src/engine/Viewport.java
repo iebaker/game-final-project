@@ -226,7 +226,7 @@ public class Viewport {
 			out.writeObject(this.game);
 			out.close();
 			fileOut.close();
-			System.out.printf("Game data saved in " + fileName);
+			System.out.println("Game data saved in " + fileName);
 		} catch (IOException i) {
 			System.err.println("Game couldn't be saved - see stack trace");
 			i.printStackTrace();
@@ -244,7 +244,7 @@ public class Viewport {
 		try {
 			FileInputStream fileIn = new FileInputStream(fileName);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
-			tempGame = (World) in.readObject();
+			tempGame = (World) in.readObject(); // Or GameWorld instead???? How do I cast to the right object
 			in.close();
 			fileIn.close();
 		} catch (IOException i) {
@@ -256,7 +256,11 @@ public class Viewport {
 			c.printStackTrace();
 			return;
 		}
-		if (tempGame != null) game = tempGame;
+		if (tempGame != null) {
+			tempGame.v = this;
+			game = tempGame;
+			System.out.println("Game data loaded from " + fileName);
+		}
 	}
 	
 	/**

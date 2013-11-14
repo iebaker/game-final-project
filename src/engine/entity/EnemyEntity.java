@@ -28,6 +28,8 @@ public class EnemyEntity extends Entity {
 		 */
 		inputs.put("startClose", new Input() {
 			
+			private static final long	serialVersionUID	= -6313273253448519746L;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				startClose();

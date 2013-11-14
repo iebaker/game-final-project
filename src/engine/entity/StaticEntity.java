@@ -28,6 +28,8 @@ public class StaticEntity extends Entity implements Serializable {
 		 */
 		inputs.put("doHide", new Input() {
 			
+			private static final long	serialVersionUID	= 8399600977246421801L;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				last = shape;
@@ -39,6 +41,8 @@ public class StaticEntity extends Entity implements Serializable {
 		 * Shows wall
 		 */
 		inputs.put("doShow", new Input() {
+			
+			private static final long	serialVersionUID	= 5192386216627791599L;
 			
 			@Override
 			public void run(Map<String, String> args) {

@@ -1,15 +1,18 @@
 package game;
 
+import java.io.Serializable;
+
 /**
  * Level class to encapsulate what changes each level - relatively unused here
  * 
  * @author dgattey
  * 
  */
-public class Level {
+public class Level implements Serializable {
 	
-	private final int	level;
-	private float		score;
+	private static final long	serialVersionUID	= -7569167150735348241L;
+	private final int			level;
+	private float				score;
 	
 	/**
 	 * Constructor, taking a level number and cumulative score

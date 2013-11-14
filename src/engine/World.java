@@ -31,7 +31,7 @@ import game.Player;
 public abstract class World implements Serializable {
 	
 	private static final long		serialVersionUID	= 8819430167695167366L;
-	public Viewport					v;
+	public transient Viewport		v;
 	protected Vec2f					dim;
 	protected Vec2f					sDim;
 	protected List<Entity>			entityStack;

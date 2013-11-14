@@ -29,6 +29,8 @@ public class Player extends Entity {
 		 */
 		inputs.put("switchGravity", new Input() {
 			
+			private static final long	serialVersionUID	= -7065159977438010815L;
+			
 			@Override
 			public void run(Map<String, String> args) {
 				world.flipGravity();

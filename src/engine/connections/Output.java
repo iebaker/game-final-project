@@ -1,5 +1,6 @@
 package engine.connections;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,9 @@ import java.util.List;
  * @author dgattey
  * 
  */
-public class Output {
+public class Output implements Serializable {
 	
+	private static final long	serialVersionUID	= -487044371518799409L;
 	private List<Connection>	connections;
 	
 	/**
@@ -33,7 +35,7 @@ public class Output {
 	}
 	
 	public boolean hasConnection() {
-		if(connections != null) {
+		if (connections != null) {
 			return true;
 		}
 		return false;
