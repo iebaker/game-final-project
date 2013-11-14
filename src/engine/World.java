@@ -20,7 +20,7 @@ import engine.connections.Connection;
 import engine.connections.Input;
 import engine.connections.Output;
 import engine.entity.Entity;
-import game.Player;
+import engine.sound.SoundRecipient;
 
 /**
  * Abstract class for a Game World
@@ -39,7 +39,7 @@ public abstract class World implements Serializable {
 	private List<Entity>			addList;
 	private Color					bgColor;
 	private HashMap<String, Entity>	entityMap;
-	protected Player				player;
+	protected SoundRecipient				soundRecipient;
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))
@@ -227,8 +227,8 @@ public abstract class World implements Serializable {
 	 * 
 	 * @return the player
 	 */
-	public Player getPlayer() {
-		return player;
+	public SoundRecipient getSoundRecipient() {
+		return soundRecipient;
 	}
 	
 	/**
@@ -236,7 +236,9 @@ public abstract class World implements Serializable {
 	 * 
 	 * @param playerEntity
 	 */
-	public abstract void setPlayer(Entity playerEntity);
+	public void setSoundRecipient(SoundRecipient sr) {
+		
+	}
 	
 	/**
 	 * Public getter for all entities
@@ -267,5 +269,11 @@ public abstract class World implements Serializable {
 	 * Flips the gravity of this world
 	 */
 	public abstract void flipGravity();
+	
+	/**
+	 * Takes in an entity that can be cast as the main character
+	 * @param e
+	 */
+	public abstract void setMainChar(Entity e);
 	
 }

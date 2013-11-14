@@ -97,6 +97,7 @@ public class GameWorld extends World {
 	private int											numLevels;
 	private HashMap<String, Class<? extends Entity>>	classes;
 	private float										hp;
+	private Player player;
 	
 	/**
 	 * Constructor for game world that simply starts new game
@@ -118,6 +119,7 @@ public class GameWorld extends World {
 		classes.put("WinEntity", WinEntity.class);
 		
 		newGame();
+		player.setGameWorld(this);
 	}
 	
 	@Override
@@ -321,7 +323,6 @@ public class GameWorld extends World {
 		lose = true;
 		if (player.hp < 0) player.hp = 0;
 		GameState.LOSE.setMessage(msg);
-		player = null;
 	}
 	
 	/**
@@ -431,12 +432,21 @@ public class GameWorld extends World {
 		return message;
 	}
 	
+	/**
+	 * Public getter for player
+	 * @return Player
+	 */
+	public Player getPlayer() {
+		return player;
+	}
+
 	@Override
 	/**
 	 * Public setter for player
 	 */
-	public void setPlayer(Entity e) {
-		if (e instanceof Player) player = (Player) e;
+	public void setMainChar(Entity e) {
+		player = (Player) e;
+		player.setGameWorld(this);
 	}
 	
 }
