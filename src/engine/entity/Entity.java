@@ -63,7 +63,6 @@ public abstract class Entity {
 			
 			@Override
 			public void run(Map<String, String> args) {
-				System.out.println("running");
 				// gets the sound file passed as an argument and plays it.
 				if (thisSound == null || !currentSounds.contains(thisSound)) {
 					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
@@ -269,7 +268,7 @@ public abstract class Entity {
 	}
 	
 	/**
-	 * Applies gravity, updates velocity, then position, then resets force and impulse Also updates active sounds and
+	 * Applies gravity, updates velocity, then position, then resets force and impulse. Also updates active sounds and
 	 * removes completed tracks
 	 * 
 	 * @param t
@@ -287,11 +286,12 @@ public abstract class Entity {
 		force = new Vec2f(0, 0);
 		impulse = new Vec2f(0, 0);
 		
-		// see if new sounds should be played
+		//if the entity has any onTick connections, run them
 		if (this.outputs.get("onTick").hasConnection()) {
 			this.outputs.get("onTick").run();
 		}
 		
+		//see if there are any active sounds, and play them
 		if (!currentSounds.isEmpty()) {
 			for (int i = currentSounds.size() - 1; i >= 0; i--) {
 				Sound s = currentSounds.get(i);
