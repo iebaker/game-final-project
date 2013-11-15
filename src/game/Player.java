@@ -2,13 +2,10 @@ package game;
 
 import java.util.Map;
 
-import cs195n.LevelData.EntityData;
 import cs195n.Vec2f;
-import engine.World;
 import engine.collision.CollisionInfo;
 import engine.connections.Input;
 import engine.entity.Entity;
-import engine.sound.SoundRecipient;
 
 /**
  * Player entity class
@@ -16,12 +13,11 @@ import engine.sound.SoundRecipient;
  * @author dgattey
  * 
  */
-public class Player extends Entity implements SoundRecipient {
+public class Player extends Entity {
 	
 	private static final long	serialVersionUID	= 1654501146675497149L;
 	public Vec2f				goalVelocity;
 	private long				time;
-	private GameWorld gw;
 	
 	public Player() {
 		super();
@@ -37,19 +33,9 @@ public class Player extends Entity implements SoundRecipient {
 			
 			@Override
 			public void run(Map<String, String> args) {
-				gw.flipGravity();
+				world.flipGravity();
 			}
 		});
-	}
-	
-	@Override
-	/**
-	 * Scary way to set Player's properties
-	 */
-	public void setProperties(EntityData ed, World world) {
-		super.setProperties(ed, world);
-		world.setSoundRecipient(this);
-		world.setMainChar(this);
 	}
 	
 	@Override
@@ -57,16 +43,16 @@ public class Player extends Entity implements SoundRecipient {
 	 * Applies the goal velocity force until it reaches actual velocity
 	 */
 	public void onTick(float t) {
-		if (gw.getSoundRecipient() == null) {gw.setSoundRecipient(this);}
+		if (world.getPlayer() == null) world.setPlayer(this);
 		if (!goalVelocity.equals(new Vec2f(0, 0))) {
 			if (!goalVelocity.equals(velocity))
 				applyImpulse((goalVelocity.minus(velocity)).smult(0.05f));
 			else
 				goalVelocity = new Vec2f(0, 0);
 		}
-		if (!gw.checkBounds(shape.getLocation()))
-			gw.setLose("You fell (or jumped) out of the world!");
-		else if (hp < 0) gw.setLose("Your health dropped below zero...");
+		if (!world.checkBounds(shape.getLocation()))
+			world.setLose("You fell (or jumped) out of the world!");
+		else if (hp < 0) world.setLose("Your health dropped below zero...");
 		super.onTick(t);
 	}
 	
@@ -76,8 +62,8 @@ public class Player extends Entity implements SoundRecipient {
 	public void onCollide(CollisionInfo collisionInfo) {
 		super.onCollide(collisionInfo);
 		float y = collisionInfo.mtv.normalized().y;
-		float up = (gw.gravity() > 1) ? -1.05f : 0.95f;
-		float down = (gw.gravity() > 1) ? -0.95f : 1.05f;
+		float up = (world.gravity() > 1) ? -1.05f : 0.95f;
+		float down = (world.gravity() > 1) ? -0.95f : 1.05f;
 		if (y < down && y > up)
 			time = System.currentTimeMillis();
 		else
@@ -99,15 +85,11 @@ public class Player extends Entity implements SoundRecipient {
 	 */
 	public void jump() {
 		time = 0;
-		applyImpulse(new Vec2f(0, gw.gravity() * -25));
+		applyImpulse(new Vec2f(0, world.gravity() * -25));
 	}
 	
-	public Vec2f getLocation() {
+	public Vec2f getCenterPosition() {
 		return this.shape.getCenter();
-	}
-	
-	public void setGameWorld(GameWorld gw) {
-		this.gw = gw;
 	}
 	
 }

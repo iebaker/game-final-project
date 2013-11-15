@@ -134,9 +134,7 @@ public class Sound implements Runnable, Serializable {
 			aClip.open(audioIn);
 			// For volume control
 			// gainControl = (FloatControl) aClip.getControl(FloatControl.Type.VOLUME);
-			if(aClip.isControlSupported( FloatControl.Type.MASTER_GAIN)) {
-				gainControl = (FloatControl) aClip.getControl(FloatControl.Type.MASTER_GAIN);
-			}
+			gainControl = (FloatControl) aClip.getControl(FloatControl.Type.MASTER_GAIN);
 			// muteControl = (BooleanControl)clip.getControl(BooleanControl.Type.MUTE);
 		} catch (LineUnavailableException e2) {
 			e2.printStackTrace();
