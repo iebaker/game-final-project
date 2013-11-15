@@ -20,7 +20,6 @@ import engine.connections.Input;
 import engine.connections.Output;
 import engine.sound.Sound;
 import engine.sound.SoundHolder;
-import game.Player;
 
 /**
  * Abstract Entity class for GameWorld
@@ -304,7 +303,7 @@ public abstract class Entity implements Serializable {
 			for (int i = currentSounds.size() - 1; i >= 0; i--) {
 				Sound s = currentSounds.get(i);
 				// calculate how far the source of the sound is from the player
-				Float dist = world.getPlayer().getCenterPosition().minus(shape.getCenter()).mag();
+				Float dist = world.getPlayer().shape.getCenter().minus(shape.getCenter()).mag();
 				if (dist < 1500) {
 					s.pause(false);
 					if (!s.isPlaying()) {
@@ -369,20 +368,11 @@ public abstract class Entity implements Serializable {
 		
 		// Friction
 		float COF = (float) Math.sqrt(o1.friction * o2.friction);
-		float uaf = ua.dot(mtv.normalized().perpendicular());
-		float ubf = ub.dot(mtv.normalized().perpendicular());
+		float uaf = o1.getVelocity().dot(mtv.normalized().perpendicular());
+		float ubf = o2.getVelocity().dot(mtv.normalized().perpendicular());
 		float urel = ubf - uaf;
-		float k2 = 50;
-		Vec2f f = mtv.perpendicular().smult((k2 * COF) * impA.mag() * (Math.signum(urel)));
-		if (o1 instanceof Player || o2 instanceof Player) {
-			// System.out.println("MTV: " + mtv);
-			// System.out.println("UA: " + ua);
-			// System.out.println("UB: " + ub);
-			// System.out.println("UAF: " + uaf);
-			// System.out.println("UBF: " + ubf);
-			// System.out.println("URel: " + urel);
-			// System.out.println("Force: " + f + "\n");
-		}
+		float k2 = 20f;
+		Vec2f f = mtv.normalized().perpendicular().smult((k2 * COF) * impA.mag() * (Math.signum(urel)));
 		assert (f.normalized().perpendicular().equals(mtv.normalized()));
 		
 		// Friction - apply

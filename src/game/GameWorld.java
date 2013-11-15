@@ -26,10 +26,7 @@ import engine.entity.StaticEntity;
  */
 public class GameWorld extends World {
 	
-	/**
-	 * 
-	 */
-	private static final long	serialVersionUID	= 8517693487746187871L;
+	private static final long	serialVersionUID	= 6619354971290257104L;
 	
 	/**
 	 * Enum for game state that displays a message
@@ -97,6 +94,7 @@ public class GameWorld extends World {
 	private int											numLevels;
 	private HashMap<String, Class<? extends Entity>>	classes;
 	private float										hp;
+	private Player										player;
 	
 	/**
 	 * Constructor for game world that simply starts new game
@@ -134,6 +132,7 @@ public class GameWorld extends World {
 	 *            the restitution to give all entities
 	 */
 	public void newGame(int lvl) {
+		player = null;
 		level = new Level(lvl, 0f);
 		if (v != null) v.viewHasChanged(true);
 		leftoverTime = 0;
@@ -188,6 +187,7 @@ public class GameWorld extends World {
 		}
 		
 		super.onDraw(g); // draws all entities
+		// System.out.println("Drawing " + System.currentTimeMillis());
 	}
 	
 	/**
@@ -219,6 +219,7 @@ public class GameWorld extends World {
 				super.onTick(TICK_LENGTH);
 				checkCollisions();
 				level.onTick(TICK_LENGTH);
+				// System.out.println("Ticking " + System.currentTimeMillis());
 			}
 		}
 	}
@@ -347,13 +348,11 @@ public class GameWorld extends World {
 		case (49): // 1 - Load level 1
 			if (player != null) {
 				newGame(1);
-				player = null;
 			}
 			break;
 		case (50): // 2 - Load level 2
 			if (player != null) {
 				newGame(2);
-				player = null;
 			}
 			break;
 		case (80): // Pause
@@ -432,11 +431,13 @@ public class GameWorld extends World {
 	}
 	
 	@Override
-	/**
-	 * Public setter for player
-	 */
-	public void setPlayer(Entity e) {
-		if (e instanceof Player) player = (Player) e;
+	public Entity getPlayer() {
+		return player;
+	}
+	
+	@Override
+	public void setPlayer(Entity p) {
+		this.player = (Player) p;
 	}
 	
 }

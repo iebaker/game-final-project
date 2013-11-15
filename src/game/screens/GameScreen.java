@@ -19,6 +19,7 @@ import cs195n.LevelData;
 import cs195n.Vec2f;
 import cs195n.Vec2i;
 import engine.Application;
+import engine.Saver;
 import engine.Screen;
 import engine.Viewport;
 import engine.ui.UIButton;
@@ -28,7 +29,7 @@ import game.GameWorld;
 import game.GameWorld.GameState;
 
 /**
- * A Screen subclass supporting playing the game - creates viewport with gameworld and starts new game
+ * A Screen subclass supporting playing the game - creates viewport with gameview.getGame() and starts new game
  * 
  * @author dgattey
  * 
@@ -38,7 +39,7 @@ public class GameScreen extends Screen {
 	private UIRect		bkgrd;
 	private Viewport	view;
 	private Vec2f		mouseLocation;
-	private GameWorld	world;
+	private GameWorld	game;
 	private UIButton	newGame;
 	private UIText		gameStatusText;
 	private GameState	gameStatus;
@@ -63,9 +64,10 @@ public class GameScreen extends Screen {
 		try {
 			LevelData data = CS195NLevelReader.readLevel(new File("Level1.nlf"));
 			String[] dimensions = data.getProperties().get("dimensions").split("[,]");
-			this.world = new GameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])));
-			this.bkgrd = new UIRect(zVec, zVec, world.getBGColor(), new BasicStroke(0f));
-			this.view = new Viewport(a, this.world);
+			this.view = new Viewport(a);
+			this.game = new GameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])));
+			this.view.setGame(game);
+			this.bkgrd = new UIRect(zVec, zVec, game.getBGColor(), new BasicStroke(0f));
 			this.newGame = new UIButton("New Game", zVec, zVec, new Color(0, 195, 0), Color.white,
 					new BasicStroke(2.0f));
 			this.gameStatus = GameState.PLAYING;
@@ -90,21 +92,21 @@ public class GameScreen extends Screen {
 	}
 	
 	/**
-	 * Changes game state and checks end conditions, passing onTick through to gameWorld if still playing after updating
-	 * score text, health text, level text, bomb count, and message if applicable
+	 * Changes game state and checks end conditions, passing onTick through to gameview.getGame() if still playing after
+	 * updating score text, health text, level text, bomb count, and message if applicable
 	 */
 	protected void onTick(long nanosSincePreviousTick) {
-		GameState state = world.checkEndConditions();
+		GameState state = game.checkEndConditions();
 		if (gameOver)
 			return;
 		else if (state != GameState.PLAYING && !gameOver)
 			gameOver(state);
 		else {
-			this.message.updateText(world.getCurrentMessage());
+			this.message.updateText(game.getCurrentMessage());
 			float secs = (float) (nanosSincePreviousTick / 1000000000.0);
-			this.healthText.updateText("HP: " + (int) world.getHealth() + "/100");
-			this.levelText.updateText("Level " + world.level.getLevel());
-			world.onTick(secs);
+			this.healthText.updateText("HP: " + (int) game.getHealth() + "/100");
+			this.levelText.updateText("Level " + game.level.getLevel());
+			game.onTick(secs);
 		}
 	}
 	
@@ -118,7 +120,7 @@ public class GameScreen extends Screen {
 		gameStatusText.updateText(gameStatus.getMessage());
 		gameOverText.updateText(gameStatus.getHeadline());
 		message.updateText("");
-		int hp = (world.getHealth() < 0) ? 0 : (int) world.getHealth();
+		int hp = (game.getHealth() < 0) ? 0 : (int) game.getHealth();
 		healthText.updateText("HP: " + hp + "/100");
 		
 		gameOver = true; // stops more updates from getting through
@@ -129,7 +131,7 @@ public class GameScreen extends Screen {
 	 */
 	protected void onDraw(Graphics2D g) {
 		bkgrd.drawAndFillShape(g);
-		view.onDraw(g);
+		view.onDraw(game, g);
 		if (!message.isEmpty()) {
 			messageBG.drawAndFillShape(g);
 			message.drawShape(g);
@@ -187,22 +189,23 @@ public class GameScreen extends Screen {
 			a.popScreen();
 			break;
 		case (51): // 3 pressed, save game
-			view.saveGame("save.gme");
+			Saver.saveGame("save.gme", game);
 			break;
 		case (52): // 4 pressed, load game
-			view.loadGame("save.gme");
+			GameWorld temp = (GameWorld) Saver.loadGame("save.gme", view);
+			if (temp != null) game = temp;
 			break;
 		default:
-			world.onKeyPressed(e);
+			game.onKeyPressed(e);
 			break;
 		}
 	}
 	
 	/**
-	 * Passes event through to world
+	 * Passes event through to view.getGame()
 	 */
 	protected void onKeyReleased(KeyEvent e) {
-		world.onKeyReleased(e);
+		game.onKeyReleased(e);
 	}
 	
 	/**
@@ -216,7 +219,7 @@ public class GameScreen extends Screen {
 		if (gameStatus != GameState.PLAYING && newGame.hitTarget(e)) {
 			newGame();
 		} else if (gameStatus == GameState.PLAYING && mouseLocation != null) {
-			world.onMouseClicked(e);
+			game.onMouseClicked(e);
 		}
 	}
 	
@@ -229,10 +232,6 @@ public class GameScreen extends Screen {
 	protected void onMouseDragged(MouseEvent e) {
 		if (gameStatus == GameState.PLAYING) {
 			Vec2f m = new Vec2f(e.getX(), e.getY());
-			Vec2f dif = mouseLocation.minus(m);
-			if (checkBounds(m, view.getSDim().x, view.getDim().x, view.getSDim().y, view.getDim().y)) {
-				view.panView(new Vec2f(dif.x / view.getScale(), dif.y / view.getScale()));
-			}
 			mouseLocation = m; // important to save it again so it doesn't jump strangely!
 		}
 	}
@@ -261,7 +260,7 @@ public class GameScreen extends Screen {
 	private void newGame() {
 		gameStatus = GameState.PLAYING;
 		gameOver = false;
-		view.getGame().newGame();
+		game.newGame();
 	}
 	
 	/**

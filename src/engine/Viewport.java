@@ -5,11 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import cs195n.Vec2f;
 
@@ -31,7 +26,6 @@ public class Viewport {
 	private float		maxZoom;
 	private Color		c;
 	private BasicStroke	stk;
-	private World		game;
 	private boolean		viewChanged;
 	
 	/**
@@ -51,19 +45,21 @@ public class Viewport {
 	 *            Maximum zoom
 	 */
 	public Viewport(Application a, Color c, World game) {
-		this(a, game);
+		this(a);
 		this.stk = new BasicStroke(10f);
 		this.c = c;
 	}
 	
-	public Viewport(Application a, World game) {
+	public Viewport(Application a) {
 		this.a = a;
-		this.game = game;
-		this.getGame().setPort(this);
+	}
+	
+	public void setGame(World game) {
+		game.setPort(this);
 		
 		this.gameOffset = new Vec2f(0, 0);
 		this.scale = 1f;
-		float zmScale = 0.0005f * (getGame().getDim().mag()); // Makes same scale no matter size of game
+		float zmScale = 0.0005f * (game.getDim().mag()); // Makes same scale no matter size of game
 		this.zoom = zmScale;
 		this.minZoom = 0.8f * zmScale;
 		this.maxZoom = 2 * zmScale;
@@ -76,9 +72,9 @@ public class Viewport {
 	 * 
 	 * @param g
 	 */
-	public void onDraw(Graphics2D g) {
+	public void onDraw(World game, Graphics2D g) {
 		double l = (a.getCurrentScreenSize().x + a.getCurrentScreenSize().y);
-		double l2 = (getGame().dim.x + getGame().dim.y);
+		double l2 = (game.dim.x + game.dim.y);
 		this.scale = (float) (zoom * (l / l2));
 		
 		float x = portCoord.x;
@@ -90,7 +86,7 @@ public class Viewport {
 		// Set clip, draw, and unclip
 		Rectangle b = g.getClipBounds();
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
-		getGame().onDraw(g);
+		game.onDraw(g);
 		g.clip(b);
 		
 		// Draw a box to show the viewport
@@ -111,17 +107,6 @@ public class Viewport {
 		this.portCoord = portCoord;
 		this.portEndCoord = portEndCoord;
 		this.viewHasChanged(true);
-	}
-	
-	/**
-	 * Pans the view in that direction
-	 * 
-	 * @param pan
-	 *            The transformation vector (already in game space)
-	 */
-	public void panView(Vec2f pan) {
-		gameOffset = getOffset().plus(pan);
-		viewHasChanged(true);
 	}
 	
 	/**
@@ -202,65 +187,6 @@ public class Viewport {
 	 */
 	public float getScale() {
 		return scale;
-	}
-	
-	/**
-	 * Public getter for the game so its viewport can be set
-	 * 
-	 * @return The gameWorld
-	 */
-	public World getGame() {
-		return game;
-	}
-	
-	/**
-	 * Serializes game world to save the game to the passed in string
-	 * 
-	 * @param fileName
-	 *            the file to save to
-	 */
-	public void saveGame(String fileName) {
-		try {
-			FileOutputStream fileOut = new FileOutputStream(fileName);
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(this.game);
-			out.close();
-			fileOut.close();
-			System.out.println("Game data saved in " + fileName);
-		} catch (IOException i) {
-			System.err.println("Game couldn't be saved - see stack trace");
-			i.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Loads game world from file and makes the game that
-	 * 
-	 * @param fileName
-	 *            the file to load game from
-	 */
-	public void loadGame(String fileName) {
-		World tempGame = null;
-		try {
-			FileInputStream fileIn = new FileInputStream(fileName);
-			ObjectInputStream in = new ObjectInputStream(fileIn);
-			tempGame = (World) in.readObject(); // Or GameWorld instead???? How do I cast to the right object
-			in.close();
-			fileIn.close();
-		} catch (IOException i) {
-			System.err.println("I/O issue in loading game: ");
-			i.printStackTrace();
-			return;
-		} catch (ClassNotFoundException c) {
-			System.err.println("World class not found");
-			c.printStackTrace();
-			return;
-		}
-		if (tempGame != null) {
-			tempGame.v = this;
-			game = tempGame;
-			System.out.println("Game data loaded from " + fileName);
-		}
 	}
 	
 	/**

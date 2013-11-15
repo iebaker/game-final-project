@@ -20,7 +20,6 @@ import engine.connections.Connection;
 import engine.connections.Input;
 import engine.connections.Output;
 import engine.entity.Entity;
-import game.Player;
 
 /**
  * Abstract class for a Game World
@@ -39,7 +38,6 @@ public abstract class World implements Serializable {
 	private List<Entity>			addList;
 	private Color					bgColor;
 	private HashMap<String, Entity>	entityMap;
-	protected Player				player;
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))
@@ -223,22 +221,6 @@ public abstract class World implements Serializable {
 	}
 	
 	/**
-	 * Public getter for player
-	 * 
-	 * @return the player
-	 */
-	public Player getPlayer() {
-		return player;
-	}
-	
-	/**
-	 * Public setter for the player
-	 * 
-	 * @param playerEntity
-	 */
-	public abstract void setPlayer(Entity playerEntity);
-	
-	/**
 	 * Public getter for all entities
 	 * 
 	 * @return all entities in a list
@@ -267,5 +249,9 @@ public abstract class World implements Serializable {
 	 * Flips the gravity of this world
 	 */
 	public abstract void flipGravity();
+	
+	public abstract Entity getPlayer();
+	
+	public abstract void setPlayer(Entity player);
 	
 }
