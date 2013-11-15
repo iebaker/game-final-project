@@ -254,4 +254,6 @@ public abstract class World implements Serializable {
 	
 	public abstract void setPlayer(Entity player);
 	
+	public abstract String getSoundFile();
+	
 }

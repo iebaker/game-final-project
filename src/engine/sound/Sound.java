@@ -3,7 +3,6 @@ package engine.sound;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -23,17 +22,16 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * @author smt3
  * 
  */
-public class Sound implements Runnable, Serializable {
+public class Sound implements Runnable {
 	
-	private static final long			serialVersionUID	= 7478371209840030751L;
-	private transient AudioInputStream	audiostream;
-	private transient Clip				clip;
+	private AudioInputStream	audiostream;
+	private Clip				clip;
 	private URL							completeURL;
 	private String						soundFilename;
 	private boolean						looping				= false;
 	private boolean						doLoop				= false;
 	private long						pausePosition		= 0L;
-	private transient FloatControl		gainControl;								// for volume
+	private FloatControl		gainControl;								// for volume
 	private boolean						paused				= false;
 	
 	/**

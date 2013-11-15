@@ -2,7 +2,6 @@ package engine.sound;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.Serializable;
 import java.util.Hashtable;
 
 import javax.xml.stream.XMLInputFactory;
@@ -17,9 +16,8 @@ import javax.xml.stream.XMLStreamReader;
  * @author smt3
  * 
  */
-public class SoundHolder implements Serializable {
+public class SoundHolder {
 	
-	private static final long						serialVersionUID	= 4473977635865953863L;
 	public static final Hashtable<String, Sound>	soundTable			= new Hashtable<String, Sound>();
 	
 	/**
@@ -28,6 +26,7 @@ public class SoundHolder implements Serializable {
 	 * @param toRead
 	 */
 	public SoundHolder(String toRead) {
+		soundTable.clear();
 		String tagContent = null;
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		try {
@@ -50,6 +49,8 @@ public class SoundHolder implements Serializable {
 					String name = reader.getLocalName();
 					if (name == "file") {
 						soundTable.put(currSoundID, new Sound(tagContent));
+						System.out.print("Adding sound: ");
+						System.out.println(soundTable.get(currSoundID));
 					}
 				}
 			}

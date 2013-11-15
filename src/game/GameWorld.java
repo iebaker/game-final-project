@@ -95,6 +95,7 @@ public class GameWorld extends World {
 	private HashMap<String, Class<? extends Entity>>	classes;
 	private float										hp;
 	private Player										player;
+	private String soundFile = "sounds.xml";
 	
 	/**
 	 * Constructor for game world that simply starts new game
@@ -132,6 +133,11 @@ public class GameWorld extends World {
 	 *            the restitution to give all entities
 	 */
 	public void newGame(int lvl) {
+		if(this.getEntities() != null) {
+			for(Entity e : this.getEntities()) {
+				e.stopSound();
+			}
+		}
 		player = null;
 		level = new Level(lvl, 0f);
 		if (v != null) v.viewHasChanged(true);
@@ -344,6 +350,7 @@ public class GameWorld extends World {
 	 */
 	public void onKeyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
+		//TODO switch out for enum values
 		case (49): // 1 - Load level 1
 			if (player != null) {
 				newGame(1);
@@ -438,6 +445,11 @@ public class GameWorld extends World {
 	public void setPlayer(Entity p) {
 		this.player = (Player) p;
 		if (hp > 0) player.hp = hp;
+	}
+
+	@Override
+	public String getSoundFile() {
+		return soundFile;
 	}
 	
 }

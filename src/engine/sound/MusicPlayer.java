@@ -2,7 +2,6 @@ package engine.sound;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -19,9 +18,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * @author Sawyer
  * 
  */
-public class MusicPlayer extends Thread implements Serializable {
+public class MusicPlayer extends Thread {
 	
-	private static final long	serialVersionUID	= -11207227583355746L;
 	private String				_file;
 	private volatile boolean	_soundPaused		= false;
 	

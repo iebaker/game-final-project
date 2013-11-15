@@ -12,6 +12,7 @@ import game.screens.MainScreen;
  */
 public class M {
 	
+	public static final String gameName = "Light";
 	/**
 	 * Creates a new Application and starts up the app with the first screen being a new MenuScreen
 	 * 
@@ -20,10 +21,10 @@ public class M {
 	 */
 	public static void main(String[] args) {
 		System.setProperty("sun.java2d.opengl", "true");
-		Application a = new Application("M", false);
+		Application a = new Application(gameName, false);
 		a.pushScreen(new MainScreen(a));
 		a.startup();
-		new SoundHolder("testSounds.xml");
+		new SoundHolder("sounds.xml");
 	}
 	
 }

@@ -48,7 +48,7 @@ public abstract class Entity implements Serializable {
 	private int						shotsNeeded;
 	protected Map<String, Input>	inputs;
 	protected Map<String, Output>	outputs;
-	private ArrayList<Sound>		currentSounds		= new ArrayList<Sound>();
+	private transient ArrayList<Sound>		currentSounds		= new ArrayList<Sound>();
 	
 	/**
 	 * Empty constructor - sets default values
@@ -63,7 +63,7 @@ public abstract class Entity implements Serializable {
 		this.inputs.put("playSound", new Input() {
 			
 			private static final long	serialVersionUID	= -6139328109470836482L;
-			Sound						thisSound;
+			private transient Sound						thisSound;
 			
 			@Override
 			public void run(Map<String, String> args) {
@@ -420,5 +420,15 @@ public abstract class Entity implements Serializable {
 	 */
 	public void setShotsNeeded(int shotsNeeded) {
 		this.shotsNeeded = shotsNeeded;
+	}
+	
+	public void reloadSounds() {
+		currentSounds = new ArrayList<Sound>();
+	}
+	
+	public void stopSound() {
+		for(Sound s : currentSounds) {
+			s.stop();
+		}
 	}
 }

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import engine.entity.Entity;
+
 public class Saver {
 	
 	/**
@@ -34,7 +36,10 @@ public class Saver {
 	 * @param fileName
 	 *            the file to load game from
 	 */
-	public static World loadGame(String fileName, Viewport v) {
+	public static World loadGame(String fileName, Viewport v, World w) {
+		for(Entity e : w.getEntities()) {
+			e.stopSound();
+		}
 		World tempGame = null;
 		try {
 			FileInputStream fileIn = new FileInputStream(fileName);
@@ -53,7 +58,9 @@ public class Saver {
 		}
 		if (tempGame != null) {
 			tempGame.v = v;
-			// reload sounds here
+			for(Entity e : tempGame.getEntities()) {
+				e.reloadSounds();
+			}
 			System.out.println("Game data loaded from " + fileName);
 			return tempGame;
 		}
