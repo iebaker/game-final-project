@@ -39,7 +39,7 @@ public class Saver {
 		try {
 			FileInputStream fileIn = new FileInputStream(fileName);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
-			tempGame = (World) in.readObject(); // Or GameWorld instead???? How do I cast to the right object
+			tempGame = (World) in.readObject();
 			in.close();
 			fileIn.close();
 		} catch (IOException i) {
@@ -53,6 +53,7 @@ public class Saver {
 		}
 		if (tempGame != null) {
 			tempGame.v = v;
+			// reload sounds here
 			System.out.println("Game data loaded from " + fileName);
 			return tempGame;
 		}

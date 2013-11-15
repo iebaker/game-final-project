@@ -145,7 +145,6 @@ public class GameWorld extends World {
 		
 		// Actually load the level
 		loadLevelFromFile("Level" + lvl + ".nlf", classes, this);
-		if (hp > 0) player.hp = hp;
 		if (lvl == 1) setMessage("Game starts in 3", 0.5f);
 		
 	}
@@ -438,6 +437,7 @@ public class GameWorld extends World {
 	@Override
 	public void setPlayer(Entity p) {
 		this.player = (Player) p;
+		if (hp > 0) player.hp = hp;
 	}
 	
 }
