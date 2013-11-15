@@ -20,6 +20,10 @@ import engine.connections.Connection;
 import engine.connections.Input;
 import engine.connections.Output;
 import engine.entity.Entity;
+<<<<<<< HEAD
+=======
+import engine.sound.SoundRecipient;
+>>>>>>> 57bafee82b5ea695b555e274a3bcfd00fa940499
 
 /**
  * Abstract class for a Game World
@@ -38,6 +42,10 @@ public abstract class World implements Serializable {
 	private List<Entity>			addList;
 	private Color					bgColor;
 	private HashMap<String, Entity>	entityMap;
+<<<<<<< HEAD
+=======
+	protected SoundRecipient				soundRecipient;
+>>>>>>> 57bafee82b5ea695b555e274a3bcfd00fa940499
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))
@@ -221,6 +229,27 @@ public abstract class World implements Serializable {
 	}
 	
 	/**
+<<<<<<< HEAD
+=======
+	 * Public getter for player
+	 * 
+	 * @return the player
+	 */
+	public SoundRecipient getSoundRecipient() {
+		return soundRecipient;
+	}
+	
+	/**
+	 * Public setter for the player
+	 * 
+	 * @param playerEntity
+	 */
+	public void setSoundRecipient(SoundRecipient sr) {
+		
+	}
+	
+	/**
+>>>>>>> 57bafee82b5ea695b555e274a3bcfd00fa940499
 	 * Public getter for all entities
 	 * 
 	 * @return all entities in a list
@@ -250,8 +279,16 @@ public abstract class World implements Serializable {
 	 */
 	public abstract void flipGravity();
 	
+<<<<<<< HEAD
 	public abstract Entity getPlayer();
 	
 	public abstract void setPlayer(Entity player);
+=======
+	/**
+	 * Takes in an entity that can be cast as the main character
+	 * @param e
+	 */
+	public abstract void setMainChar(Entity e);
+>>>>>>> 57bafee82b5ea695b555e274a3bcfd00fa940499
 	
 }

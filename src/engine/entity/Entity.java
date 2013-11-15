@@ -2,7 +2,6 @@ package engine.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +26,8 @@ import engine.sound.SoundHolder;
  * @author dgattey
  * 
  */
-public abstract class Entity implements Serializable {
+public abstract class Entity {
 	
-	private static final long		serialVersionUID	= -427222487694569405L;
 	protected World					world;
 	public CollisionShape			shape;
 	protected float					width;
@@ -48,7 +46,7 @@ public abstract class Entity implements Serializable {
 	private int						shotsNeeded;
 	protected Map<String, Input>	inputs;
 	protected Map<String, Output>	outputs;
-	private ArrayList<Sound>		currentSounds		= new ArrayList<Sound>();
+	private ArrayList<Sound>		currentSounds	= new ArrayList<Sound>();
 	
 	/**
 	 * Empty constructor - sets default values
@@ -61,13 +59,11 @@ public abstract class Entity implements Serializable {
 		this.inputs = new HashMap<String, Input>();
 		this.outputs = new HashMap<String, Output>();
 		this.inputs.put("playSound", new Input() {
-			
-			private static final long	serialVersionUID	= -6139328109470836482L;
-			Sound						thisSound;
+			private static final long serialVersionUID = 1L;
+			Sound	thisSound;
 			
 			@Override
 			public void run(Map<String, String> args) {
-				// System.out.println("running");
 				// gets the sound file passed as an argument and plays it.
 				if (thisSound == null || !currentSounds.contains(thisSound)) {
 					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
@@ -239,7 +235,7 @@ public abstract class Entity implements Serializable {
 	 *            the force to apply
 	 */
 	public void applyForce(Vec2f f) {
-		if (!isStatic) this.force = this.force.plus(f);
+		this.force = this.force.plus(f);
 	}
 	
 	/**
@@ -249,7 +245,7 @@ public abstract class Entity implements Serializable {
 	 *            the impulse to apply
 	 */
 	public void applyImpulse(Vec2f p) {
-		if (!isStatic) this.impulse = this.impulse.plus(p);
+		this.impulse = this.impulse.plus(p);
 	}
 	
 	/**
@@ -264,19 +260,16 @@ public abstract class Entity implements Serializable {
 	}
 	
 	/**
-	 * Returns velocity for the entity (0 if static)
+	 * Returns velocity for the entity (overriden in StaticEntity)
 	 * 
 	 * @return
 	 */
 	protected Vec2f getVelocity() {
-		if (isStatic)
-			return new Vec2f(0, 0);
-		else
-			return velocity;
+		return velocity;
 	}
 	
 	/**
-	 * Applies gravity, updates velocity, then position, then resets force and impulse Also updates active sounds and
+	 * Applies gravity, updates velocity, then position, then resets force and impulse. Also updates active sounds and
 	 * removes completed tracks
 	 * 
 	 * @param t
@@ -294,16 +287,22 @@ public abstract class Entity implements Serializable {
 		force = new Vec2f(0, 0);
 		impulse = new Vec2f(0, 0);
 		
-		// see if new sounds should be played
+		//if the entity has any onTick connections, run them
 		if (this.outputs.get("onTick").hasConnection()) {
 			this.outputs.get("onTick").run();
 		}
 		
-		if (!currentSounds.isEmpty() && world.getPlayer() != null) {
+		//see if there are any active sounds, and play them
+		if (!currentSounds.isEmpty() && world.getSoundRecipient() != null) {
 			for (int i = currentSounds.size() - 1; i >= 0; i--) {
 				Sound s = currentSounds.get(i);
+<<<<<<< HEAD
 				// calculate how far the source of the sound is from the player
 				Float dist = world.getPlayer().shape.getCenter().minus(shape.getCenter()).mag();
+=======
+				// calculate how far the source of the sound is from the sound recipient
+				Float dist = world.getSoundRecipient().getLocation().minus(shape.getCenter()).mag();
+>>>>>>> 57bafee82b5ea695b555e274a3bcfd00fa940499
 				if (dist < 1500) {
 					s.pause(false);
 					if (!s.isPlaying()) {
@@ -368,16 +367,23 @@ public abstract class Entity implements Serializable {
 		
 		// Friction
 		float COF = (float) Math.sqrt(o1.friction * o2.friction);
+<<<<<<< HEAD
 		float uaf = o1.getVelocity().dot(mtv.normalized().perpendicular());
 		float ubf = o2.getVelocity().dot(mtv.normalized().perpendicular());
 		float urel = ubf - uaf;
 		float k2 = 20f;
 		Vec2f f = mtv.normalized().perpendicular().smult((k2 * COF) * impA.mag() * (Math.signum(urel)));
 		assert (f.normalized().perpendicular().equals(mtv.normalized()));
+=======
+		float urel = ub.dot(mtv.perpendicular()) - ua.dot(mtv.perpendicular());
+		float k2 = 10;
+		Vec2f f = mtv.perpendicular().smult((k2 * COF) * impA.mag() * Math.signum(urel));
+>>>>>>> 57bafee82b5ea695b555e274a3bcfd00fa940499
 		
 		// Friction - apply
 		o1.applyForce(f);
 		o2.applyForce(f.smult(-1));
+		if (!f.isZero()) System.out.println(f);
 	}
 	
 	/**
@@ -420,5 +426,5 @@ public abstract class Entity implements Serializable {
 	 */
 	public void setShotsNeeded(int shotsNeeded) {
 		this.shotsNeeded = shotsNeeded;
-	}
+	}	
 }
