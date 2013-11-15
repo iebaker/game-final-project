@@ -222,7 +222,9 @@ public class Sound implements Runnable, Serializable {
 		value = (value <= 0.0) ? 0.0001 : ((value > 1.0) ? 1.0 : value);
 		try {
 			float dB = (float) (Math.log(value) / Math.log(10.0) * 20.0);
-			gainControl.setValue(dB);
+			if(gainControl != null) {
+				gainControl.setValue(dB);
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
