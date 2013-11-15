@@ -22,7 +22,6 @@ import engine.Application;
 import engine.Saver;
 import engine.Screen;
 import engine.Viewport;
-import engine.entity.Entity;
 import engine.ui.UIButton;
 import engine.ui.UIRect;
 import engine.ui.UIText;
