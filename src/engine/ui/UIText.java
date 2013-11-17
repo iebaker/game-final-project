@@ -20,6 +20,7 @@ public class UIText extends Shape {
 	private Font				f;
 	private Vec2f				coord;
 	private float				preferredHeight;
+	private boolean visible = true;
 	
 	/**
 	 * Creates a new text shape with the desired text, coordinates, and preferred width
@@ -40,14 +41,16 @@ public class UIText extends Shape {
 	 * Draws the shape to the screen by figuring out the preferred text size that will fit in the height of that space
 	 */
 	public void drawShape(Graphics2D g) {
-		super.drawShape(g);
-		Font tempF = g.getFont();
-		
-		float height = g.getFontMetrics(tempF).getHeight();
-		float newFSize = (tempF.getSize() * (this.preferredHeight / height));
-		if (!s.equals("")) f = tempF.deriveFont(newFSize);
-		g.setFont(f);
-		g.drawString(s, coord.x, coord.y);
+		if(visible) {
+			super.drawShape(g);
+			Font tempF = g.getFont();
+			
+			float height = g.getFontMetrics(tempF).getHeight();
+			float newFSize = (tempF.getSize() * (this.preferredHeight / height));
+			if (!s.equals("")) f = tempF.deriveFont(newFSize);
+			g.setFont(f);
+			g.drawString(s, coord.x, coord.y);
+		}
 	}
 	
 	/**
@@ -84,5 +87,9 @@ public class UIText extends Shape {
 	 */
 	public boolean isEmpty() {
 		return (s == null) || (s.length() == 0);
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 }

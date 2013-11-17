@@ -72,7 +72,7 @@ public class MainScreen extends Screen {
 	 * Gets key events: if enter key released, transition to the game
 	 */
 	protected void onKeyReleased(KeyEvent e) {
-		if (e.getKeyCode() == 10) switchToGame("Enter key pressed");
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) switchToGame("Enter key pressed");
 	}
 	
 	/**

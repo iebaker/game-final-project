@@ -12,6 +12,7 @@ public class SensorEntity extends StaticEntity {
 	
 	private static final long	serialVersionUID	= -308280903550886181L;
 	private Output				onCollide;
+	private boolean activated = false;
 	
 	/**
 	 * Empty constructor, making a new output from onCollide
@@ -27,7 +28,10 @@ public class SensorEntity extends StaticEntity {
 	 * Runs onCollide after a collision
 	 */
 	public void afterCollision() {
-		onCollide.run();
+		if(!activated) {
+			onCollide.run();
+			activated = true;
+		}
 	}
 	
 }

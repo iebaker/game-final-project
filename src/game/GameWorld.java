@@ -3,11 +3,15 @@ package game;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.swing.Timer;
 
 import cs195n.Vec2f;
 import engine.World;
@@ -18,6 +22,7 @@ import engine.entity.Entity;
 import engine.entity.RelayEntity;
 import engine.entity.SensorEntity;
 import engine.entity.StaticEntity;
+import engine.ui.TextBox;
 
 /**
  * GameWorld for M
@@ -28,63 +33,13 @@ public class GameWorld extends World {
 	
 	private static final long	serialVersionUID	= 6619354971290257104L;
 	
-	/**
-	 * Enum for game state that displays a message
-	 * 
-	 * @author dgattey
-	 * 
-	 */
-	public static enum GameState {
-		WIN("Nice Work!", "You won"), LOSE("Game Over", "You lost... Try again"), PLAYING("...", "Still in play");
-		
-		private String			message;
-		private final String	headline;
-		
-		/**
-		 * Private constructor with headline and message
-		 * 
-		 * @param par
-		 * @param msg
-		 */
-		private GameState(String head, String msg) {
-			this.message = msg;
-			this.headline = head;
-		}
-		
-		/**
-		 * Public getter for the message
-		 * 
-		 * @return
-		 */
-		public String getMessage() {
-			return this.message;
-		}
-		
-		/**
-		 * Public setter for the message
-		 * 
-		 * @param msg
-		 *            the message to set
-		 */
-		public void setMessage(String msg) {
-			this.message = msg;
-		}
-		
-		/**
-		 * Public getter for the headline
-		 * 
-		 * @return
-		 */
-		public String getHeadline() {
-			return this.headline;
-		}
-	}
-	
 	private static final float							TICK_LENGTH	= 0.005f;
 	public Level										level;
 	private String										message;
 	private float										countdown;
 	private boolean										paused;
+	private boolean cutsceneActive;
+	private boolean textChangeReady;
 	private double										leftoverTime;
 	private Vec2f										line;
 	private int											lineCt;
@@ -98,12 +53,12 @@ public class GameWorld extends World {
 	private String soundFile = "sounds.xml";
 	
 	/**
-	 * Constructor for game world that simply starts new game
-	 * 
+	 * Constructor for a world that starts a new game
 	 * @param dim
+	 * @param tb
 	 */
-	public GameWorld(Vec2f dim) {
-		super(dim);
+	public GameWorld(Vec2f dim, TextBox tb) {
+		super(dim, tb);
 		numLevels = 2;
 		
 		// Classes map
@@ -219,7 +174,7 @@ public class GameWorld extends World {
 				message = "Game paused";
 			
 			// Ticks through each entity and checks collisions
-			else {
+			else if (!cutsceneActive){
 				message = "";
 				super.onTick(TICK_LENGTH);
 				checkCollisions();
@@ -264,28 +219,28 @@ public class GameWorld extends World {
 	 *            the destination of the ray
 	 */
 	private void fireBullet(Vec2f dest) {
-		if (!paused && player != null) {
+		if (!paused && !cutsceneActive && player != null) {
 			Vec2f src = player.shape.getCenter();
 			Ray ray = new Ray(src, dest);
-			Entity effected = null;
+			Entity affected = null;
 			Vec2f castTo = null;
 			for (Entity e : entityStack) {
 				if (!e.equals(player) && e.shape != null) {
 					Vec2f tmp = e.shape.cast(ray);
 					if (castTo == null
 							|| (castTo != null && tmp != null && tmp.minus(src).mag() < castTo.minus(src).mag())) {
-						effected = e;
+						affected = e;
 						castTo = tmp;
 					}
 				}
 			}
 			if (castTo != null) {
-				effected.applyImpulse(ray.getDirection().smult(5000f));
+				affected.applyImpulse(ray.getDirection().smult(5000f));
 				
 				// For breakable blocks
-				if (effected.isShootable()) {
-					effected.setShotsNeeded(effected.getShotsNeeded() - 1);
-					if (effected.getShotsNeeded() < 1) removeEntity(effected);
+				if (affected.isShootable()) {
+					affected.setShotsNeeded(affected.getShotsNeeded() - 1);
+					if (affected.getShotsNeeded() < 1) removeEntity(affected);
 				}
 				line = castTo;
 			}
@@ -349,34 +304,53 @@ public class GameWorld extends World {
 	 * @param e
 	 */
 	public void onKeyPressed(KeyEvent e) {
-		switch (e.getKeyCode()) {
-		//TODO switch out for enum values
-		case (49): // 1 - Load level 1
+		int keyCode = e.getKeyCode();
+		if(textChangeReady && (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S)) {
+			textChangeReady = false;
+			if(textBox.hasNextLine()) {
+				final Timer t = new Timer(100, null);
+				t.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						GameWorld.this.textChangeReady = true;
+						t.removeActionListener(this);
+					}
+				});
+				t.start();
+				textBox.displayNext();
+			}
+			else {
+				cutsceneActive = false;
+				textBox.setVisible(false);
+			}
+		}
+		switch (keyCode) {
+		case (KeyEvent.VK_1): // 1 - Load level 1
 			if (player != null) {
 				newGame(1);
 			}
 			break;
-		case (50): // 2 - Load level 2
+		case (KeyEvent.VK_2): // 2 - Load level 2
 			if (player != null) {
 				newGame(2);
 			}
 			break;
-		case (80): // Pause
+		case (KeyEvent.VK_P): // Pause
 			if (player != null && !lose && !win)
 				paused = !paused;
 			else
 				paused = false;
 			break;
-		case (87): // W
-		case (32): // Jump
+		case (KeyEvent.VK_W): // W
+		case (KeyEvent.VK_SPACE): // Jump
 			if (player != null && !lose && !win && player.canJump()) player.jump();
 			break;
-		case (65): // A
-		case (37): // Left
+		case (KeyEvent.VK_A): // A
+		case (KeyEvent.VK_LEFT): // Left
 			if (player != null && !lose && !win) player.goalVelocity = new Vec2f(-800, 0);
 			break;
-		case (68): // D
-		case (39): // Right
+		case (KeyEvent.VK_D): // D
+		case (KeyEvent.VK_RIGHT): // Right
 			if (player != null && !lose && !win) player.goalVelocity = new Vec2f(800, 0);
 			break;
 		default:
@@ -391,10 +365,10 @@ public class GameWorld extends World {
 	 */
 	public void onKeyReleased(KeyEvent e) {
 		switch (e.getKeyCode()) {
-		case (37): // left
-		case (39): // Right
-		case (65): // A
-		case (68): // D
+		case (KeyEvent.VK_LEFT): // left
+		case (KeyEvent.VK_RIGHT): // Right
+		case (KeyEvent.VK_A): // A
+		case (KeyEvent.VK_D): // D
 			if (player != null && !lose && !win) player.goalVelocity = new Vec2f(0, 0);
 			break;
 		default:
@@ -452,4 +426,73 @@ public class GameWorld extends World {
 		return soundFile;
 	}
 	
+	/**
+	 * Enum for game state that displays a message
+	 * 
+	 * @author dgattey
+	 * 
+	 */
+	public static enum GameState {
+		WIN("Nice Work!", "You won"), LOSE("Game Over", "You lost... Try again"), PLAYING("...", "Still in play");
+		
+		private String			message;
+		private final String	headline;
+		
+		/**
+		 * Private constructor with headline and message
+		 * 
+		 * @param par
+		 * @param msg
+		 */
+		private GameState(String head, String msg) {
+			this.message = msg;
+			this.headline = head;
+		}
+		
+		/**
+		 * Public getter for the message
+		 * 
+		 * @return
+		 */
+		public String getMessage() {
+			return this.message;
+		}
+		
+		/**
+		 * Public setter for the message
+		 * 
+		 * @param msg
+		 *            the message to set
+		 */
+		public void setMessage(String msg) {
+			this.message = msg;
+		}
+		
+		/**
+		 * Public getter for the headline
+		 * 
+		 * @return
+		 */
+		public String getHeadline() {
+			return this.headline;
+		}
+	}
+
+	@Override
+	/**
+	 * Enters cutscene mode
+	 */
+	public void enterCutscene() {
+		this.cutsceneActive = true;
+		//Keeps player from accidentally skipping text immediately
+		final Timer t = new Timer(500, null); 
+		t.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				GameWorld.this.textChangeReady = true;
+				t.removeActionListener(this);
+			}
+		});
+		t.start();
+	}
 }

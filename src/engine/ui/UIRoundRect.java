@@ -19,6 +19,7 @@ public class UIRoundRect extends Shape {
 	private static final long	serialVersionUID	= -2940009164281465539L;
 	private RoundRectangle2D	rect;
 	private float				round;
+	private boolean visible = true;
 	
 	/**
 	 * Creates a UIRoundRect object with coord, width, height (optionally with color, stroke, and custom rounded radius
@@ -74,16 +75,20 @@ public class UIRoundRect extends Shape {
 	 * Draws a rectangle using Rectangle2D into the screen
 	 */
 	public void drawShape(Graphics2D g) {
-		super.drawShape(g);
-		g.draw(rect);
+		if(visible) {
+			super.drawShape(g);
+			g.draw(rect);
+		}
 	}
 	
 	/**
 	 * Draws a rectangle using Rectangle2D into the screen and fills it
 	 */
 	public void drawAndFillShape(Graphics2D g) {
-		drawShape(g);
-		g.fill(rect);
+		if(visible) {
+			drawShape(g);
+			g.fill(rect);
+		}
 	}
 	
 	/**
@@ -94,6 +99,14 @@ public class UIRoundRect extends Shape {
 	 */
 	public void updatePosition(Vec2f coord, Vec2f endCoord) {
 		rect.setRoundRect(coord.x, coord.y, endCoord.x - coord.x, endCoord.y - coord.y, this.round, this.round);
+	}
+	
+	/**
+	 * Sets the visibility of the shape
+	 * @param visible
+	 */
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 	
 }

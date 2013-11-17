@@ -207,7 +207,7 @@ public class Sound implements Runnable {
 			looping = true;
 		} else {
 			clip.setMicrosecondPosition(playPosition);
-			clip.loop(0);
+			//clip.loop(0);
 		}
 		paused = false;
 	}

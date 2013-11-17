@@ -49,8 +49,6 @@ public class SoundHolder {
 					String name = reader.getLocalName();
 					if (name == "file") {
 						soundTable.put(currSoundID, new Sound(tagContent));
-						System.out.print("Adding sound: ");
-						System.out.println(soundTable.get(currSoundID));
 					}
 				}
 			}

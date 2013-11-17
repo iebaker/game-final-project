@@ -20,6 +20,7 @@ import engine.connections.Connection;
 import engine.connections.Input;
 import engine.connections.Output;
 import engine.entity.Entity;
+import engine.ui.TextBox;
 
 /**
  * Abstract class for a Game World
@@ -32,25 +33,24 @@ public abstract class World implements Serializable {
 	private static final long		serialVersionUID	= 8819430167695167366L;
 	public transient Viewport		v;
 	protected Vec2f					dim;
-	protected Vec2f					sDim;
+	protected Vec2f					sDim = new Vec2f(0,0);
 	protected List<Entity>			entityStack;
-	private List<Entity>			removeList;
-	private List<Entity>			addList;
-	private Color					bgColor;
-	private HashMap<String, Entity>	entityMap;
+	private List<Entity>			removeList = new ArrayList<Entity>();
+	private List<Entity>			addList = new ArrayList<Entity>();
+	private Color					bgColor = new Color(255, 255, 255);
+	private HashMap<String, Entity>	entityMap = new HashMap<String, Entity>();
+	protected TextBox textBox;
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))
 	 * 
 	 * @param dim
 	 */
-	public World(Vec2f dim) {
+	public World(Vec2f dim, TextBox tb) {
 		this.dim = dim;
-		this.sDim = new Vec2f(0, 0);
-		this.removeList = new ArrayList<Entity>();
-		this.addList = new ArrayList<Entity>();
-		this.bgColor = new Color(255, 255, 255);
-		this.entityMap = new HashMap<String, Entity>();
+		textBox = tb;
+		textBox.setWorld(this);
+		entityMap.put("textBox", tb);
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public abstract class World implements Serializable {
 				entityMap.put(ed.getName(), e);
 				this.addEntity(e);
 			}
-			
+						
 			// Connections!!
 			for (ConnectionData cd : data.getConnections()) {
 				
@@ -174,6 +174,10 @@ public abstract class World implements Serializable {
 		}
 	}
 	
+	public TextBox getTextBox() {
+		return textBox;
+	}
+	
 	/**
 	 * Sets viewport
 	 * 
@@ -255,5 +259,7 @@ public abstract class World implements Serializable {
 	public abstract void setPlayer(Entity player);
 	
 	public abstract String getSoundFile();
+	
+	public abstract void enterCutscene();
 	
 }

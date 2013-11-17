@@ -31,7 +31,6 @@ public class Application extends SwingFrontEnd {
 	public Application(String title, boolean fullscreen) {
 		super(title, fullscreen);
 		System.setProperty("sun.java2d.opengl", "true");
-		System.out.println("App initialized! Starting game...");
 	}
 	
 	/**
