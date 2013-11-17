@@ -31,15 +31,15 @@ import engine.ui.TextBox;
  */
 public class GameWorld extends World {
 	
-	private static final long	serialVersionUID	= 6619354971290257104L;
+	private static final long							serialVersionUID	= 6619354971290257104L;
 	
-	private static final float							TICK_LENGTH	= 0.005f;
+	private static final float							TICK_LENGTH			= 0.005f;
 	public Level										level;
 	private String										message;
 	private float										countdown;
 	private boolean										paused;
-	private boolean cutsceneActive;
-	private boolean textChangeReady;
+	private boolean										cutsceneActive;
+	private boolean										textChangeReady;
 	private double										leftoverTime;
 	private Vec2f										line;
 	private int											lineCt;
@@ -50,10 +50,11 @@ public class GameWorld extends World {
 	private HashMap<String, Class<? extends Entity>>	classes;
 	private float										hp;
 	private Player										player;
-	private String soundFile = "sounds.xml";
+	private String										soundFile			= "sounds.xml";
 	
 	/**
 	 * Constructor for a world that starts a new game
+	 * 
 	 * @param dim
 	 * @param tb
 	 */
@@ -88,8 +89,8 @@ public class GameWorld extends World {
 	 *            the restitution to give all entities
 	 */
 	public void newGame(int lvl) {
-		if(this.getEntities() != null) {
-			for(Entity e : this.getEntities()) {
+		if (this.getEntities() != null) {
+			for (Entity e : this.getEntities()) {
 				e.stopSound();
 			}
 		}
@@ -137,7 +138,7 @@ public class GameWorld extends World {
 		if (line != null && player != null && lineCt < 20) {
 			g.setColor(Color.blue);
 			g.setStroke(new BasicStroke(5f));
-			Vec2f p1 = v.gamePtToScreen(player.shape.getLocation().plus(8, 8));
+			Vec2f p1 = v.gamePtToScreen(player.shape.getCenter());
 			Vec2f p2 = v.gamePtToScreen(line);
 			g.draw(new Line2D.Double(p1.x, p1.y, p2.x, p2.y));
 			lineCt++;
@@ -147,7 +148,6 @@ public class GameWorld extends World {
 		}
 		
 		super.onDraw(g); // draws all entities
-		// System.out.println("Drawing " + System.currentTimeMillis());
 	}
 	
 	/**
@@ -174,7 +174,7 @@ public class GameWorld extends World {
 				message = "Game paused";
 			
 			// Ticks through each entity and checks collisions
-			else if (!cutsceneActive){
+			else if (!cutsceneActive) {
 				message = "";
 				super.onTick(TICK_LENGTH);
 				checkCollisions();
@@ -305,9 +305,10 @@ public class GameWorld extends World {
 	 */
 	public void onKeyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
-		if(textChangeReady && (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S)) {
+		if (textChangeReady
+				&& (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S)) {
 			textChangeReady = false;
-			if(textBox.hasNextLine()) {
+			if (textBox.hasNextLine()) {
 				final Timer t = new Timer(100, null);
 				t.addActionListener(new ActionListener() {
 					@Override
@@ -318,8 +319,7 @@ public class GameWorld extends World {
 				});
 				t.start();
 				textBox.displayNext();
-			}
-			else {
+			} else {
 				cutsceneActive = false;
 				textBox.setVisible(false);
 			}
@@ -420,7 +420,7 @@ public class GameWorld extends World {
 		this.player = (Player) p;
 		if (hp > 0) player.hp = hp;
 	}
-
+	
 	@Override
 	public String getSoundFile() {
 		return soundFile;
@@ -477,15 +477,15 @@ public class GameWorld extends World {
 			return this.headline;
 		}
 	}
-
+	
 	@Override
 	/**
 	 * Enters cutscene mode
 	 */
 	public void enterCutscene() {
 		this.cutsceneActive = true;
-		//Keeps player from accidentally skipping text immediately
-		final Timer t = new Timer(500, null); 
+		// Keeps player from accidentally skipping text immediately
+		final Timer t = new Timer(500, null);
 		t.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {

@@ -3,7 +3,6 @@ package engine;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
-import java.awt.BasicStroke;
 import java.io.Serializable;
 
 /**
@@ -16,7 +15,7 @@ public abstract class Shape implements Serializable {
 	
 	private static final long	serialVersionUID	= 2603943546880126544L;
 	protected Color				c;
-	protected transient Stroke			stk;
+	protected transient Stroke	stk;
 	
 	/**
 	 * Sets the color and sets the stroke
