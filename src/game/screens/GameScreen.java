@@ -54,8 +54,7 @@ public class GameScreen extends Screen {
 	private UIRect		levelRect;
 	private UIText		levelText;
 	private boolean		gameOver;
-	private UIRoundRect cutsceneRect;
-	private UIText cutsceneText;
+	private TextBox textBox;
 	
 	/**
 	 * Constructor creates relevant items and places them based on ratios
@@ -78,14 +77,12 @@ public class GameScreen extends Screen {
 			LevelData data = CS195NLevelReader.readLevel(new File("Level1.nlf"));
 			String[] dimensions = data.getProperties().get("dimensions").split("[,]");
 			this.view = new Viewport(a);
-			TextBox cutsceneBox = new TextBox();
-			this.cutsceneRect = new UIRoundRect(zVec, zVec, new Color(255, 255, 255), new BasicStroke(0f));
+			UIRoundRect cutsceneRect = new UIRoundRect(zVec, zVec, new Color(255, 255, 255), new BasicStroke(0f));
 			cutsceneRect.setVisible(false);
-			cutsceneBox.resetRect(cutsceneRect);
-			this.cutsceneText = new UIText("TEST", new Color(0,0,0), zVec, 1);
+			UIText cutsceneText = new UIText("TEST", new Color(0,0,0), zVec, 1);
 			cutsceneText.setVisible(false);
-			cutsceneBox.resetText(cutsceneText);
-			this.game = new GameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])), cutsceneBox);
+			textBox = new TextBox(cutsceneRect, cutsceneText);
+			this.game = new GameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])), textBox);
 			this.view.setGame(game);
 			this.bkgrd = new UIRect(zVec, zVec, game.getBGColor(), new BasicStroke(0f));
 			this.newGame = new UIButton("New Game", zVec, zVec, new Color(0, 195, 0), Color.white,
@@ -166,8 +163,7 @@ public class GameScreen extends Screen {
 			gameOverText.drawShape(g);
 			newGame.drawShape(g);
 		}
-		cutsceneRect.drawAndFillShape(g);
-		cutsceneText.drawShape(g);
+		textBox.draw(g);
 	}
 	
 	/**
@@ -193,8 +189,8 @@ public class GameScreen extends Screen {
 		healthText.resizeText(new Vec2f(w - w / 3 + w / 60, h - h / 30), h / 14);
 		levelRect.updatePosition(new Vec2f(0, 0), new Vec2f(w / 3, h / 8));
 		levelText.resizeText(new Vec2f(w / 60, h / 10), h / 8);
-		cutsceneRect.updatePosition(new Vec2f(10, h - h/4), new Vec2f(w-10, h-10));
-		cutsceneText.resizeText(new Vec2f(20, h - h/8), h/16);
+		textBox.getRect().updatePosition(new Vec2f(10, h - h/4), new Vec2f(w-10, h-10));
+		textBox.getText().resizeText(new Vec2f(20, h - h/8), h/16);
 	}
 	
 	/**
@@ -216,11 +212,13 @@ public class GameScreen extends Screen {
 			Saver.saveGame("save.gme", game);
 			break;
 		case (KeyEvent.VK_4): // 4 pressed, load game
-			GameWorld temp = (GameWorld) Saver.loadGame("save.gme", view, game);
-			if (temp != null) {
-				game = temp;
-				game.getTextBox().resetRect(cutsceneRect);
-			}
+			//if(!textBox.getVisible()) {
+				GameWorld temp = (GameWorld) Saver.loadGame("save.gme", view, game);
+				if (temp != null) {
+					game = temp;
+					textBox = game.getTextBox();
+				}
+			//}
 			break;
 		default:
 			game.onKeyPressed(e);

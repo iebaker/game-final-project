@@ -5,6 +5,7 @@ import java.util.Map;
 import engine.World;
 import engine.connections.Input;
 import engine.entity.Entity;
+import java.awt.Graphics2D;
 
 /**
  * Class representing a text box that appears during cutscenes
@@ -19,20 +20,24 @@ public class TextBox extends Entity {
 	private UIText text;
 	private Map<String, String> currArgs;
 	private int argCount = 1;
+	private boolean visible = false;
 
 	/**
 	 * Constructor. Creates the Input that allows the TextBox to be used
 	 */
-	public TextBox() {
+	public TextBox(UIRoundRect rect, UIText textBox) {
+		this.rect = rect;
+		this.text = textBox;
+		
 		this.inputs.put("displayText", new Input() {
 
 			private static final long serialVersionUID = 5782831638451389990L;
 
 			@Override
 			public void run(Map<String, String> args) {
+				System.out.println("running");
 				TextBox.this.currArgs = args;
-				rect.setVisible(true);
-				text.setVisible(true);
+				TextBox.this.setVisible(true);
 				text.updateText(args.get("text1"));
 				argCount = 2;
 				TextBox.super.world.enterCutscene();
@@ -101,7 +106,25 @@ public class TextBox extends Entity {
 	 * @param visible
 	 */
 	public void setVisible(boolean visible) {
+		this.visible = visible;
 		text.setVisible(visible);
 		rect.setVisible(visible);
+	}
+	
+	/**
+	 * 
+	 * @return visible
+	 */
+	public boolean getVisible() {
+		return visible;
+	}
+	
+	/**
+	 * Draws the textbox
+	 * @param g
+	 */
+	public void draw(Graphics2D g) {
+		rect.drawAndFillShape(g);
+		text.drawShape(g);
 	}
 }

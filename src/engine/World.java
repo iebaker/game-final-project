@@ -48,8 +48,7 @@ public abstract class World implements Serializable {
 	 */
 	public World(Vec2f dim, TextBox tb) {
 		this.dim = dim;
-		textBox = tb;
-		textBox.setWorld(this);
+		this.textBox = tb;
 		entityMap.put("textBox", tb);
 	}
 	
@@ -174,10 +173,6 @@ public abstract class World implements Serializable {
 		}
 	}
 	
-	public TextBox getTextBox() {
-		return textBox;
-	}
-	
 	/**
 	 * Sets viewport
 	 * 
@@ -261,5 +256,9 @@ public abstract class World implements Serializable {
 	public abstract String getSoundFile();
 	
 	public abstract void enterCutscene();
+	
+	public TextBox getTextBox() {
+		return textBox;
+	}
 	
 }
