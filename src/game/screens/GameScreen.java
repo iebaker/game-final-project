@@ -22,6 +22,7 @@ import engine.Application;
 import engine.Saver;
 import engine.Screen;
 import engine.Viewport;
+import engine.entity.Entity;
 import engine.ui.TextBox;
 import engine.ui.UIButton;
 import engine.ui.UIRect;
@@ -63,7 +64,7 @@ public class GameScreen extends Screen {
 	 */
 	public GameScreen(Application a) {
 		super(a);
-		/*Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {
 				if(game != null && game.getEntities() != null) {
 					for(Entity e : game.getEntities()) {
@@ -71,7 +72,7 @@ public class GameScreen extends Screen {
 					}
 				}
 			}
-		}));*/
+		}));
 		Vec2f zVec = new Vec2f(0, 0);
 		try {
 			LevelData data = CS195NLevelReader.readLevel(new File("Level1.nlf"));

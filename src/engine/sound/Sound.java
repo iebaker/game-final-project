@@ -207,7 +207,7 @@ public class Sound implements Runnable {
 			looping = true;
 		} else {
 			clip.setMicrosecondPosition(playPosition);
-			//clip.loop(0);
+			clip.loop(0);
 		}
 		paused = false;
 	}
@@ -279,5 +279,9 @@ public class Sound implements Runnable {
 	
 	public boolean isPaused() {
 		return paused;
+	}
+	
+	public void close() {
+		//paused = true;
 	}
 }
