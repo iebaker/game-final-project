@@ -53,7 +53,7 @@ public class AngularComparator extends Comparator<Vec2f> {
 		double temp = Math.atan2(point.y, point.x);
 
 		if(temp < 0) {
-			temp = 2 * Math.PI * temp;
+			temp = 2 * Math.PI + temp;
 		}
 		return temp;
 	}
