@@ -38,6 +38,21 @@ public class RayCastData {
 		return segments;
 	}
 
+
+	/**
+	 * Returns the closest point to the source.
+	 */
+	public Vec2f minPoint() {
+		return intersections.get(0).getPoint();
+	}
+
+	/**
+	 * Returns the closest segment to the source.
+	 */
+	public Vec2f minSegment() {
+		return intersections.get(0).getSegment();
+	}
+
 	/**
 	 * Removes any intersections associated with a specified segment from the
 	 * object

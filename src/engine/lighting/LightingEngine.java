@@ -88,6 +88,7 @@ public class LightingEngine {
 					points.add(i + 1, rcd.minPoint());
 					i += 2;
 				}
+				closest = rcd.minSegment();
 			} else if(closest != prevSegment) {
 				rcd.removePoint(point);
 				LightCone lc = new LightCone(lightLocation, rcd.minPoint(), prevSegment.getBeginPoint());
