@@ -112,10 +112,15 @@ public class LightingEngine {
 	 * @return 				A RayCastData object representing the result of the cast
 	 */
 	private RayCastData doRayCast(Vec2f sourcePoint, Vec2f targetPoint) {
+		RayCastData rcd_return = new RayCastData();
 		Vec2f direction = targetPoint.minus(sourcePoint);
+		direction = direction.normalized().smult(100000);
+		Vec2f intersection = new Vec2f(0,0);
 
 		for(Segment segment : lineSegments) {
-
+			if(intersect(sourcePoint, sourcePoint.plus(direction), segment.getBeginPoint(), segment.getEndPoint(), intersection)) {
+				rcd_return.addIntersection(intersection, segment);
+			}
 		}
 	}
 
