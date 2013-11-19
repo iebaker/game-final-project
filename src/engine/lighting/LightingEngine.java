@@ -112,8 +112,55 @@ public class LightingEngine {
 	 * @return 				A RayCastData object representing the result of the cast
 	 */
 	private RayCastData doRayCast(Vec2f sourcePoint, Vec2f targetPoint) {
-		//TODO: Implement raycasting over this segment world model
-		return null;
+		Vec2f direction = targetPoint.minus(sourcePoint);
+
+		for(Segment segment : lineSegments) {
+
+		}
+	}
+
+	/**
+	 * This function determines if two line segments intersect each other, and if they do, the value of
+	 * the variable intersection is set to the intersection point of the two segments.
+	 *
+	 * @param A1 			The beginning of the first segment
+	 * @param A2 			The end of the first segment
+	 * @param B1			The beginning of the second segment
+	 * @param B2			The end of the second segment
+	 * @param intersection	A Vec2f which will be set 
+	 * @return				True, if the points define intersecting segments, false otherwise
+	 */
+	private static boolean intersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2, Vec2f intersection) {
+		float mA = (A2.y - A1.y) / (A2.x - A1.x);
+		float mB = (B2.y - B1.y) / (B2.x - B1.x);
+
+		float intX = ((mA * A1.x) - A1.y - (mB * B1.x) + B1.y) / (mA - mB);
+		float intY - (mA *(intX - A1.x)) + A1.y;
+
+		if(	within(intX, A1.x, A2.x) && 
+		   	within(intX, B1.x, B2.x) &&
+		   	within(intY, A1.y, A2.y) &&
+		   	within(intY, B1.y, B2.y)) {
+			if(intersection != null) {
+				intersection.x = intX;
+				intersection.y = intY;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Determines whether a value is in between two other values, with no regards to the order the
+	 * limiting values will be given.
+	 *
+	 * @param a 	The value in question
+	 * @param E1	One of the bounds 
+	 * @param E2	The other bound
+	 * @return 		True, if a is between E1 and E2.
+	 */
+	private static boolean within(float a, float E1, float E2) {
+		return a >= E1 && a <= E2 || a >= E2 && a <= E1;
 	}
 }
 
