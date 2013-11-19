@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<sounds>
+	<sound id="beep">
+		<file>lib/beep-1.wav</file>
+	</sound>
+	<sound id="water">
+		<file>lib/water.wav</file>
+	</sound>
+	<sound id="loudwater">
+		<file>lib/loudwater.wav</file>
+	</sound>
+</sounds>

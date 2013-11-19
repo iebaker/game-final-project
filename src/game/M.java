@@ -24,7 +24,7 @@ public class M {
 		Application a = new Application(gameName, false);
 		a.pushScreen(new MainScreen(a));
 		a.startup();
-		new SoundHolder("sounds.xml");
+		new SoundHolder("lib/sounds.xml");
 	}
 	
 }

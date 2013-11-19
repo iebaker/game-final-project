@@ -26,13 +26,13 @@ public class Vec2fPair {
 	 * Accessor for the first point.
 	 */
 	public Vec2f getP1() {
-		return p1;
+		return point1;
 	}
 
 	/**
 	 * Accessor for the second point.
 	 */
 	public Vec2f getP2() {
-		return p2;
+		return point2;
 	}
 }

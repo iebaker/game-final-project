@@ -95,7 +95,7 @@ public class RayCastData {
 		Intersection newInt = new Intersection(p, s);
 		int i = 0;
 
-		while(true) {
+		while(!intersections.isEmpty()) {
 			Intersection temp = intersections.get(i);
 
 			Vec2f otherPoint = temp.getPoint();
@@ -132,6 +132,9 @@ public class RayCastData {
 	 * @param b2 	The end of the line
 	 */
 	private boolean opposing(Vec2f a1, Vec2f a2, Vec2f b1, Vec2f b2) {
-		//TODO: Implement opposing (see SO)
+		float term1 = ((b1.y - b2.y)(a1.x - b1.x) + (b2.x - b1.x)(a1.y - b1.y));
+		float term2 = ((b1.y - b2.y)(a2.x - b1.x) + (b2.x - b1.x)(a2.y - b1.y));
+		return term1 * term2 < 0;
+
 	}
 }
