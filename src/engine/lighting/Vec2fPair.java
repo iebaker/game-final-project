@@ -1,4 +1,4 @@
-package src.engine.lighting;
+package engine.lighting;
 
 import cs195n.Vec2f;
 

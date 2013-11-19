@@ -1,4 +1,4 @@
-package src.engine.lighting;
+package engine.lighting;
 
 import cs195n.Vec2f;
 
@@ -36,7 +36,7 @@ public class Intersection {
 	 *
 	 * @return 		The segment involved, as a Vec2f.
 	 */
-	public Vec2f getSegment() {
+	public Segment getSegment() {
 		return segment;
 	}
 }

@@ -28,6 +28,9 @@ public final class Vec2f implements Serializable {
 	 */
 	public final float			x, y;
 	
+	private boolean isStart;
+	private boolean isEnd;
+	
 	/**
 	 * Constructor. Creates a new instance from an x and y component.
 	 * 
@@ -397,5 +400,21 @@ public final class Vec2f implements Serializable {
 	@Override
 	public final String toString() {
 		return new StringBuilder("(").append(x).append(", ").append(y).append(")").toString();
+	}
+
+	public boolean isStart() {
+		return isStart;
+	}
+
+	public void setStart(boolean isStart) {
+		this.isStart = isStart;
+	}
+
+	public boolean isEnd() {
+		return isEnd;
+	}
+
+	public void setEnd(boolean isEnd) {
+		this.isEnd = isEnd;
 	}
 }

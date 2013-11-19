@@ -1,4 +1,4 @@
-package src.engine.lighting;
+package engine.lighting;
 
 import cs195n.Vec2f;
 import java.awt.Color;
@@ -12,7 +12,7 @@ public class LightSource {
 	
 	private Vec2f my_location;
 	private Color my_color = new Color(255, 255, 153); //FFFF99
-	private float my_brightness = 0.5;
+	private float my_brightness = 0.5f;
 
 	/**
 	 * Constructor.  Just sets the light's location -- color defaults to FFFF99 (light yellow)

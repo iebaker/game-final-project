@@ -1,4 +1,4 @@
-package src.engine.lighting;
+package engine.lighting;
 
 import cs195n.Vec2f;
 import java.util.Comparator;
@@ -7,7 +7,7 @@ import java.util.Comparator;
  * A comparator for Vec2f that uses the Math.atan2() function in order to rank points
  * in a counterclockwise ordering around the light source.
  */
-public class AngularComparator extends Comparator<Vec2f> {
+public class AngularComparator implements Comparator<Vec2f> {
 	
 	private Vec2f sourcePoint;
 

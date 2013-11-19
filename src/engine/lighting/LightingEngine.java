@@ -1,6 +1,8 @@
-package src.engine.lighting;
+package engine.lighting;
 
 import cs195n.Vec2f;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -20,6 +22,7 @@ public class LightingEngine {
 	 * @param world  	The LightWorld object over which to perform lighting calculations
 	 */
 	public void run(LightWorld world) {
+		Vec2f lightLocation = null;
 		for(LightSource light : world.getLightSources()) {
 			
 			//Reset points and line segments.  They must be recalculated for each light source.
@@ -27,7 +30,7 @@ public class LightingEngine {
 			lineSegments = new ArrayList<Segment>();
 
 			//Create a comparator object which will be used to arrange the points
-			Vec2f lightLocation = light.getLocation();
+			lightLocation = light.getLocation();
 			AngularComparator ac = new AngularComparator(lightLocation);
 
 			//Get the points from the world and sort them according to their angle relative to the light source's sweepline
@@ -55,17 +58,18 @@ public class LightingEngine {
 			}
 		}
 
-		this.sweep();
+		this.sweep(lightLocation);
 	}
 
 	/**
 	 * This method actually runs the RedBlob sweepline algorithm in order to calculate lighting cones
 	 */
-	private void sweep() {
+	private void sweep(Vec2f lightLocation) {
 		
 		//Set up preliminary values
 		RayCastData rcd = this.doRayCast(lightLocation, points.get(0));
 		Segment prevSegment = rcd.minSegment();
+		List<LightCone> cones = new ArrayList<LightCone>();
 		points.add(points.get(0));
 		int i = 1;
 
@@ -81,7 +85,7 @@ public class LightingEngine {
 				LightCone lc = new LightCone(lightLocation, point, prevSegment.getBeginPoint());
 				cones.add(lc);
 
-				if(point.isBeginPoint()) {
+				if(point.isStart()) {
 					++i;
 				} else {
 					rcd.removePoint(point);
@@ -109,6 +113,7 @@ public class LightingEngine {
 	 */
 	private RayCastData doRayCast(Vec2f sourcePoint, Vec2f targetPoint) {
 		//TODO: Implement raycasting over this segment world model
+		return null;
 	}
 }
 

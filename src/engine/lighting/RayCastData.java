@@ -1,4 +1,4 @@
-package src.engine.lighting;
+package engine.lighting;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class RayCastData {
 	/**
 	 * Returns the closest segment to the source.
 	 */
-	public Vec2f minSegment() {
+	public Segment minSegment() {
 		return intersections.get(0).getSegment();
 	}
 
@@ -76,7 +76,7 @@ public class RayCastData {
 	public void removePoint(Vec2f p) {
 		for(int i = 0; i < intersections.size(); ++i) {
 			Intersection temp = intersections.get(i);
-			if(temp.getPoint == p) {
+			if(temp.getPoint() == p) {
 				intersections.remove(temp);
 			}
 		}
@@ -99,7 +99,7 @@ public class RayCastData {
 			Intersection temp = intersections.get(i);
 
 			Vec2f otherPoint = temp.getPoint();
-			Vec2f otherSegment = temp.getSegment();
+			Segment otherSegment = temp.getSegment();
 
 			float tempDistance = sourcePoint.dist(otherPoint);
 
@@ -132,8 +132,8 @@ public class RayCastData {
 	 * @param b2 	The end of the line
 	 */
 	private boolean opposing(Vec2f a1, Vec2f a2, Vec2f b1, Vec2f b2) {
-		float term1 = ((b1.y - b2.y)(a1.x - b1.x) + (b2.x - b1.x)(a1.y - b1.y));
-		float term2 = ((b1.y - b2.y)(a2.x - b1.x) + (b2.x - b1.x)(a2.y - b1.y));
+		float term1 = ((b1.y - b2.y)*(a1.x - b1.x) + (b2.x - b1.x)*(a1.y - b1.y));
+		float term2 = ((b1.y - b2.y)*(a2.x - b1.x) + (b2.x - b1.x)*(a2.y - b1.y));
 		return term1 * term2 < 0;
 
 	}

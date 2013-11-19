@@ -1,4 +1,4 @@
-package src.engine.lighting;
+package engine.lighting;
 
 import cs195n.Vec2f;
 
@@ -19,6 +19,7 @@ public class Segment {
 	public void setBeginPoint(Vec2f p) {
 		if(beginPoint == null) {
 			beginPoint = p;
+			p.setStart(true);
 		}
 	}
 
@@ -31,6 +32,7 @@ public class Segment {
 	public void setEndPoint(Vec2f p) {
 		if(endPoint == null) {
 			endPoint = p;
+			p.setEnd(true);
 		}
 	}
 
