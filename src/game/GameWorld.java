@@ -51,7 +51,6 @@ public class GameWorld extends World {
 	private float										hp;
 	private Player										player;
 	private String										soundFile			= "sounds.xml";
-	private boolean jumpUnlocked = false;
 	private static WorldTrigger wt = new WorldTrigger();
 	private static HashMap<String, Entity> defaults;
 	static {
@@ -343,7 +342,7 @@ public class GameWorld extends World {
 			break;
 		case (KeyEvent.VK_2): // 2 - Load level 2
 			if (player != null) {
-				newGame(2);
+				//newGame(2);
 			}
 			break;
 		case (KeyEvent.VK_P): // Pause
@@ -431,7 +430,6 @@ public class GameWorld extends World {
 	@Override
 	public void setPlayer(Entity p) {
 		this.player = (Player) p;
-		this.player.setGameWorld(this);
 		if (hp > 0) player.hp = hp;
 	}
 	
@@ -511,10 +509,6 @@ public class GameWorld extends World {
 	}
 	
 	public void unlockJump() {
-		this.jumpUnlocked = true;
-	}
-	
-	public boolean getJumpUnlocked() {
-		return jumpUnlocked;
+		player.unlockJump();
 	}
 }

@@ -16,7 +16,7 @@ public class Player extends Entity {
 	
 	private static final long	serialVersionUID	= 1654501146675497149L;
 	public Vec2f				goalVelocity;
-	private GameWorld w;
+	private boolean jumpUnlocked = false;
 	
 	public Player() {
 		super();
@@ -60,7 +60,7 @@ public class Player extends Entity {
 	 * @return ability to jump currently
 	 */
 	public boolean canJump() {
-		if(!w.getJumpUnlocked() || this.contactDelay <= 0) {
+		if(!jumpUnlocked || this.contactDelay <= 0) {
 			return false;
 		}
 		return true;
@@ -78,8 +78,8 @@ public class Player extends Entity {
 		return this.shape.getCenter();
 	}
 	
-	public void setGameWorld(GameWorld gw) {
-		this.w = gw;
+	public void unlockJump() {
+		jumpUnlocked = true;
 	}
 	
 }

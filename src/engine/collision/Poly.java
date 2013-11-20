@@ -265,13 +265,17 @@ public class Poly extends Shape implements CollisionShape {
 	 * Returns the center of this shape
 	 */
 	public Vec2f getCenter() {
-		float xmax = 0;
-		float ymax = 0;
+		float xmin = Float.POSITIVE_INFINITY;
+		float xmax = Float.NEGATIVE_INFINITY;
+		float ymin = Float.POSITIVE_INFINITY;
+		float ymax = Float.NEGATIVE_INFINITY;
 		for (Vec2f pt : points) {
-			if (pt.x - location.x > xmax) xmax = pt.x;
-			if (pt.y - location.y > ymax) ymax = pt.y;
+			if(pt.x > xmax) xmax = pt.x;
+			if(pt.x < xmin) xmin = pt.x;
+			if(pt.y > ymax) ymax = pt.y;
+			if(pt.y < ymin) ymin = pt.y;
 		}
-		return location.minus(new Vec2f(xmax - location.x, ymax - location.y).sdiv(2));
+		return new Vec2f(xmin + (xmax-xmin)/2, ymin + (ymax-ymin)/2);
 	}
 	
 	/**

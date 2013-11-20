@@ -310,12 +310,12 @@ public abstract class Entity implements Serializable {
 				Sound s = currentSounds.get(i);
 				// calculate how far the source of the sound is from the player
 				Float dist = world.getPlayer().shape.getCenter().minus(shape.getCenter()).mag();
-				if (dist < 1500) {
+				if (dist < 2500) {
 					s.pause(false);
 					if (!s.isPlaying()) {
 						s.play();
 					}
-					s.setVolume((1500 - dist) / 1500);
+					s.setVolume(1 - Math.sqrt(.00033*dist));
 				} else {
 					s.pause(true);
 				}
