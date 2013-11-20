@@ -49,6 +49,8 @@ public abstract class Entity implements Serializable {
 	protected Map<String, Input>	inputs;
 	protected Map<String, Output>	outputs;
 	private transient ArrayList<Sound>		currentSounds		= new ArrayList<Sound>();
+	protected Vec2f lastMTV = new Vec2f(0,0);
+	protected float contactDelay = 0;
 	
 	/**
 	 * Empty constructor - sets default values
@@ -121,7 +123,10 @@ public abstract class Entity implements Serializable {
 	public void setProperties(EntityData ed, World world) {
 		if (!ed.getShapes().isEmpty()) {
 			ShapeData shapeData = ed.getShapes().get(0);
-			String[] shapeColor = shapeData.getProperties().get("color").split("[,]");
+			String[] shapeColor = new String[] {"0","0","0"}; 
+			if(shapeData.getProperties().get("color") != null) {
+				shapeColor = shapeData.getProperties().get("color").split("[,]");
+			}
 			Vec2f min = shapeData.getMin();
 			
 			switch (shapeData.getType()) {
@@ -146,7 +151,7 @@ public abstract class Entity implements Serializable {
 			String stat = ed.getProperties().get("static");
 			this.isStatic = ((stat != null && stat.equals("true")) || ed.getEntityClass().contains("Static"));
 		}
-		this.restitution = Float.parseFloat(create("restitution", "1", ed));
+		this.restitution = Float.parseFloat(create("restitution", "0.5", ed));
 		this.friction = Float.parseFloat(create("friction", "0.5", ed));
 		this.mass = (float) (Float.parseFloat(create("density", "1", ed)) * (Math.sqrt(width * height)));
 		this.disappearing = Float.parseFloat(create("disappearing", "0", ed));
@@ -283,6 +288,7 @@ public abstract class Entity implements Serializable {
 	 *            Nanoseconds since last tick
 	 */
 	public void onTick(float t) {
+		contactDelay -= t;
 		applyForce(new Vec2f(0, world.gravity() * mass)); // apply gravity
 		if (mass != 0) {
 			velocity = getVelocity().plus(force.sdiv(mass).smult(t).plus(impulse.sdiv(mass))); // new velocity
@@ -329,6 +335,8 @@ public abstract class Entity implements Serializable {
 		Entity o1 = this;
 		Entity o2 = collisionInfo.other;
 		Vec2f mtv = collisionInfo.mtv;
+		this.lastMTV = mtv;
+		this.contactDelay = 0.1f;
 		
 		// Translation
 		if (!o1.isStatic) {

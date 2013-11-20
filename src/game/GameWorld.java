@@ -107,7 +107,7 @@ public class GameWorld extends World {
 		entityStack = new ArrayList<Entity>();
 		
 		// Actually load the level
-		loadLevelFromFile("Level" + lvl + ".nlf", classes, this);
+		loadLevelFromFile("lib/Level" + lvl + ".nlf", classes, this);
 		if (lvl == 1) setMessage("Game starts in 3", 0.5f);
 		
 		textBox.setVisible(false);
@@ -346,7 +346,9 @@ public class GameWorld extends World {
 			break;
 		case (KeyEvent.VK_W): // W
 		case (KeyEvent.VK_SPACE): // Jump
-			if (player != null && !lose && !win && player.canJump()) player.jump();
+			if (player != null && !lose && !win && player.canJump()) {
+				player.jump();
+			}
 			break;
 		case (KeyEvent.VK_A): // A
 		case (KeyEvent.VK_LEFT): // Left

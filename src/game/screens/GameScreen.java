@@ -75,12 +75,12 @@ public class GameScreen extends Screen {
 		}));
 		Vec2f zVec = new Vec2f(0, 0);
 		try {
-			LevelData data = CS195NLevelReader.readLevel(new File("Level1.nlf"));
+			LevelData data = CS195NLevelReader.readLevel(new File("lib/Level1.nlf"));
 			String[] dimensions = data.getProperties().get("dimensions").split("[,]");
 			this.view = new Viewport(a);
 			UIRoundRect cutsceneRect = new UIRoundRect(zVec, zVec, new Color(255, 255, 255), new BasicStroke(0f));
 			cutsceneRect.setVisible(false);
-			UIText cutsceneText = new UIText("TEST", new Color(0,0,0), zVec, 1);
+			UIText cutsceneText = new UIText("", new Color(0,0,0), zVec, 1);
 			cutsceneText.setVisible(false);
 			textBox = new TextBox(cutsceneRect, cutsceneText);
 			this.game = new GameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])), textBox);

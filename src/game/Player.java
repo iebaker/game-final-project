@@ -3,7 +3,6 @@ package game;
 import java.util.Map;
 
 import cs195n.Vec2f;
-import engine.collision.CollisionInfo;
 import engine.connections.Input;
 import engine.entity.Entity;
 
@@ -17,12 +16,10 @@ public class Player extends Entity {
 	
 	private static final long	serialVersionUID	= 1654501146675497149L;
 	public Vec2f				goalVelocity;
-	private long				time;
 	
 	public Player() {
 		super();
 		this.goalVelocity = new Vec2f(0, 0);
-		this.time = 0;
 		
 		/**
 		 * Switches gravity
@@ -57,35 +54,22 @@ public class Player extends Entity {
 	}
 	
 	/**
-	 * Collides like normal, but uses MTV to determine whether able to jump (on solidish ground - tops of circles too!)
-	 */
-	public void onCollide(CollisionInfo collisionInfo) {
-		super.onCollide(collisionInfo);
-		float y = collisionInfo.mtv.normalized().y;
-		float up = (world.gravity() > 1) ? -1.05f : 0.95f;
-		float down = (world.gravity() > 1) ? -0.95f : 1.05f;
-		if (y < down && y > up)
-			time = System.currentTimeMillis();
-		else
-			time = 0;
-		
-	}
-	
-	/**
 	 * Returns if player can jump
 	 * 
 	 * @return ability to jump currently
 	 */
 	public boolean canJump() {
-		return (time != 0 && System.currentTimeMillis() - time < 500);
+		if(this.contactDelay > 0) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**
 	 * Jumps by applying the appropriate force
 	 */
 	public void jump() {
-		time = 0;
-		applyImpulse(new Vec2f(0, world.gravity() * -25));
+		applyImpulse(this.lastMTV.smult(-1).normalized().smult(world.gravity() * -25));
 	}
 	
 	public Vec2f getCenterPosition() {
