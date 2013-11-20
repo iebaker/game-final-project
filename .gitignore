@@ -13,7 +13,6 @@
   *.war
   *.ear
   *.db
-  *.nlf
    
 ######################
 # Windows
@@ -70,3 +69,4 @@
                
 # PDT-specific
                .buildpath
+               .build-path
