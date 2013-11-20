@@ -72,7 +72,7 @@ public class MainScreen extends Screen {
 	 * Gets key events: if enter key released, transition to the game
 	 */
 	protected void onKeyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ENTER) switchToGame("Enter key pressed");
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) switchToGame();
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class MainScreen extends Screen {
 	 */
 	protected void onMouseReleased(MouseEvent e) {
 		if (playButton.hitTarget(e)) {
-			switchToGame("Button clicked");
+			switchToGame();
 		}
 	}
 	
@@ -89,8 +89,7 @@ public class MainScreen extends Screen {
 	 * 
 	 * @param msg
 	 */
-	private void switchToGame(String msg) {
+	private void switchToGame() {
 		a.pushScreen(new GameScreen(a));
-		System.out.println(msg + ", transitioning to game screen");
 	}
 }

@@ -23,9 +23,8 @@ public class Saver {
 			out.writeObject(game);
 			out.close();
 			fileOut.close();
-			System.out.println("Game data saved in " + fileName);
 		} catch (IOException i) {
-			System.err.println("Game couldn't be saved - see stack trace");
+			System.err.println("Game couldn't be saved - I/O Exception");
 			i.printStackTrace();
 		}
 	}
@@ -37,7 +36,7 @@ public class Saver {
 	 *            the file to load game from
 	 */
 	public static World loadGame(String fileName, Viewport v, World w) {
-		for(Entity e : w.getEntities()) {
+		for (Entity e : w.getEntities()) {
 			e.stopSound();
 		}
 		World tempGame = null;
@@ -58,10 +57,9 @@ public class Saver {
 		}
 		if (tempGame != null) {
 			tempGame.v = v;
-			for(Entity e : tempGame.getEntities()) {
+			for (Entity e : tempGame.getEntities()) {
 				e.reloadSounds();
 			}
-			System.out.println("Game data loaded from " + fileName);
 			return tempGame;
 		}
 		return null;

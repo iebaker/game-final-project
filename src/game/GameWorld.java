@@ -182,7 +182,6 @@ public class GameWorld extends World {
 				super.onTick(TICK_LENGTH);
 				checkCollisions();
 				level.onTick(TICK_LENGTH);
-				// System.out.println("Ticking " + System.currentTimeMillis());
 			}
 		}
 	}
@@ -328,16 +327,6 @@ public class GameWorld extends World {
 			}
 		}
 		switch (keyCode) {
-		case (KeyEvent.VK_1): // 1 - Load level 1
-			if (player != null) {
-				newGame(1);
-			}
-			break;
-		case (KeyEvent.VK_2): // 2 - Load level 2
-			if (player != null) {
-				newGame(2);
-			}
-			break;
 		case (KeyEvent.VK_P): // Pause
 			if (player != null && !lose && !win)
 				paused = !paused;

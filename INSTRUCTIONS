@@ -1,0 +1,23 @@
+INSTRUCTIONS
+
+Welcome to Light!
+
+Start game by clicking the new game button or pressing enter. You're 
+the turquoise circle, exploring the world
+
+- Zoom the view by scrolling with the mouse
+- Move the player by holding left or right arrow keys, or A and D
+- Jump by pressing the space bar or W
+- Shoot bullets with the left mouse button
+
+Bounce around and have fun!
+  
+----------
+Commands
+ESC/Q 		: return to main menu
+R			: start new game
+P			: pause game
+ARROWS/A/D	: move left/right
+SPACE/W		: jump
+3			: save game
+4			: load game
