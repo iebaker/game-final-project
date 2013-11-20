@@ -2,6 +2,7 @@ package game;
 
 import java.io.Serializable;
 
+import engine.entity.Entity;
 import engine.entity.StaticEntity;
 
 public class WinEntity extends StaticEntity implements Serializable {
@@ -13,7 +14,7 @@ public class WinEntity extends StaticEntity implements Serializable {
 	}
 	
 	@Override
-	public void afterCollision() {
+	public void afterCollision(Entity other) {
 		this.world.setWin();
 	}
 }

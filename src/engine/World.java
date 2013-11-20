@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cs195n.CS195NLevelReader;
 import cs195n.CS195NLevelReader.InvalidLevelException;
@@ -46,10 +47,12 @@ public abstract class World implements Serializable {
 	 * 
 	 * @param dim
 	 */
-	public World(Vec2f dim, TextBox tb) {
+	public World(Vec2f dim, TextBox tb, Map<String, Entity> defaults) {
 		this.dim = dim;
-		this.textBox = tb;
 		entityMap.put("textBox", tb);
+		for(Map.Entry<String, Entity> item : defaults.entrySet()) {
+			entityMap.put(item.getKey(), item.getValue());
+		}
 	}
 	
 	/**

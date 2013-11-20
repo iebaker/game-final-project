@@ -51,6 +51,13 @@ public class GameWorld extends World {
 	private float										hp;
 	private Player										player;
 	private String										soundFile			= "sounds.xml";
+	private boolean jumpUnlocked = false;
+	private static WorldTrigger wt = new WorldTrigger();
+	private static HashMap<String, Entity> defaults;
+	static {
+		defaults = new HashMap<String, Entity>();
+		defaults.put("world", wt);
+	}
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -59,7 +66,8 @@ public class GameWorld extends World {
 	 * @param tb
 	 */
 	public GameWorld(Vec2f dim, TextBox tb) {
-		super(dim, tb);
+		super(dim, tb, defaults);
+		wt.setWorld(this);
 		numLevels = 2;
 		textBox = tb;
 		tb.setWorld(this);
@@ -204,11 +212,11 @@ public class GameWorld extends World {
 				if (a.collideWithEntity(b)) {
 					CollisionInfo aCol = new CollisionInfo(a, b);
 					if (aCol.mtv != null && !aCol.mtv.isZero()) a.onCollide(aCol);
-					a.afterCollision();
-					b.afterCollision();
+					a.afterCollision(b);
+					b.afterCollision(a);
 				} else if (b.collideWithEntity(a)) {
-					a.afterCollision();
-					b.afterCollision();
+					a.afterCollision(b);
+					b.afterCollision(a);
 				}
 				
 			}
@@ -423,6 +431,7 @@ public class GameWorld extends World {
 	@Override
 	public void setPlayer(Entity p) {
 		this.player = (Player) p;
+		this.player.setGameWorld(this);
 		if (hp > 0) player.hp = hp;
 	}
 	
@@ -499,5 +508,13 @@ public class GameWorld extends World {
 			}
 		});
 		t.start();
+	}
+	
+	public void unlockJump() {
+		this.jumpUnlocked = true;
+	}
+	
+	public boolean getJumpUnlocked() {
+		return jumpUnlocked;
 	}
 }

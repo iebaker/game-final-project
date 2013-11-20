@@ -336,7 +336,7 @@ public abstract class Entity implements Serializable {
 		Entity o2 = collisionInfo.other;
 		Vec2f mtv = collisionInfo.mtv;
 		this.lastMTV = mtv;
-		this.contactDelay = 0.1f;
+		this.contactDelay = 0.2f;
 		
 		// Translation
 		if (!o1.isStatic) {
@@ -398,7 +398,7 @@ public abstract class Entity implements Serializable {
 	/**
 	 * Does nothing except for in sensors that send out a signal
 	 */
-	public void afterCollision() {
+	public void afterCollision(Entity other) {
 		
 	}
 	

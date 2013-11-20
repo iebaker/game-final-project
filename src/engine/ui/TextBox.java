@@ -35,7 +35,6 @@ public class TextBox extends Entity {
 
 			@Override
 			public void run(Map<String, String> args) {
-				System.out.println("running");
 				TextBox.this.currArgs = args;
 				TextBox.this.setVisible(true);
 				text.updateText(args.get("text1"));

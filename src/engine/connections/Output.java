@@ -13,7 +13,7 @@ import java.util.List;
 public class Output implements Serializable {
 	
 	private static final long	serialVersionUID	= -487044371518799409L;
-	private List<Connection>	connections;
+	private List<Connection>	connections = new ArrayList<Connection>();
 	
 	/**
 	 * Creates a connection between this output and the input connection
@@ -22,7 +22,6 @@ public class Output implements Serializable {
 	 *            a Connection to add to this connections list
 	 */
 	public void connect(Connection c) {
-		connections = new ArrayList<Connection>();
 		connections.add(c);
 	}
 	
