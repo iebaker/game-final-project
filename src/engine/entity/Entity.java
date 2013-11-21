@@ -442,7 +442,7 @@ public abstract class Entity implements Serializable {
 	 */
 	public void stopSound() {
 		for(Sound s : currentSounds) {
-			s.close();
+			s.stop();
 		}
 	}
 	

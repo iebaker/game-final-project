@@ -56,7 +56,6 @@ public class Viewport {
 	
 	public void setGame(World game) {
 		game.setPort(this);
-		
 		this.gameOffset = new Vec2f(0, 0);
 		this.scale = 1f;
 		float zmScale = 0.0005f * (game.getDim().mag()); // Makes same scale no matter size of game

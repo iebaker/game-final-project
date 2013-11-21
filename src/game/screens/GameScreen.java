@@ -64,7 +64,7 @@ public class GameScreen extends Screen {
 	 */
 	public GameScreen(Application a) {
 		super(a);
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+		/*Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {
 				if(game != null && game.getEntities() != null) {
 					for(Entity e : game.getEntities()) {
@@ -72,7 +72,7 @@ public class GameScreen extends Screen {
 					}
 				}
 			}
-		}));
+		}));*/
 		Vec2f zVec = new Vec2f(0, 0);
 		try {
 			LevelData data = CS195NLevelReader.readLevel(new File("lib/Level1.nlf"));
@@ -207,6 +207,9 @@ public class GameScreen extends Screen {
 			break;
 		case (KeyEvent.VK_ESCAPE): // ESC pressed (quit)
 		case (KeyEvent.VK_Q): // Q pressed (quit)
+			for(Entity ent :game.getEntities()) {
+				ent.stopSound();
+			}
 			a.popScreen();
 			break;
 		case (KeyEvent.VK_3): // 3 pressed, save game
