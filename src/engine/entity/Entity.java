@@ -430,13 +430,33 @@ public abstract class Entity implements Serializable {
 		this.shotsNeeded = shotsNeeded;
 	}
 	
+	/**
+	 * Reloads all sounds. Used when loading a save file.
+	 */
 	public void reloadSounds() {
 		currentSounds = new ArrayList<Sound>();
 	}
 	
+	/**
+	 * Stops all sounds. Currently not working totally right.
+	 */
 	public void stopSound() {
 		for(Sound s : currentSounds) {
 			s.close();
 		}
+	}
+	
+	/**
+	 * Resets the Y part of the current velocity
+	 */
+	public void resetY() {
+		velocity = new Vec2f(velocity.x, 0);
+	}
+	
+	/**
+	 * Resets the X part of the current velocity
+	 */
+	public void resetX() {
+		velocity = new Vec2f(0, velocity.y);
 	}
 }

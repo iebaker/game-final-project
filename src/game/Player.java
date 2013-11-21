@@ -1,5 +1,6 @@
 package game;
 
+import java.awt.event.KeyEvent;
 import java.util.Map;
 
 import cs195n.Vec2f;
@@ -16,7 +17,9 @@ public class Player extends Entity {
 	
 	private static final long	serialVersionUID	= 1654501146675497149L;
 	public Vec2f				goalVelocity;
-	private boolean jumpUnlocked = false;
+	private boolean jumpUnlocked = true;
+	private boolean moveLeft = false;
+	private boolean moveRight = false;
 	
 	public Player() {
 		super();
@@ -42,11 +45,20 @@ public class Player extends Entity {
 	 */
 	public void onTick(float t) {
 		if (world.getPlayer() == null) world.setPlayer(this);
+		if(this.moveLeft && !this.moveRight) {
+			goalVelocity = new Vec2f(-800,0);
+		}
+		else if(this.moveRight && !this.moveLeft) {
+			goalVelocity = new Vec2f(800,0);
+		}
+		else {
+			goalVelocity = new Vec2f(0,0);
+		}
+		
 		if (!goalVelocity.equals(new Vec2f(0, 0))) {
-			if (!goalVelocity.equals(velocity))
+			if (!goalVelocity.equals(velocity)) {
 				applyImpulse((goalVelocity.minus(velocity)).smult(0.05f));
-			else
-				goalVelocity = new Vec2f(0, 0);
+			}
 		}
 		if (!world.checkBounds(shape.getLocation()))
 			world.setLose("You fell (or jumped) out of the world!");
@@ -60,7 +72,7 @@ public class Player extends Entity {
 	 * @return ability to jump currently
 	 */
 	public boolean canJump() {
-		if(!jumpUnlocked || this.contactDelay <= 0) {
+		if(!jumpUnlocked || this.contactDelay <= 0 || this.lastMTV.y >= 0) {
 			return false;
 		}
 		return true;
@@ -70,16 +82,64 @@ public class Player extends Entity {
 	 * Jumps by applying the appropriate force
 	 */
 	public void jump() {
-		applyImpulse(this.lastMTV.normalized().smult(world.gravity() * 40));
+		//Clear the current Y-velocity to stop bounce-jumps
+		this.resetY();
+		this.applyImpulse(this.lastMTV.normalized().smult(world.gravity() * 40));
 		this.contactDelay = 0;
 	}
 	
+	/**
+	 * Gets the center of the player's position. Useful for sound distance calculations
+	 * @return Center of the player's shape's position
+	 */
 	public Vec2f getCenterPosition() {
 		return this.shape.getCenter();
 	}
 	
+	/**
+	 * Allows the player to jump
+	 */
 	public void unlockJump() {
 		jumpUnlocked = true;
 	}
 	
+	/**
+	 * Allows the player to respond to keyboard input
+	 * @param e
+	 */
+	public void onKeyPressed(KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_LEFT:
+		case KeyEvent.VK_A: moveLeft = true;
+			break;
+		case KeyEvent.VK_RIGHT:
+		case KeyEvent.VK_D: moveRight = true;
+			break;
+		case (KeyEvent.VK_W): // W
+		case (KeyEvent.VK_SPACE): // Jump
+			if (this.canJump()) {
+				this.jump();
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * Allows the player to respond to keyboard input
+	 * @param e
+	 */
+	public void onKeyReleased(KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_LEFT:
+		case KeyEvent.VK_A : moveLeft = false;
+			break;
+		case KeyEvent.VK_RIGHT:
+		case KeyEvent.VK_D: moveRight = false;
+			break;
+		default:
+			break;
+		}
+	}
 }

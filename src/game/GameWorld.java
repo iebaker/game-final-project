@@ -351,22 +351,11 @@ public class GameWorld extends World {
 			else
 				paused = false;
 			break;
-		case (KeyEvent.VK_W): // W
-		case (KeyEvent.VK_SPACE): // Jump
-			if (player != null && !lose && !win && player.canJump()) {
-				player.jump();
-			}
-			break;
-		case (KeyEvent.VK_A): // A
-		case (KeyEvent.VK_LEFT): // Left
-			if (player != null && !lose && !win) player.goalVelocity = new Vec2f(-800, 0);
-			break;
-		case (KeyEvent.VK_D): // D
-		case (KeyEvent.VK_RIGHT): // Right
-			if (player != null && !lose && !win) player.goalVelocity = new Vec2f(800, 0);
-			break;
 		default:
 			break;
+		}
+		if(player != null && !lose && !win) {
+			player.onKeyPressed(e);
 		}
 	}
 	
@@ -376,16 +365,7 @@ public class GameWorld extends World {
 	 * @param e
 	 */
 	public void onKeyReleased(KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case (KeyEvent.VK_LEFT): // left
-		case (KeyEvent.VK_RIGHT): // Right
-		case (KeyEvent.VK_A): // A
-		case (KeyEvent.VK_D): // D
-			if (player != null && !lose && !win) player.goalVelocity = new Vec2f(0, 0);
-			break;
-		default:
-			break;
-		}
+		if (player != null && !lose && !win) player.onKeyReleased(e);
 	}
 	
 	@Override
