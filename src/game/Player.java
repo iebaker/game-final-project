@@ -17,7 +17,7 @@ public class Player extends Entity {
 	
 	private static final long	serialVersionUID	= 1654501146675497149L;
 	public Vec2f				goalVelocity;
-	private boolean jumpUnlocked = true;
+	private boolean jumpUnlocked = false;
 	private boolean moveLeft = false;
 	private boolean moveRight = false;
 	
@@ -84,7 +84,7 @@ public class Player extends Entity {
 	public void jump() {
 		//Clear the current Y-velocity to stop bounce-jumps
 		this.resetY();
-		this.applyImpulse(this.lastMTV.normalized().smult(world.gravity() * 40));
+		this.applyImpulse(this.lastMTV.normalized().smult(world.gravity() * 30));
 		this.contactDelay = 0;
 	}
 	
