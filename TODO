@@ -4,7 +4,7 @@ Make world loop on left and right sides
 	Implementation? Could this be done with some sort of mod in the viewport? Dylan, do you know?
 	
 Add water
-	Areas that player can move through apply upwards force. Things with enough mass would sink, maybe.
+	Areas that player can move through that but which apply upwards force and are a partially-transparent/translucent blue. Things with enough mass would sink, maybe.
 	Some sort of oxygen-countdown would be pretty easy to add too. And adding an item to increase lung capacity would be easy
 	
 Clean up cutscene UI
