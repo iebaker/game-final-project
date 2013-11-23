@@ -1,0 +1,92 @@
+README - M
+
+Engine Reqs
+-----------
+GENERAL
+- The engine holds an Application class and an abstract Screen class, the latter
+  of which can be subclassed to provide screen functionality
+- On every draw event, the Application passes the tick through to the screen on
+  the top of its stack, representing the screen currently in use in the window
+- Once again, the Application class passes through all onXXX mouse and keyboard
+  events to the topmost screen so that it can handle the event independently
+- On every tick event, the Application passes the tick through to the topmost
+  screen for it to handle on its own
+- On every resize, the Application passes through the new dimensions to every
+  screen in the stack so they can all resize at the same time, and saves it in
+  the class as a variable to use later
+- No code in the engine can make a game by itself - at minimum, it needs one
+  instantiated Screen subclass
+  
+DYLAN
+- Friction is implemented in the onCollide method after impulse calculation
+- Saving is done by the static methods in Saver, called with a World and filename,
+  from the GameWorld class
+
+SAWYER
+- Positional sound is implemented in the sound package, with sound files loaded
+  from an XML at runtime and loaded as needed in Entity
+- In the level file, a sound associated with an Entity is specified, with the
+  sound getting louder the closer the player gets to it - test it by going left
+- Text scene cutboxes are done in TextBox and loaded by Entities in the GameWorld
+- Cutboxes haven't been put into the game to playtest, but they can be created and
+  work
+  
+IZAAK
+- Vision cones have been implemented in the lighting package
+- The LightingEngine runs it all - see the class breakdown below
+- Can't be tested as not integrated to the game yet but it works
+
+LightingEngine - Actually performs vision cone calculations for each light source in 
+the world.  Mutates the light sources in order to update their lit areas
+
+LightWorld - An interface that worlds must extend if they are to be lit by a 
+Lighting Engine.  Basically amounts to the ability to convert from Shape objects to 
+a set of points and line segments.
+
+LightSource - A class representing a single point source of light which has a color 
+and brightness.  Holds onto a list of triangles which represent the areas of the 
+world it lights.
+
+LightCone - A class representing a 2D cone of light (i.e. a triangle) cast by a 
+lightsource against an object
+
+Vec2fPair - A tuple wrapper for 2 Vec2f objects (why doesn't Java have tuples? 
+My soul weeps...)
+
+Segment - An oriented line segment with a beginning point and an ending 
+point.  Oriented such that relative to a lightsource, the beginning point 
+is clockwise of the ending point.
+
+AngularComparator - A comparator for Vec2f objects which uses the Math.atan2() 
+function to rank points in order counterclockwise around a light source.
+
+RayCastData - (ugh, this one is hard to write) A utility object to store the result 
+of a raycast against a LightWorld.  Records intersections in order first by the 
+distance of the intersection point from the source and secondarily by the closeness 
+(not really, but what's actually happening is kinda weird -- it's more like 
+in-front-ness) of their corresponding segment to the source.
+
+Intersection - A tuple type object which records a line segment and its 
+intersection point with a ray.  
+  
+Game Reqs
+-----------
+- Start a new game by pressing the new game button when you die, the new game 
+  button when you win, or new game on the main menu (get back to it by pressing 
+  ESC or Q)
+- The game is just one level, with no win/lose conditions, but it loads and can
+  be played
+- Test saving/loading by hitting 3 and 4 respectively
+- Test positional sound by moving to the left hand wall
+- Test friction by bouncing around!
+  
+Known Bugs
+----------
+- With 4 held down (load game), the sounds will reload many times, causing issues 
+  with "No free voices" after awhile. No gameplay affected.
+- Strange buzzing/clicking when game reloaded/game exited but doesn't affect 
+  gameplay
+  
+Approximate Number of Hours to Complete
+---------------------------------------
+15
