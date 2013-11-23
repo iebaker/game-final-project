@@ -51,8 +51,8 @@ public class GameWorld extends World {
 	private float										hp;
 	private Player										player;
 	private String										soundFile			= "sounds.xml";
-	private static WorldTrigger wt = new WorldTrigger();
-	private static HashMap<String, Entity> defaults;
+	private static WorldTrigger							wt					= new WorldTrigger();
+	private static HashMap<String, Entity>				defaults;
 	static {
 		defaults = new HashMap<String, Entity>();
 		defaults.put("world", wt);
@@ -342,7 +342,7 @@ public class GameWorld extends World {
 			break;
 		case (KeyEvent.VK_2): // 2 - Load level 2
 			if (player != null) {
-				//newGame(2);
+				// newGame(2);
 			}
 			break;
 		case (KeyEvent.VK_P): // Pause
@@ -354,7 +354,7 @@ public class GameWorld extends World {
 		default:
 			break;
 		}
-		if(player != null && !lose && !win) {
+		if (player != null && !lose && !win) {
 			player.onKeyPressed(e);
 		}
 	}

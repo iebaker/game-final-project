@@ -21,7 +21,7 @@ public class EnemyEntity extends Entity {
 	@Override
 	public void setProperties(EntityData ed, World world) {
 		super.setProperties(ed, world);
-		this.damage = Float.parseFloat(create("damage", "0", ed));
+		this.damage = Float.parseFloat(create("damage", "1", ed));
 		
 		/**
 		 * Makes the enemy stop being static and start closing in on player
