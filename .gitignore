@@ -1,25 +1,24 @@
 # Directories #
-  /build/
-  /bin/*
-  target/
-  bin
-  /bin
+/build/*
+/bin/*
+target/*
+bin/*
  
 # Build Files #
-  *.class
+*.class
   
 # Package Files #
-  *.jar
-  *.war
-  *.ear
-  *.db
+*.jar
+*.war
+*.ear
+*.db
    
 ######################
 # Windows
 ######################
     
 # Windows image file caches
-    Thumbs.db 
+Thumbs.db 
      
 # Folder config file
      Desktop.ini
@@ -70,3 +69,4 @@
 # PDT-specific
                .buildpath
                .build-path
+/bin
