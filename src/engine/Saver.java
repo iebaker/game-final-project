@@ -1,5 +1,6 @@
 package engine;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class Saver {
 	 */
 	public static void saveGame(String fileName, World game) {
 		try {
-			FileOutputStream fileOut = new FileOutputStream(fileName);
+			FileOutputStream fileOut = new FileOutputStream(new File(fileName));
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(game);
 			out.close();
@@ -42,7 +43,7 @@ public class Saver {
 		}
 		World tempGame = null;
 		try {
-			FileInputStream fileIn = new FileInputStream(fileName);
+			FileInputStream fileIn = new FileInputStream(new File(fileName));
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			tempGame = (World) in.readObject();
 			in.close();

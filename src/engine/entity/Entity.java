@@ -442,7 +442,7 @@ public abstract class Entity implements Serializable {
 	 */
 	public void stopSound() {
 		for(Sound s : currentSounds) {
-			s.stop();
+			s.close();
 		}
 	}
 	
@@ -451,7 +451,6 @@ public abstract class Entity implements Serializable {
 	 */
 	public void resetY() {
 		velocity = new Vec2f(velocity.x, 0);
-		impulse = new Vec2f(impulse.x, 0);
 	}
 	
 	/**
@@ -459,6 +458,5 @@ public abstract class Entity implements Serializable {
 	 */
 	public void resetX() {
 		velocity = new Vec2f(0, velocity.y);
-		impulse = new Vec2f(0, impulse.y);
 	}
 }
