@@ -29,8 +29,8 @@ public class SensorEntity extends StaticEntity {
 	 */
 	public void afterCollision(Entity other) {
 		if(!activated && !other.isStatic && !(other instanceof EnemyEntity)) {
-			onCollide.run();
 			activated = true;
+			onCollide.run();
 		}
 	}
 	

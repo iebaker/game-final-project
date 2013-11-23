@@ -3,17 +3,14 @@ package game;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.Timer;
-
 import cs195n.Vec2f;
+import engine.Saver;
 import engine.World;
 import engine.collision.CollisionInfo;
 import engine.collision.Ray;
@@ -33,13 +30,14 @@ public class GameWorld extends World {
 	
 	private static final long							serialVersionUID	= 6619354971290257104L;
 	
+	public static final String saveFile = System.getProperty("user.home") + "/save.gme";
+	
 	private static final float							TICK_LENGTH			= 0.005f;
 	public Level										level;
 	private String										message;
 	private float										countdown;
 	private boolean										paused;
 	private boolean										cutsceneActive;
-	private boolean										textChangeReady;
 	private double										leftoverTime;
 	private Vec2f										line;
 	private int											lineCt;
@@ -189,7 +187,6 @@ public class GameWorld extends World {
 				super.onTick(TICK_LENGTH);
 				checkCollisions();
 				level.onTick(TICK_LENGTH);
-				// System.out.println("Ticking " + System.currentTimeMillis());
 			}
 		}
 	}
@@ -315,19 +312,8 @@ public class GameWorld extends World {
 	 */
 	public void onKeyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
-		if (textChangeReady
-				&& (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S)) {
-			textChangeReady = false;
+		if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
 			if (textBox.hasNextLine()) {
-				final Timer t = new Timer(100, null);
-				t.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						GameWorld.this.textChangeReady = true;
-						t.removeActionListener(this);
-					}
-				});
-				t.start();
 				textBox.displayNext();
 			} else {
 				cutsceneActive = false;
@@ -476,16 +462,7 @@ public class GameWorld extends World {
 	 */
 	public void enterCutscene() {
 		this.cutsceneActive = true;
-		// Keeps player from accidentally skipping text immediately
-		final Timer t = new Timer(500, null);
-		t.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				GameWorld.this.textChangeReady = true;
-				t.removeActionListener(this);
-			}
-		});
-		t.start();
+		Saver.saveGame(saveFile, this);
 	}
 	
 	public void unlockJump() {

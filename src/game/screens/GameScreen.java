@@ -213,11 +213,11 @@ public class GameScreen extends Screen {
 			a.popScreen();
 			break;
 		case (KeyEvent.VK_3): // 3 pressed, save game
-			Saver.saveGame(System.getProperty("user.home") + "/save.gme", game);
+			Saver.saveGame(GameWorld.saveFile, game);
 			break;
 		case (KeyEvent.VK_4): // 4 pressed, load game
 			//if(!textBox.getVisible()) {
-				GameWorld temp = (GameWorld) Saver.loadGame(System.getProperty("user.home") + "/save.gme", view, game);
+				GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
 				if (temp != null) {
 					game = temp;
 					textBox = game.getTextBox();
