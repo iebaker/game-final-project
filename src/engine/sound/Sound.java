@@ -282,6 +282,6 @@ public class Sound implements Runnable {
 	}
 	
 	public void close() {
-		//paused = true;
+		clip.close();
 	}
 }
