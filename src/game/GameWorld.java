@@ -16,6 +16,7 @@ import engine.collision.CollisionInfo;
 import engine.collision.Ray;
 import engine.entity.EnemyEntity;
 import engine.entity.Entity;
+import engine.entity.PassableEntity;
 import engine.entity.RelayEntity;
 import engine.entity.SensorEntity;
 import engine.entity.StaticEntity;
@@ -77,6 +78,7 @@ public class GameWorld extends World {
 		classes.put("Sensor", SensorEntity.class);
 		classes.put("Relay", RelayEntity.class);
 		classes.put("WinEntity", WinEntity.class);
+		classes.put("PassableEntity", PassableEntity.class);
 		
 		newGame();
 	}

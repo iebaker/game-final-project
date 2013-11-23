@@ -21,6 +21,7 @@ import engine.connections.Connection;
 import engine.connections.Input;
 import engine.connections.Output;
 import engine.entity.Entity;
+import engine.entity.PassableEntity;
 import engine.ui.TextBox;
 
 /**
@@ -34,13 +35,14 @@ public abstract class World implements Serializable {
 	private static final long		serialVersionUID	= 8819430167695167366L;
 	public transient Viewport		v;
 	protected Vec2f					dim;
-	protected Vec2f					sDim = new Vec2f(0,0);
+	protected Vec2f					sDim				= new Vec2f(0, 0);
 	protected List<Entity>			entityStack;
-	private List<Entity>			removeList = new ArrayList<Entity>();
-	private List<Entity>			addList = new ArrayList<Entity>();
-	private Color					bgColor = new Color(255, 255, 255);
-	private HashMap<String, Entity>	entityMap = new HashMap<String, Entity>();
-	protected TextBox textBox;
+	private List<Entity>			removeList			= new ArrayList<Entity>();
+	private List<Entity>			addList				= new ArrayList<Entity>();
+	private List<PassableEntity>	passList			= new ArrayList<PassableEntity>();
+	private Color					bgColor				= new Color(255, 255, 255);
+	private HashMap<String, Entity>	entityMap			= new HashMap<String, Entity>();
+	protected TextBox				textBox;
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))
@@ -50,7 +52,7 @@ public abstract class World implements Serializable {
 	public World(Vec2f dim, TextBox tb, Map<String, Entity> defaults) {
 		this.dim = dim;
 		entityMap.put("textBox", tb);
-		for(Map.Entry<String, Entity> item : defaults.entrySet()) {
+		for (Map.Entry<String, Entity> item : defaults.entrySet()) {
 			entityMap.put(item.getKey(), item.getValue());
 		}
 	}
@@ -78,7 +80,7 @@ public abstract class World implements Serializable {
 				entityMap.put(ed.getName(), e);
 				this.addEntity(e);
 			}
-						
+			
 			// Connections!!
 			for (ConnectionData cd : data.getConnections()) {
 				
@@ -201,6 +203,15 @@ public abstract class World implements Serializable {
 	 */
 	public void addEntity(Entity entity) {
 		addList.add(entity);
+	}
+	
+	/**
+	 * Adds a passable entity to the passable entity stack
+	 * 
+	 * @param passableEntity
+	 */
+	public void addPassableEntity(PassableEntity entity) {
+		passList.add(entity);
 	}
 	
 	/**
