@@ -32,17 +32,17 @@ import engine.ui.TextBox;
  */
 public abstract class World implements Serializable {
 	
-	private static final long		serialVersionUID	= 8819430167695167366L;
-	public transient Viewport		v;
-	protected Vec2f					dim;
-	protected Vec2f					sDim				= new Vec2f(0, 0);
-	protected List<Entity>			entityStack;
-	private List<Entity>			removeList			= new ArrayList<Entity>();
-	private List<Entity>			addList				= new ArrayList<Entity>();
-	private List<PassableEntity>	passList			= new ArrayList<PassableEntity>();
-	private Color					bgColor				= new Color(255, 255, 255);
-	private HashMap<String, Entity>	entityMap			= new HashMap<String, Entity>();
-	protected TextBox				textBox;
+	private static final long				serialVersionUID	= 8819430167695167366L;
+	private List<Entity>					addList				= new ArrayList<Entity>();
+	private Color							bgColor				= new Color(255, 255, 255);
+	protected Vec2f							dim;
+	private final HashMap<String, Entity>	entityMap			= new HashMap<String, Entity>();
+	protected List<Entity>					entityStack;
+	private final List<PassableEntity>		passList			= new ArrayList<PassableEntity>();
+	private List<Entity>					removeList			= new ArrayList<Entity>();
+	protected Vec2f							sDim				= new Vec2f(0, 0);
+	protected TextBox						textBox;
+	public transient Viewport				v;
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))
@@ -58,6 +58,99 @@ public abstract class World implements Serializable {
 	}
 	
 	/**
+	 * Add an entity to the entity stack
+	 * 
+	 * @param entity
+	 */
+	public void addEntity(Entity entity) {
+		addList.add(entity);
+	}
+	
+	/**
+	 * Adds a passable entity to the passable entity stack
+	 * 
+	 * @param passableEntity
+	 */
+	public void addPassableEntity(PassableEntity entity) {
+		passList.add(entity);
+	}
+	
+	/**
+	 * Checks to see if a vector is within the bounds of the game
+	 * 
+	 * @param vec
+	 * @return If vec is within game world
+	 */
+	public boolean checkBounds(Vec2f vec) {
+		return ((vec.x > sDim.x && vec.x < dim.x) && (vec.y > sDim.y && vec.y < dim.y));
+	}
+	
+	/**
+	 * Creates a string with a key, initial value, and level data
+	 * 
+	 * @param key
+	 * @param initialVal
+	 * @param l
+	 * @return
+	 */
+	public String create(String key, String initialVal, LevelData l) {
+		String toReturn = initialVal;
+		if (l.getProperties().containsKey(key)) {
+			toReturn = l.getProperties().get(key);
+		}
+		return toReturn;
+	}
+	
+	public abstract void enterCutscene();
+	
+	/**
+	 * Flips the gravity of this world
+	 */
+	public abstract void flipGravity();
+	
+	/**
+	 * Public getter for the background color
+	 * 
+	 * @return the background color set by the level editor
+	 */
+	public Color getBGColor() {
+		return bgColor;
+	}
+	
+	/**
+	 * Getter for dim
+	 * 
+	 * @return
+	 */
+	public Vec2f getDim() {
+		return dim;
+	}
+	
+	/**
+	 * Public getter for all entities
+	 * 
+	 * @return all entities in a list
+	 */
+	public List<Entity> getEntities() {
+		return entityStack;
+	}
+	
+	public abstract Entity getPlayer();
+	
+	public abstract String getSoundFile();
+	
+	public TextBox getTextBox() {
+		return textBox;
+	}
+	
+	/**
+	 * Returns gravity value for the world (-x for up, x for down)
+	 * 
+	 * @return the gravity value for this world
+	 */
+	public abstract float gravity();
+	
+	/**
 	 * Loads level from file given as arg, creating entities, etc that way
 	 * 
 	 * @param fileName
@@ -65,8 +158,8 @@ public abstract class World implements Serializable {
 	public void loadLevelFromFile(String fileName, HashMap<String, Class<? extends Entity>> classes, World world) {
 		try {
 			LevelData data = CS195NLevelReader.readLevel(new File(fileName));
-			String[] bg = this.create("backgroundColor", "255,255,255", data).split("[,]");
-			this.bgColor = new Color(Integer.parseInt(bg[0]), Integer.parseInt(bg[1]), Integer.parseInt(bg[2]));
+			String[] bg = create("backgroundColor", "255,255,255", data).split("[,]");
+			bgColor = new Color(Integer.parseInt(bg[0]), Integer.parseInt(bg[1]), Integer.parseInt(bg[2]));
 			
 			// Entities!!
 			for (EntityData ed : data.getEntities()) {
@@ -78,7 +171,7 @@ public abstract class World implements Serializable {
 				
 				// Put in the entity map for connections
 				entityMap.put(ed.getName(), e);
-				this.addEntity(e);
+				addEntity(e);
 			}
 			
 			// Connections!!
@@ -120,32 +213,6 @@ public abstract class World implements Serializable {
 	public abstract void newGame();
 	
 	/**
-	 * Sets a win for the game
-	 */
-	public abstract void setWin();
-	
-	/**
-	 * Sets a lose for the game with a message
-	 */
-	public abstract void setLose(String msg);
-	
-	/**
-	 * Creates a string with a key, initial value, and level data
-	 * 
-	 * @param key
-	 * @param initialVal
-	 * @param l
-	 * @return
-	 */
-	public String create(String key, String initialVal, LevelData l) {
-		String toReturn = initialVal;
-		if (l.getProperties().containsKey(key)) {
-			toReturn = l.getProperties().get(key);
-		}
-		return toReturn;
-	}
-	
-	/**
 	 * Draws all entities to screen
 	 * 
 	 * @param g
@@ -179,42 +246,6 @@ public abstract class World implements Serializable {
 	}
 	
 	/**
-	 * Sets viewport
-	 * 
-	 * @param v
-	 */
-	protected void setPort(Viewport v) {
-		this.v = v;
-	}
-	
-	/**
-	 * Getter for dim
-	 * 
-	 * @return
-	 */
-	public Vec2f getDim() {
-		return dim;
-	}
-	
-	/**
-	 * Add an entity to the entity stack
-	 * 
-	 * @param entity
-	 */
-	public void addEntity(Entity entity) {
-		addList.add(entity);
-	}
-	
-	/**
-	 * Adds a passable entity to the passable entity stack
-	 * 
-	 * @param passableEntity
-	 */
-	public void addPassableEntity(PassableEntity entity) {
-		passList.add(entity);
-	}
-	
-	/**
 	 * Remove an entity from the entity stack
 	 * 
 	 * @param entity
@@ -224,55 +255,24 @@ public abstract class World implements Serializable {
 	}
 	
 	/**
-	 * Checks to see if a vector is within the bounds of the game
-	 * 
-	 * @param vec
-	 * @return If vec is within game world
+	 * Sets a lose for the game with a message
 	 */
-	public boolean checkBounds(Vec2f vec) {
-		return ((vec.x > sDim.x && vec.x < dim.x) && (vec.y > sDim.y && vec.y < dim.y));
-	}
-	
-	/**
-	 * Public getter for all entities
-	 * 
-	 * @return all entities in a list
-	 */
-	public List<Entity> getEntities() {
-		return entityStack;
-	}
-	
-	/**
-	 * Public getter for the background color
-	 * 
-	 * @return the background color set by the level editor
-	 */
-	public Color getBGColor() {
-		return bgColor;
-	}
-	
-	/**
-	 * Returns gravity value for the world (-x for up, x for down)
-	 * 
-	 * @return the gravity value for this world
-	 */
-	public abstract float gravity();
-	
-	/**
-	 * Flips the gravity of this world
-	 */
-	public abstract void flipGravity();
-	
-	public abstract Entity getPlayer();
+	public abstract void setLose(String msg);
 	
 	public abstract void setPlayer(Entity player);
 	
-	public abstract String getSoundFile();
-	
-	public abstract void enterCutscene();
-	
-	public TextBox getTextBox() {
-		return textBox;
+	/**
+	 * Sets viewport
+	 * 
+	 * @param v
+	 */
+	protected void setPort(Viewport v) {
+		this.v = v;
 	}
+	
+	/**
+	 * Sets a win for the game
+	 */
+	public abstract void setWin();
 	
 }
