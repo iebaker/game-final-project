@@ -29,33 +29,87 @@ import engine.ui.TextBox;
  */
 public class GameWorld extends World {
 	
-	private static final long							serialVersionUID	= 6619354971290257104L;
-	
-	public static final String saveFile = System.getProperty("user.home") + "/save.gme";
-	
-	private static final float							TICK_LENGTH			= 0.005f;
-	public Level										level;
-	private String										message;
-	private float										countdown;
-	private boolean										paused;
-	private boolean										cutsceneActive;
-	private double										leftoverTime;
-	private Vec2f										line;
-	private int											lineCt;
-	private boolean										win;
-	private boolean										lose;
-	private float										gravity;
-	private int											numLevels;
-	private HashMap<String, Class<? extends Entity>>	classes;
-	private float										hp;
-	private Player										player;
-	private String										soundFile			= "sounds.xml";
-	private static WorldTrigger							wt					= new WorldTrigger();
-	private static HashMap<String, Entity>				defaults;
-	static {
-		defaults = new HashMap<String, Entity>();
-		defaults.put("world", wt);
+	/**
+	 * Enum for game state that displays a message
+	 * 
+	 * @author dgattey
+	 * 
+	 */
+	public static enum GameState {
+		LOSE("Game Over", "You lost... Try again"), PLAYING("...", "Still in play"), WIN("Nice Work!", "You won");
+		
+		private final String	headline;
+		private String			message;
+		
+		/**
+		 * Private constructor with headline and message
+		 * 
+		 * @param par
+		 * @param msg
+		 */
+		private GameState(String head, String msg) {
+			message = msg;
+			headline = head;
+		}
+		
+		/**
+		 * Public getter for the headline
+		 * 
+		 * @return
+		 */
+		public String getHeadline() {
+			return headline;
+		}
+		
+		/**
+		 * Public getter for the message
+		 * 
+		 * @return
+		 */
+		public String getMessage() {
+			return message;
+		}
+		
+		/**
+		 * Public setter for the message
+		 * 
+		 * @param msg
+		 *            the message to set
+		 */
+		public void setMessage(String msg) {
+			message = msg;
+		}
 	}
+	
+	private static HashMap<String, Entity>					defaults;
+	private static WorldTrigger								wt					= new WorldTrigger();
+	static {
+		GameWorld.defaults = new HashMap<String, Entity>();
+		GameWorld.defaults.put("world", GameWorld.wt);
+	}
+	
+	public static final String								saveFile			= System.getProperty("user.home")
+																						+ "/save.gme";
+	
+	private static final long								serialVersionUID	= 6619354971290257104L;
+	private static final float								TICK_LENGTH			= 0.005f;
+	private final HashMap<String, Class<? extends Entity>>	classes;
+	private float											countdown;
+	private boolean											cutsceneActive;
+	private float											gravity;
+	private float											hp;
+	private double											leftoverTime;
+	public Level											level;
+	private Vec2f											line;
+	private int												lineCt;
+	private boolean											lose;
+	private String											message;
+	private final int										numLevels;
+	private boolean											paused;
+	private Player											player;
+	private final String									soundFile			= "sounds.xml";
+	
+	private boolean											win;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -64,8 +118,8 @@ public class GameWorld extends World {
 	 * @param tb
 	 */
 	public GameWorld(Vec2f dim, TextBox tb) {
-		super(dim, tb, defaults);
-		wt.setWorld(this);
+		super(dim, tb, GameWorld.defaults);
+		GameWorld.wt.setWorld(this);
 		numLevels = 2;
 		textBox = tb;
 		tb.setWorld(this);
@@ -83,123 +137,13 @@ public class GameWorld extends World {
 		newGame();
 	}
 	
-	@Override
-	public void newGame() {
-		hp = 0;
-		newGame(1);
-	}
-	
-	/**
-	 * Begins a new game, making a new level, setting a countdown message for when the game starts, and loading the
-	 * level from file
-	 * 
-	 * @param restitution
-	 *            the restitution to give all entities
-	 */
-	public void newGame(int lvl) {
-		if (this.getEntities() != null) {
-			for (Entity e : this.getEntities()) {
-				e.stopSound();
-			}
-		}
-		player = null;
-		level = new Level(lvl, 0f);
-		if (v != null) v.viewHasChanged(true);
-		leftoverTime = 0;
-		line = null;
-		win = false;
-		lose = false;
-		lineCt = 0;
-		gravity = 300;
-		entityStack = new ArrayList<Entity>();
-		
-		// Actually load the level
-		loadLevelFromFile("lib/Level" + lvl + ".nlf", classes, this);
-		if (lvl == 1) setMessage("Game starts in 3", 0.5f);
-		
-		textBox.setVisible(false);
-		cutsceneActive = false;
-	}
-	
-	/**
-	 * Set the message for the message display with a countdown or just pause the game
-	 * 
-	 * @param msg
-	 * @param ct
-	 */
-	private void setMessage(String msg, float ct) {
-		message = msg;
-		if (ct > 0)
-			countdown = ct;
-		else if (ct == 0) paused = true;
-	}
-	
-	@Override
-	/**
-	 * Draws the entities and a line for the bullet if needed
-	 * @param g
-	 */
-	public void onDraw(Graphics2D g) {
-		// Resets viewport to be the correct offset based on player location
-		if (v != null && player != null)
-			this.v.setOffset(player.shape.getLocation().minus(v.screenPtToGameForOffset(v.getDim().sdiv(2))));
-		
-		// Draws the line for bullets
-		if (line != null && player != null && lineCt < 20) {
-			g.setColor(Color.blue);
-			g.setStroke(new BasicStroke(5f));
-			Vec2f p1 = v.gamePtToScreen(player.shape.getCenter());
-			Vec2f p2 = v.gamePtToScreen(line);
-			g.draw(new Line2D.Double(p1.x, p1.y, p2.x, p2.y));
-			lineCt++;
-		} else if (lineCt >= 20) {
-			lineCt = 0;
-			line = null;
-		}
-		
-		super.onDraw(g); // draws all entities
-	}
-	
-	/**
-	 * Does a lot of stuff every tick - see breakdown comments in code below - but splits tick into multiple iterations
-	 * of 0.005 seconds for consistency
-	 */
-	@Override
-	public void onTick(float secs) {
-		
-		// Calculates standard tick - how many + leftover time to counter for later
-		double timeSteps = (secs / TICK_LENGTH) + leftoverTime;
-		long steps = (long) timeSteps;
-		leftoverTime = timeSteps - steps;
-		for (int i = 0; i < steps; i++) {
-			
-			// Updates message while there's a countdown
-			if (countdown > 1) {
-				setMessage(message.subSequence(0, message.length() - 1).toString() + (int) countdown, countdown
-						- TICK_LENGTH);
-			}
-			
-			// Shows paused message
-			else if (paused)
-				message = "Game paused";
-			
-			// Ticks through each entity and checks collisions
-			else if (!cutsceneActive) {
-				message = "";
-				super.onTick(TICK_LENGTH);
-				checkCollisions();
-				level.onTick(TICK_LENGTH);
-			}
-		}
-	}
-	
 	/**
 	 * Checks collisions by way of double iteration through all elements - does special things for certain entities
 	 */
 	public void checkCollisions() {
 		for (int i = 0; i < entityStack.size(); i++) {
+			Entity a = entityStack.get(i);
 			for (int j = i + 1; j < entityStack.size(); j++) {
-				Entity a = entityStack.get(i);
 				Entity b = entityStack.get(j);
 				
 				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
@@ -218,7 +162,38 @@ public class GameWorld extends World {
 				}
 				
 			}
+			for (PassableEntity e : passList) {
+				if (a.collideWithEntity(e)) {
+					CollisionInfo col = new CollisionInfo(a, e);
+					if (col.mtv != null && !col.mtv.isZero()) e.onCollide(col);
+					a.afterCollision(e);
+					e.afterCollision(a);
+				}
+			}
 		}
+	}
+	
+	/**
+	 * Checks the game state - win after level 5 - but could be extended!
+	 * 
+	 * @return
+	 */
+	public GameState checkEndConditions() {
+		if (lose)
+			return GameState.LOSE;
+		else if (win)
+			return GameState.WIN;
+		else
+			return GameState.PLAYING;
+	}
+	
+	@Override
+	/**
+	 * Enters cutscene mode
+	 */
+	public void enterCutscene() {
+		cutsceneActive = true;
+		Saver.saveGame(GameWorld.saveFile, this);
 	}
 	
 	/**
@@ -256,55 +231,112 @@ public class GameWorld extends World {
 		}
 	}
 	
+	@Override
+	public void flipGravity() {
+		gravity = -gravity;
+	}
+	
 	/**
-	 * Checks the game state - win after level 5 - but could be extended!
+	 * Public getter for message
 	 * 
 	 * @return
 	 */
-	public GameState checkEndConditions() {
-		if (lose)
-			return GameState.LOSE;
-		else if (win)
-			return GameState.WIN;
-		else
-			return GameState.PLAYING;
-	}
-	
-	@Override
-	/**
-	 * Sets a win if over, or goes to next level if there's one more
-	 */
-	public void setWin() {
-		if (level.getLevel() < numLevels) {
-			hp = player.hp;
-			setMessage("Level " + (level.getLevel() + 1) + " starts in 3", 3.5f);
-			newGame(level.getLevel() + 1);
-		} else
-			win = true;
-	}
-	
-	@Override
-	/**
-	 * Sets a lose with a message
-	 */
-	public void setLose(String msg) {
-		lose = true;
-		if (player.hp < 0) player.hp = 0;
-		GameState.LOSE.setMessage(msg);
-		player = null;
+	public String getCurrentMessage() {
+		return message;
 	}
 	
 	/**
-	 * Responder for mouse release - shoots bullet to mouse location with left button if in game and shoots grenade if
-	 * right button or ctrl-left mouse button
+	 * Public getter for health
 	 * 
-	 * @param e
+	 * @return
 	 */
-	public void onMouseClicked(MouseEvent e) {
-		Vec2f pt = v.screenPtToGame(new Vec2f(e.getX(), e.getY()));
-		if (e.getButton() == MouseEvent.BUTTON1) {
-			if (checkBounds(pt)) fireBullet(pt);
+	public float getHealth() {
+		if (player == null)
+			return 100;
+		else
+			return player.hp;
+	}
+	
+	@Override
+	public Entity getPlayer() {
+		return player;
+	}
+	
+	@Override
+	public String getSoundFile() {
+		return soundFile;
+	}
+	
+	@Override
+	/**
+	 * Returns the gravity value for this world (-x is up, x is down)
+	 */
+	public float gravity() {
+		return gravity;
+	}
+	
+	@Override
+	public void newGame() {
+		hp = 0;
+		newGame(1);
+	}
+	
+	/**
+	 * Begins a new game, making a new level, setting a countdown message for when the game starts, and loading the
+	 * level from file
+	 * 
+	 * @param restitution
+	 *            the restitution to give all entities
+	 */
+	public void newGame(int lvl) {
+		if (getEntities() != null) {
+			for (Entity e : getEntities()) {
+				e.stopSound();
+			}
 		}
+		player = null;
+		level = new Level(lvl, 0f);
+		if (v != null) v.viewHasChanged(true);
+		leftoverTime = 0;
+		line = null;
+		win = false;
+		lose = false;
+		lineCt = 0;
+		gravity = 300;
+		entityStack = new ArrayList<Entity>();
+		
+		// Actually load the level
+		loadLevelFromFile("lib/Level" + lvl + ".nlf", classes, this);
+		if (lvl == 1) setMessage("Game starts in 3", 0.5f);
+		
+		textBox.setVisible(false);
+		cutsceneActive = false;
+	}
+	
+	@Override
+	/**
+	 * Draws the entities and a line for the bullet if needed
+	 * @param g
+	 */
+	public void onDraw(Graphics2D g) {
+		// Resets viewport to be the correct offset based on player location
+		if (v != null && player != null)
+			v.setOffset(player.shape.getLocation().minus(v.screenPtToGameForOffset(v.getDim().sdiv(2))));
+		
+		// Draws the line for bullets
+		if (line != null && player != null && lineCt < 20) {
+			g.setColor(Color.blue);
+			g.setStroke(new BasicStroke(5f));
+			Vec2f p1 = v.gamePtToScreen(player.shape.getCenter());
+			Vec2f p2 = v.gamePtToScreen(line);
+			g.draw(new Line2D.Double(p1.x, p1.y, p2.x, p2.y));
+			lineCt++;
+		} else if (lineCt >= 20) {
+			lineCt = 0;
+			line = null;
+		}
+		
+		super.onDraw(g); // draws all entities
 	}
 	
 	/**
@@ -315,7 +347,7 @@ public class GameWorld extends World {
 	public void onKeyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 		if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
-			if (textBox.hasNextLine()) {
+			if (cutsceneActive && textBox.hasNextLine()) {
 				textBox.displayNext();
 			} else {
 				cutsceneActive = false;
@@ -356,115 +388,93 @@ public class GameWorld extends World {
 		if (player != null && !lose && !win) player.onKeyReleased(e);
 	}
 	
-	@Override
 	/**
-	 * Returns the gravity value for this world (-x is up, x is down)
-	 */
-	public float gravity() {
-		return gravity;
-	}
-	
-	@Override
-	public void flipGravity() {
-		this.gravity = -gravity;
-	}
-	
-	/**
-	 * Public getter for health
+	 * Responder for mouse release - shoots bullet to mouse location with left button if in game and shoots grenade if
+	 * right button or ctrl-left mouse button
 	 * 
-	 * @return
+	 * @param e
 	 */
-	public float getHealth() {
-		if (player == null)
-			return 100;
-		else
-			return player.hp;
+	public void onMouseClicked(MouseEvent e) {
+		Vec2f pt = v.screenPtToGame(new Vec2f(e.getX(), e.getY()));
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			if (checkBounds(pt)) fireBullet(pt);
+		}
 	}
 	
 	/**
-	 * Public getter for message
-	 * 
-	 * @return
+	 * Does a lot of stuff every tick - see breakdown comments in code below - but splits tick into multiple iterations
+	 * of 0.005 seconds for consistency
 	 */
-	public String getCurrentMessage() {
-		return message;
+	@Override
+	public void onTick(float secs) {
+		
+		// Calculates standard tick - how many + leftover time to counter for later
+		double timeSteps = (secs / GameWorld.TICK_LENGTH) + leftoverTime;
+		long steps = (long) timeSteps;
+		leftoverTime = timeSteps - steps;
+		for (int i = 0; i < steps; i++) {
+			
+			// Updates message while there's a countdown
+			if (countdown > 1) {
+				setMessage(message.subSequence(0, message.length() - 1).toString() + (int) countdown, countdown
+						- GameWorld.TICK_LENGTH);
+			}
+			
+			// Shows paused message
+			else if (paused)
+				message = "Game paused";
+			
+			// Ticks through each entity and checks collisions
+			else if (!cutsceneActive) {
+				message = "";
+				super.onTick(GameWorld.TICK_LENGTH);
+				checkCollisions();
+				level.onTick(GameWorld.TICK_LENGTH);
+			}
+		}
 	}
 	
 	@Override
-	public Entity getPlayer() {
-		return player;
+	/**
+	 * Sets a lose with a message
+	 */
+	public void setLose(String msg) {
+		lose = true;
+		if (player.hp < 0) player.hp = 0;
+		GameState.LOSE.setMessage(msg);
+		player = null;
+	}
+	
+	/**
+	 * Set the message for the message display with a countdown or just pause the game
+	 * 
+	 * @param msg
+	 * @param ct
+	 */
+	private void setMessage(String msg, float ct) {
+		message = msg;
+		if (ct > 0)
+			countdown = ct;
+		else if (ct == 0) paused = true;
 	}
 	
 	@Override
 	public void setPlayer(Entity p) {
-		this.player = (Player) p;
+		player = (Player) p;
 		if (hp > 0) player.hp = hp;
 	}
 	
 	@Override
-	public String getSoundFile() {
-		return soundFile;
-	}
-	
 	/**
-	 * Enum for game state that displays a message
-	 * 
-	 * @author dgattey
-	 * 
+	 * Sets a win if over, or goes to next level if there's one more
 	 */
-	public static enum GameState {
-		WIN("Nice Work!", "You won"), LOSE("Game Over", "You lost... Try again"), PLAYING("...", "Still in play");
-		
-		private String			message;
-		private final String	headline;
-		
-		/**
-		 * Private constructor with headline and message
-		 * 
-		 * @param par
-		 * @param msg
-		 */
-		private GameState(String head, String msg) {
-			this.message = msg;
-			this.headline = head;
-		}
-		
-		/**
-		 * Public getter for the message
-		 * 
-		 * @return
-		 */
-		public String getMessage() {
-			return this.message;
-		}
-		
-		/**
-		 * Public setter for the message
-		 * 
-		 * @param msg
-		 *            the message to set
-		 */
-		public void setMessage(String msg) {
-			this.message = msg;
-		}
-		
-		/**
-		 * Public getter for the headline
-		 * 
-		 * @return
-		 */
-		public String getHeadline() {
-			return this.headline;
-		}
-	}
-	
-	@Override
-	/**
-	 * Enters cutscene mode
-	 */
-	public void enterCutscene() {
-		this.cutsceneActive = true;
-		Saver.saveGame(saveFile, this);
+	public void setWin() {
+		if (level.getLevel() < numLevels) {
+			hp = player.hp;
+			setMessage("Level " + (level.getLevel() + 1) + " starts in 3", 3.5f);
+			newGame(level.getLevel() + 1);
+		} else
+			win = true;
 	}
 	
 	public void unlockJump() {

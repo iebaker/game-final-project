@@ -29,43 +29,43 @@ import engine.sound.SoundHolder;
  */
 public abstract class Entity implements Serializable {
 	
-	private static final long		serialVersionUID	= -427222487694569405L;
-	protected World					world;
-	public CollisionShape			shape;
-	protected float					width;
-	protected float					height;
-	protected float					mass;
-	protected float					restitution;
-	protected float					friction;
-	public boolean					isStatic;
-	protected Color					c;
-	public float					hp;
-	private Vec2f					impulse;
-	private Vec2f					force;
-	protected Vec2f					velocity;
-	protected float					disappearing;
-	private boolean					shootable;
-	private int						shotsNeeded;
-	protected Map<String, Input>	inputs;
-	protected Map<String, Output>	outputs;
-	private transient ArrayList<Sound>		currentSounds		= new ArrayList<Sound>();
-	protected Vec2f lastMTV = new Vec2f(0,0);
-	protected float contactDelay = 0;
+	private static final long			serialVersionUID	= -427222487694569405L;
+	protected Color						c;
+	protected float						contactDelay		= 0;
+	private transient ArrayList<Sound>	currentSounds		= new ArrayList<Sound>();
+	protected float						disappearing;
+	private Vec2f						force;
+	protected float						friction;
+	protected float						height;
+	public float						hp;
+	private Vec2f						impulse;
+	protected Map<String, Input>		inputs;
+	public boolean						isStatic;
+	protected Vec2f						lastMTV				= new Vec2f(0, 0);
+	protected float						mass;
+	protected Map<String, Output>		outputs;
+	protected float						restitution;
+	public CollisionShape				shape;
+	private boolean						shootable;
+	private int							shotsNeeded;
+	protected Vec2f						velocity;
+	protected float						width;
+	protected World						world;
 	
 	/**
 	 * Empty constructor - sets default values
 	 */
 	public Entity() {
-		this.force = new Vec2f(0, 0);
-		this.impulse = new Vec2f(0, 0);
-		this.velocity = new Vec2f(0, 0);
-		this.hp = fullHP();
-		this.inputs = new HashMap<String, Input>();
-		this.outputs = new HashMap<String, Output>();
-		this.inputs.put("playSound", new Input() {
+		force = new Vec2f(0, 0);
+		impulse = new Vec2f(0, 0);
+		velocity = new Vec2f(0, 0);
+		hp = fullHP();
+		inputs = new HashMap<String, Input>();
+		outputs = new HashMap<String, Output>();
+		inputs.put("playSound", new Input() {
 			
 			private static final long	serialVersionUID	= -6139328109470836482L;
-			private transient Sound						thisSound;
+			private transient Sound		thisSound;
 			
 			@Override
 			public void run(Map<String, String> args) {
@@ -77,7 +77,7 @@ public abstract class Entity implements Serializable {
 				}
 			}
 		});
-		this.outputs.put("onTick", new Output());
+		outputs.put("onTick", new Output());
 	}
 	
 	/**
@@ -107,57 +107,47 @@ public abstract class Entity implements Serializable {
 		this.height = height;
 		this.isStatic = isStatic;
 		this.restitution = restitution;
-		this.mass = density * (new Float(Math.sqrt(width * height)));
+		mass = density * (new Float(Math.sqrt(width * height)));
 		this.c = c;
 		this.world = world;
 	}
 	
 	/**
-	 * Method to set all fields of the entity based on EntityData
-	 * 
-	 * @param ed
-	 *            the EntityData to parse and create a new entity out of
-	 * @param world
-	 *            the GameWorld in which this entity should be placed
+	 * Does nothing except for in sensors that send out a signal
 	 */
-	public void setProperties(EntityData ed, World world) {
-		if (!ed.getShapes().isEmpty()) {
-			ShapeData shapeData = ed.getShapes().get(0);
-			String[] shapeColor = new String[] {"0","0","0"}; 
-			if(shapeData.getProperties().get("color") != null) {
-				shapeColor = shapeData.getProperties().get("color").split("[,]");
-			}
-			Vec2f min = shapeData.getMin();
-			
-			switch (shapeData.getType()) {
-			case CIRCLE:
-				this.shape = new Circle(min, shapeData.getRadius(), c);
-				break;
-			case BOX:
-				this.shape = new AAB(min, min.plus(new Vec2f(shapeData.getWidth(), shapeData.getHeight())), c);
-				break;
-			case POLY:
-				this.shape = new Poly(c, shapeData.getVerts().toArray(new Vec2f[shapeData.getVerts().size()]));
-				break;
-			default:
-				break;
-			}
-			this.c = new Color(Integer.parseInt(shapeColor[0]), Integer.parseInt(shapeColor[1]),
-					Integer.parseInt(shapeColor[2]));
-			this.width = shapeData.getWidth();
-			this.height = shapeData.getHeight();
-			
-			// Will set static for anything that contains Static in name or has a property static: true
-			String stat = ed.getProperties().get("static");
-			this.isStatic = ((stat != null && stat.equals("true")) || ed.getEntityClass().contains("Static"));
-		}
-		this.restitution = Float.parseFloat(create("restitution", "0.5", ed));
-		this.friction = Float.parseFloat(create("friction", "0.5", ed));
-		this.mass = (float) (Float.parseFloat(create("density", "1", ed)) * (Math.sqrt(width * height)));
-		this.disappearing = Float.parseFloat(create("disappearing", "0", ed));
-		this.shotsNeeded = Integer.parseInt(create("shotsNeeded", "0", ed));
-		this.shootable = (getShotsNeeded() > 0);
-		this.world = world;
+	public void afterCollision(Entity other) {
+		
+	}
+	
+	/**
+	 * Applies f force to the entity
+	 * 
+	 * @param f
+	 *            the force to apply
+	 */
+	public void applyForce(Vec2f f) {
+		if (!isStatic) force = force.plus(f);
+	}
+	
+	/**
+	 * Applies p impulse to the entity
+	 * 
+	 * @param p
+	 *            the impulse to apply
+	 */
+	public void applyImpulse(Vec2f p) {
+		if (!isStatic) impulse = impulse.plus(p);
+	}
+	
+	/**
+	 * Returns if this is colliding with the given entity e
+	 * 
+	 * @param e
+	 *            an entity to collide with
+	 * @return if this is colliding with entity e
+	 */
+	public boolean collideWithEntity(Entity e) {
+		return ((e.shape != null && shape != null) ? shape.collides(e.shape) : false);
 	}
 	
 	/**
@@ -180,14 +170,31 @@ public abstract class Entity implements Serializable {
 	}
 	
 	/**
-	 * Gets an output from the map, given a name
+	 * Creates a string with a key, initial value, and shape data
 	 * 
-	 * @param s
-	 *            the string representing the output name
-	 * @return the output given by s
+	 * @param key
+	 *            the key to check for in the properties of e
+	 * @param defaultVal
+	 *            the value to set if nothing there
+	 * @param e
+	 *            the entityData to look at
+	 * @return the string value to return
 	 */
-	public Output getOutputByName(String s) {
-		return outputs.get(s);
+	public String create(String key, String defaultVal, ShapeData e) {
+		String toReturn = defaultVal;
+		if (e.getProperties().containsKey(key)) {
+			toReturn = e.getProperties().get(key);
+		}
+		return toReturn;
+	}
+	
+	/**
+	 * Set full HP value - default 100
+	 * 
+	 * @return a value for full hp
+	 */
+	protected float fullHP() {
+		return 100;
 	}
 	
 	/**
@@ -202,70 +209,23 @@ public abstract class Entity implements Serializable {
 	}
 	
 	/**
-	 * Set full HP value - default 100
+	 * Gets an output from the map, given a name
 	 * 
-	 * @return a value for full hp
+	 * @param s
+	 *            the string representing the output name
+	 * @return the output given by s
 	 */
-	protected float fullHP() {
-		return 100;
+	public Output getOutputByName(String s) {
+		return outputs.get(s);
 	}
 	
 	/**
-	 * Makes correct color based off HP
+	 * Public getter for shotsNeeded
 	 * 
-	 * @param g
+	 * @return how many shots needed until entity dies
 	 */
-	public void onDraw(Graphics2D g) {
-		if (hp > 0.99 * fullHP())
-			g.setColor(c);
-		else if (hp > 0.65 * fullHP())
-			g.setColor(Color.yellow);
-		else if (hp > 0.3 * fullHP())
-			g.setColor(Color.orange);
-		else if (hp < 0.31 * fullHP()) g.setColor(Color.red);
-		
-		if (shape != null) {
-			toScreen();
-			shape.drawAndFillShape(g);
-		}
-	}
-	
-	/**
-	 * Translates the game coordinates to onscreen ones
-	 */
-	public void toScreen() {
-		shape.toScreen(world.v);
-	}
-	
-	/**
-	 * Applies f force to the entity
-	 * 
-	 * @param f
-	 *            the force to apply
-	 */
-	public void applyForce(Vec2f f) {
-		if (!isStatic) this.force = this.force.plus(f);
-	}
-	
-	/**
-	 * Applies p impulse to the entity
-	 * 
-	 * @param p
-	 *            the impulse to apply
-	 */
-	public void applyImpulse(Vec2f p) {
-		if (!isStatic) this.impulse = this.impulse.plus(p);
-	}
-	
-	/**
-	 * Returns if this is colliding with the given entity e
-	 * 
-	 * @param e
-	 *            an entity to collide with
-	 * @return if this is colliding with entity e
-	 */
-	public boolean collideWithEntity(Entity e) {
-		return ((e.shape != null && this.shape != null) ? this.shape.collides(e.shape) : false);
+	public int getShotsNeeded() {
+		return shotsNeeded;
 	}
 	
 	/**
@@ -281,46 +241,12 @@ public abstract class Entity implements Serializable {
 	}
 	
 	/**
-	 * Applies gravity, updates velocity, then position, then resets force and impulse Also updates active sounds and
-	 * removes completed tracks
+	 * Returns if the entity is shootable
 	 * 
-	 * @param t
-	 *            Nanoseconds since last tick
+	 * @return if entity is shootable
 	 */
-	public void onTick(float t) {
-		contactDelay -= t;
-		applyForce(new Vec2f(0, world.gravity() * mass)); // apply gravity
-		if (mass != 0) {
-			velocity = getVelocity().plus(force.sdiv(mass).smult(t).plus(impulse.sdiv(mass))); // new velocity
-			if (shape != null) {
-				shape.move(velocity.smult(t)); // new position
-			}
-		}
-		
-		force = new Vec2f(0, 0);
-		impulse = new Vec2f(0, 0);
-		
-		// see if new sounds should be played
-		if (this.outputs.get("onTick").hasConnection()) {
-			this.outputs.get("onTick").run();
-		}
-		
-		if (!currentSounds.isEmpty() && world.getPlayer() != null) {
-			for (int i = currentSounds.size() - 1; i >= 0; i--) {
-				Sound s = currentSounds.get(i);
-				// calculate how far the source of the sound is from the player
-				Float dist = world.getPlayer().shape.getCenter().minus(shape.getCenter()).mag();
-				if (dist < 2500) {
-					s.pause(false);
-					if (!s.isPlaying()) {
-						s.play();
-					}
-					s.setVolume(1 - Math.sqrt(.00033*dist));
-				} else {
-					s.pause(true);
-				}
-			}
-		}
+	public boolean isShootable() {
+		return shootable;
 	}
 	
 	/**
@@ -335,8 +261,8 @@ public abstract class Entity implements Serializable {
 		Entity o1 = this;
 		Entity o2 = collisionInfo.other;
 		Vec2f mtv = collisionInfo.mtv;
-		this.lastMTV = mtv;
-		this.contactDelay = 0.2f;
+		lastMTV = mtv;
+		contactDelay = 0.2f;
 		
 		// Translation
 		if (!o1.isStatic) {
@@ -389,35 +315,136 @@ public abstract class Entity implements Serializable {
 	}
 	
 	/**
-	 * String representation for Entities, including shape, restitution, and mass
+	 * Makes correct color based off HP
+	 * 
+	 * @param g
 	 */
-	public String toString() {
-		return "Entity<sh:" + shape + " rst:" + restitution + " mass:" + mass + ">";
-	}
-	
-	/**
-	 * Does nothing except for in sensors that send out a signal
-	 */
-	public void afterCollision(Entity other) {
+	public void onDraw(Graphics2D g) {
+		if (hp > 0.99 * fullHP())
+			g.setColor(c);
+		else if (hp > 0.65 * fullHP())
+			g.setColor(Color.yellow);
+		else if (hp > 0.3 * fullHP())
+			g.setColor(Color.orange);
+		else if (hp < 0.31 * fullHP()) g.setColor(Color.red);
 		
+		if (shape != null) {
+			toScreen();
+			shape.drawAndFillShape(g);
+		}
 	}
 	
 	/**
-	 * Returns if the entity is shootable
+	 * Applies gravity, updates velocity, then position, then resets force and impulse Also updates active sounds and
+	 * removes completed tracks
 	 * 
-	 * @return if entity is shootable
+	 * @param t
+	 *            Nanoseconds since last tick
 	 */
-	public boolean isShootable() {
-		return shootable;
+	public void onTick(float t) {
+		contactDelay -= t;
+		applyForce(new Vec2f(0, world.gravity() * mass)); // apply gravity
+		if (mass != 0) {
+			velocity = getVelocity().plus(force.sdiv(mass).smult(t).plus(impulse.sdiv(mass))); // new velocity
+			if (shape != null) {
+				shape.move(velocity.smult(t)); // new position
+			}
+		}
+		
+		force = new Vec2f(0, 0);
+		impulse = new Vec2f(0, 0);
+		
+		// see if new sounds should be played
+		if (outputs.get("onTick").hasConnection()) {
+			outputs.get("onTick").run();
+		}
+		
+		if (!currentSounds.isEmpty() && world.getPlayer() != null) {
+			for (int i = currentSounds.size() - 1; i >= 0; i--) {
+				Sound s = currentSounds.get(i);
+				// calculate how far the source of the sound is from the player
+				Float dist = world.getPlayer().shape.getCenter().minus(shape.getCenter()).mag();
+				if (dist < 2500) {
+					s.pause(false);
+					if (!s.isPlaying()) {
+						s.play();
+					}
+					s.setVolume(1 - Math.sqrt(.00033 * dist));
+				} else {
+					s.pause(true);
+				}
+			}
+		}
 	}
 	
 	/**
-	 * Public getter for shotsNeeded
-	 * 
-	 * @return how many shots needed until entity dies
+	 * Reloads all sounds. Used when loading a save file.
 	 */
-	public int getShotsNeeded() {
-		return shotsNeeded;
+	public void reloadSounds() {
+		currentSounds = new ArrayList<Sound>();
+	}
+	
+	/**
+	 * Resets the X part of the current velocity
+	 */
+	public void resetX() {
+		velocity = new Vec2f(0, velocity.y);
+	}
+	
+	/**
+	 * Resets the Y part of the current velocity
+	 */
+	public void resetY() {
+		velocity = new Vec2f(velocity.x, 0);
+	}
+	
+	/**
+	 * Method to set all fields of the entity based on EntityData
+	 * 
+	 * @param ed
+	 *            the EntityData to parse and create a new entity out of
+	 * @param world
+	 *            the GameWorld in which this entity should be placed
+	 */
+	public void setProperties(EntityData ed, World world) {
+		if (!ed.getShapes().isEmpty()) {
+			ShapeData shapeData = ed.getShapes().get(0);
+			String[] shapeColor = new String[] { "0", "0", "0" };
+			String alpha = create("alpha", "255", shapeData);
+			if (shapeData.getProperties().get("color") != null) {
+				shapeColor = shapeData.getProperties().get("color").split("[,]");
+			}
+			Vec2f min = shapeData.getMin();
+			
+			switch (shapeData.getType()) {
+			case CIRCLE:
+				shape = new Circle(min, shapeData.getRadius(), c);
+				break;
+			case BOX:
+				shape = new AAB(min, min.plus(new Vec2f(shapeData.getWidth(), shapeData.getHeight())), c);
+				break;
+			case POLY:
+				shape = new Poly(c, shapeData.getVerts().toArray(new Vec2f[shapeData.getVerts().size()]));
+				break;
+			default:
+				break;
+			}
+			c = new Color(Integer.parseInt(shapeColor[0]), Integer.parseInt(shapeColor[1]),
+					Integer.parseInt(shapeColor[2]), Integer.parseInt(alpha));
+			width = shapeData.getWidth();
+			height = shapeData.getHeight();
+			
+			// Will set static for anything that contains Static in name or has a property static: true
+			String stat = ed.getProperties().get("static");
+			isStatic = ((stat != null && stat.equals("true")) || ed.getEntityClass().contains("Static"));
+		}
+		restitution = Float.parseFloat(create("restitution", "0.5", ed));
+		friction = Float.parseFloat(create("friction", "0.5", ed));
+		mass = (float) (Float.parseFloat(create("density", "1", ed)) * (Math.sqrt(width * height)));
+		disappearing = Float.parseFloat(create("disappearing", "0", ed));
+		shotsNeeded = Integer.parseInt(create("shotsNeeded", "0", ed));
+		shootable = (getShotsNeeded() > 0);
+		this.world = world;
 	}
 	
 	/**
@@ -431,32 +458,26 @@ public abstract class Entity implements Serializable {
 	}
 	
 	/**
-	 * Reloads all sounds. Used when loading a save file.
-	 */
-	public void reloadSounds() {
-		currentSounds = new ArrayList<Sound>();
-	}
-	
-	/**
 	 * Stops all sounds. Currently not working totally right.
 	 */
 	public void stopSound() {
-		for(Sound s : currentSounds) {
+		for (Sound s : currentSounds) {
 			s.close();
 		}
 	}
 	
 	/**
-	 * Resets the Y part of the current velocity
+	 * Translates the game coordinates to onscreen ones
 	 */
-	public void resetY() {
-		velocity = new Vec2f(velocity.x, 0);
+	public void toScreen() {
+		shape.toScreen(world.v);
 	}
 	
 	/**
-	 * Resets the X part of the current velocity
+	 * String representation for Entities, including shape, restitution, and mass
 	 */
-	public void resetX() {
-		velocity = new Vec2f(0, velocity.y);
+	@Override
+	public String toString() {
+		return "Entity<sh:" + shape + " rst:" + restitution + " mass:" + mass + ">";
 	}
 }

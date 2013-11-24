@@ -5,8 +5,7 @@ public class PassableEntity extends SensorEntity {
 	private static final long	serialVersionUID	= -7382617960447661170L;
 	
 	public PassableEntity() {
-		world.addPassableEntity(this);
-		world.removeEntity(this);
+		super();
 	}
 	
 }

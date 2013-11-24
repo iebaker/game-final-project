@@ -38,7 +38,7 @@ public abstract class World implements Serializable {
 	protected Vec2f							dim;
 	private final HashMap<String, Entity>	entityMap			= new HashMap<String, Entity>();
 	protected List<Entity>					entityStack;
-	private final List<PassableEntity>		passList			= new ArrayList<PassableEntity>();
+	protected List<PassableEntity>			passList			= new ArrayList<PassableEntity>();
 	private List<Entity>					removeList			= new ArrayList<Entity>();
 	protected Vec2f							sDim				= new Vec2f(0, 0);
 	protected TextBox						textBox;
@@ -71,8 +71,8 @@ public abstract class World implements Serializable {
 	 * 
 	 * @param passableEntity
 	 */
-	public void addPassableEntity(PassableEntity entity) {
-		passList.add(entity);
+	public void addPassableEntity(Entity entity) {
+		passList.add((PassableEntity) entity);
 	}
 	
 	/**
@@ -171,7 +171,10 @@ public abstract class World implements Serializable {
 				
 				// Put in the entity map for connections
 				entityMap.put(ed.getName(), e);
-				addEntity(e);
+				if (ed.getEntityClass().equals("PassableEntity"))
+					addPassableEntity(e);
+				else
+					addEntity(e);
 			}
 			
 			// Connections!!
@@ -223,6 +226,9 @@ public abstract class World implements Serializable {
 		for (Entity e : entityStack) {
 			e.onDraw(g);
 		}
+		for (Entity e : passList) {
+			e.onDraw(g);
+		}
 	}
 	
 	/**
@@ -241,6 +247,9 @@ public abstract class World implements Serializable {
 		removeList = new ArrayList<Entity>();
 		addList = new ArrayList<Entity>();
 		for (Entity e : entityStack) {
+			e.onTick(secs);
+		}
+		for (Entity e : passList) {
 			e.onTick(secs);
 		}
 	}

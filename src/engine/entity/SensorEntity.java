@@ -11,8 +11,8 @@ import engine.connections.Output;
 public class SensorEntity extends StaticEntity {
 	
 	private static final long	serialVersionUID	= -308280903550886181L;
-	private Output				onCollide;
-	private boolean activated = false;
+	private boolean				activated			= false;
+	private final Output		onCollide;
 	
 	/**
 	 * Empty constructor, making a new output from onCollide
@@ -28,7 +28,7 @@ public class SensorEntity extends StaticEntity {
 	 * Runs onCollide after a collision
 	 */
 	public void afterCollision(Entity other) {
-		if(!activated && !other.isStatic && !(other instanceof EnemyEntity)) {
+		if (!activated && !other.isStatic && !(other instanceof EnemyEntity)) {
 			activated = true;
 			onCollide.run();
 		}
