@@ -90,7 +90,6 @@ public class GameWorld extends World {
 	
 	public static final String								saveFile			= System.getProperty("user.home")
 																						+ "/save.gme";
-	
 	private static final long								serialVersionUID	= 6619354971290257104L;
 	private static final float								TICK_LENGTH			= 0.005f;
 	private final HashMap<String, Class<? extends Entity>>	classes;
@@ -108,6 +107,7 @@ public class GameWorld extends World {
 	private boolean											paused;
 	private Player											player;
 	private final String									soundFile			= "sounds.xml";
+	private boolean											transferredEntities	= false;
 	
 	private boolean											win;
 	
@@ -123,6 +123,7 @@ public class GameWorld extends World {
 		numLevels = 2;
 		textBox = tb;
 		tb.setWorld(this);
+		
 		// Classes map
 		classes = new HashMap<String, Class<? extends Entity>>();
 		classes.put("PlayerEntity", Player.class);
@@ -133,6 +134,7 @@ public class GameWorld extends World {
 		classes.put("Relay", RelayEntity.class);
 		classes.put("WinEntity", WinEntity.class);
 		classes.put("PassableEntity", PassableEntity.class);
+		classes.put("Water", WaterEntity.class);
 		
 		newGame();
 	}
@@ -163,9 +165,8 @@ public class GameWorld extends World {
 				
 			}
 			for (PassableEntity e : passList) {
-				if (a.collideWithEntity(e)) {
-					CollisionInfo col = new CollisionInfo(a, e);
-					if (col.mtv != null && !col.mtv.isZero()) e.onCollide(col);
+				if (e.collideWithEntity(a)) {
+					e.onCollide(new CollisionInfo(e, a));
 					a.afterCollision(e);
 					e.afterCollision(a);
 				}
@@ -407,7 +408,6 @@ public class GameWorld extends World {
 	 */
 	@Override
 	public void onTick(float secs) {
-		
 		// Calculates standard tick - how many + leftover time to counter for later
 		double timeSteps = (secs / GameWorld.TICK_LENGTH) + leftoverTime;
 		long steps = (long) timeSteps;
@@ -431,6 +431,10 @@ public class GameWorld extends World {
 				checkCollisions();
 				level.onTick(GameWorld.TICK_LENGTH);
 			}
+		}
+		if (!transferredEntities) {
+			transferredEntities = true;
+			moveEntitiesToPassable();
 		}
 	}
 	

@@ -171,10 +171,7 @@ public abstract class World implements Serializable {
 				
 				// Put in the entity map for connections
 				entityMap.put(ed.getName(), e);
-				if (ed.getEntityClass().equals("PassableEntity"))
-					addPassableEntity(e);
-				else
-					addEntity(e);
+				addEntity(e);
 			}
 			
 			// Connections!!
@@ -207,6 +204,18 @@ public abstract class World implements Serializable {
 		} catch (IllegalAccessException e1) {
 			System.out.println("Illegal access");
 			e1.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Takes all entities and checks if they're passable, moving them from entity stack to passable list if so
+	 */
+	protected void moveEntitiesToPassable() {
+		for (Entity e : entityStack) {
+			if (e instanceof PassableEntity) {
+				removeEntity(e);
+				addPassableEntity(e);
+			}
 		}
 	}
 	
