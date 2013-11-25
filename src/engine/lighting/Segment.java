@@ -37,6 +37,13 @@ public class Segment {
 	}
 
 	/**
+	 * Resetter method for the ending point of this segment.
+	 */
+	public void resetBeginPoint(Vec2f p) {
+		beginPoint = p;
+	}
+
+	/**
 	 * Accessor method for the beginning point of the segment
 	 *
 	 * @return 		The beginning point of the segment
@@ -53,5 +60,13 @@ public class Segment {
 	 */
 	public Vec2f getEndPoint() {
 		return endPoint;
+	}
+
+	@Override
+	/**
+	 * Returns a useful Stirng representation of this Segment object
+	 */
+	public String toString() {
+		return "[engine.lighting.Segment BEGIN=" + beginPoint + " END=" + endPoint + "]";
 	}
 }

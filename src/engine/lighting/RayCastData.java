@@ -14,6 +14,10 @@ public class RayCastData {
 	private Vec2f sourcePoint;
 	private List<Intersection> intersections = new ArrayList<Intersection>();
 
+	public RayCastData(Vec2f sourcePoint) {
+		this.sourcePoint = sourcePoint;
+	}
+
 	/** 
 	 * Returns a list of the points at which the ray intersected segments.  
 	 * Sorted in order of their distance to the source point.
@@ -36,6 +40,10 @@ public class RayCastData {
 			segments.add(i.getSegment());
 		}
 		return segments;
+	}
+
+	public List<Intersection> getIntersections() {
+		return intersections;
 	}
 
 
@@ -90,13 +98,16 @@ public class RayCastData {
 	 * the ray.
 	 */
 	public void addIntersection(Vec2f p, Segment s) {
-		
 		float distance = sourcePoint.dist(p);
 		Intersection newInt = new Intersection(p, s);
 		int i = 0;
 
-		while(!intersections.isEmpty()) {
-			Intersection temp = intersections.get(i);
+		if(intersections.isEmpty()) {
+			intersections.add(newInt);
+		}
+
+		while(!intersections.isEmpty() && i < intersections.size() - 1) {
+			Intersection temp = intersections.get(i++);
 
 			Vec2f otherPoint = temp.getPoint();
 			Segment otherSegment = temp.getSegment();
@@ -135,6 +146,25 @@ public class RayCastData {
 		float term1 = ((b1.y - b2.y)*(a1.x - b1.x) + (b2.x - b1.x)*(a1.y - b1.y));
 		float term2 = ((b1.y - b2.y)*(a2.x - b1.x) + (b2.x - b1.x)*(a2.y - b1.y));
 		return term1 * term2 < 0;
+	}
 
+	@Override
+	/**
+	 * Returns a useful String representation of this RayCastData object
+	 */ 
+	public String toString() {
+		String result =  "[engine.lighting.RayCastData ";
+		if(intersections.isEmpty()) {
+			result += "<NO INTERSECTIONS>]";
+			return result;
+		}
+
+		result += "INTERSECTIONS=";
+		for(Intersection i : intersections) {
+			result += i.toString() + " ";
+		}
+
+		result += "]";
+		return result;
 	}
 }

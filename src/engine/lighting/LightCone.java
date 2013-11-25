@@ -25,4 +25,12 @@ public class LightCone {
 	public List<Vec2f> getPoints() {
 		return my_points;
 	}
+
+	@Override
+	/**
+	 * Returns a useful String representation of this LightCone object
+	 */
+	public String toString() {
+		return "[engine.lighting.LightCone P1=" + my_points.get(0) + " P2=" + my_points.get(1) + " P3=" + my_points.get(2) + "]";
+	}
 }

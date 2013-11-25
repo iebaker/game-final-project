@@ -3,6 +3,9 @@ package engine.lighting;
 import cs195n.Vec2f;
 import java.awt.Color;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * LightSource is a class which represents a single light in the world.  A LightSource
  * owns its location, color, and brightness (between 0 and 1).  In addition, it owns
@@ -13,6 +16,7 @@ public class LightSource {
 	private Vec2f my_location;
 	private Color my_color = new Color(255, 255, 153); //FFFF99
 	private float my_brightness = 0.5f;
+	private List<LightCone> my_light_cones;
 
 	/**
 	 * Constructor.  Just sets the light's location -- color defaults to FFFF99 (light yellow)
@@ -76,5 +80,21 @@ public class LightSource {
 	 */
 	public Vec2f getLocation() {
 		return my_location;
+	}
+
+	/**
+	 * Setters for the light cones owned by this LightSource object
+	 *
+	 * @param cones 	The list of LightCone objects to be associated with this light
+	 */
+	public void setLightCones(List<LightCone> cones) {
+		my_light_cones = cones;
+	}
+
+	/**
+	 * Returns a useful string representation of this lightsource object
+	 */
+	public String toString() {
+		return "[engine.lighting.LightSource LOCATION=" + my_location + "]";
 	}
 }

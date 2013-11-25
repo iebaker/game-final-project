@@ -180,6 +180,14 @@ public class AAB extends Shape implements CollisionShape {
 	public Vec2f getCenter() {
 		return this.min.plus(this.max.minus(min).sdiv(2));
 	}
+
+	public Vec2f getMin() {
+		return min;
+	}
+
+	public Vec2f getMax() {
+		return max;
+	}
 	
 	/**
 	 * Returns a string representing this AAB

@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 import cs195n.Vec2f;
+import game.GameWorld;
 
 /**
  * Viewport class
@@ -72,6 +73,7 @@ public class Viewport {
 	 * @param g
 	 */
 	public void onDraw(World game, Graphics2D g) {
+		GameWorld gameworld = (GameWorld) game;
 		double l = (a.getCurrentScreenSize().x + a.getCurrentScreenSize().y);
 		double l2 = (game.dim.x + game.dim.y);
 		this.scale = (float) (zoom * (l / l2));
@@ -85,7 +87,8 @@ public class Viewport {
 		// Set clip, draw, and unclip
 		Rectangle b = g.getClipBounds();
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
-		game.onDraw(g);
+		gameworld.getLightingEngineForTesting().run(gameworld);
+		//game.onDraw(g);
 		g.clip(b);
 		
 		// Draw a box to show the viewport

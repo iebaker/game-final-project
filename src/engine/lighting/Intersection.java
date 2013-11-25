@@ -39,4 +39,12 @@ public class Intersection {
 	public Segment getSegment() {
 		return segment;
 	}
+
+	@Override
+	/**
+	 * Returns a "useful" String representation of this Intersection object
+	 */
+	public String toString() {
+		return "[engine.lighting.Intersection POINT=" + point + " SEGMENT=" + segment + "]";
+	}
 }

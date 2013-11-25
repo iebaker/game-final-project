@@ -35,4 +35,12 @@ public class Vec2fPair {
 	public Vec2f getP2() {
 		return point2;
 	}
+
+	@Override
+	/**
+	 * Returns a useful String representation of this Vec2fPair object
+	 */	
+	public String toString() {
+		return "[engine.segment.Vec2fPair POINT=" + point1 + " POINT=" + point2 + "]";
+	}
 }

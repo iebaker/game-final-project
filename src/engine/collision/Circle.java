@@ -177,6 +177,10 @@ public class Circle extends Shape implements CollisionShape {
 	public Vec2f getCenter() {
 		return this.center;
 	}
+
+	public float getRadius() {
+		return radius;
+	}
 	
 	/**
 	 * String representation of a circle
