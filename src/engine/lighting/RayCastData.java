@@ -111,6 +111,7 @@ public class RayCastData {
 	 * the ray.
 	 */
 	public void addIntersection(Vec2f p, Segment s) {
+		System.out.println("[RCD.addIntersection] p is " + p + " and s is " + s);
 		System.out.println("[RCD.addIntersection] Starting size of intersections: " + intersections.size());
 		float distance = sourcePoint.dist(p);
 		Intersection newInt = new Intersection(p, s);
