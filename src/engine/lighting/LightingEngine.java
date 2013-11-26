@@ -183,12 +183,34 @@ public class LightingEngine {
 	 * @return True, if the points define intersecting segments, false otherwise
 	 */
 	private static Vec2f intersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
-		float mA = (A2.y - A1.y) / (A2.x - A1.x);
-		float mB = (B2.y - B1.y) / (B2.x - B1.x);
-		
-		float intX = ((mA * A1.x) - A1.y - (mB * B1.x) + B1.y) / (mA - mB);
-		float intY = (mA * (intX - A1.x)) + A1.y;
-		
+
+		float intX;
+		float intY;
+
+		//Check for Verticality! 
+		boolean aIsVert = A2.x - A1.x == 0;
+		boolean bIsVert = B2.x - B1.x == 0;
+
+		if(aIsVert && bIsVert) {
+			return null;
+		}
+
+		if(aIsVert) {
+			intX = A1.x;
+			float mB = (B2.y - B1.y) / (B2.x - B1.x);
+			intY = mB * A1.x - mB * B1.x + B1.y;
+		} else if(bIsVert) {
+			intX = B1.x;
+			float mA = (A2.y - A1.y) / (A2.x - B2.x);
+			intY = mA * B1.x - mA * A1.x + A1.y;
+		} else {
+			float mA = (A2.y - A1.y) / (A2.x - A1.x);
+			float mB = (B2.y - B1.y) / (B2.x - B1.x);
+			
+			intX = ((mA * A1.x) - A1.y - (mB * B1.x) + B1.y) / (mA - mB);
+			intY = (mA * (intX - A1.x)) + A1.y;
+		}
+			
 		if (within(intX, A1.x, A2.x) && within(intX, B1.x, B2.x) && within(intY, A1.y, A2.y)
 				&& within(intY, B1.y, B2.y)) {
 			Vec2f vec = null;
@@ -425,7 +447,7 @@ public class LightingEngine {
 
 			RayCastData rcd = this.doRayCast(sp, p);
 			Vec2f rcdmin = null;
-			if(rcd.getIntersections().size() > 0) rcdmin = rcd.minPoint();
+			if(rcd.getIntersections().size() > 0) rcdmin = rcd.findMinPoint();
 			if(rcdmin != null) {
 				a.line(g, sp.x, sp.y, rcdmin.x, rcdmin.y);
 			} else {
@@ -434,8 +456,8 @@ public class LightingEngine {
 			}
 		}
 
-		Vec2f tester = this.intersect(new Vec2f(0,0), new Vec2f(0,1), new Vec2f(-1,0.5f), new Vec2f(1,0.5f));
-		//System.out.println(tester);
+		Vec2f tester = this.intersect(new Vec2f(-0.5f,0), new Vec2f(0.5f,1), new Vec2f(0,0.5f), new Vec2f(1,0.5f));
+		System.out.println(tester);
 	}
 
 	public void walls(float width, float height, Vec2f sourcePoint) {
