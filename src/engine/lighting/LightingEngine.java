@@ -227,7 +227,7 @@ public class LightingEngine {
 			rcd = doRayCast(lightLocation, point);
 			Segment closest = rcd.minSegment();
 			
-			if (point == prevSegment.getEndPoint()) {
+			if (point.equals(prevSegment.getEndPoint())) {
 				LightCone lc = new LightCone(lightLocation, point, prevSegment.getBeginPoint());
 				cones.add(lc);
 				
@@ -249,7 +249,8 @@ public class LightingEngine {
 				LightCone lc;
 				
 				if (intersection != null) {
-					lc = new LightCone(lightLocation, intersection, prevSegment.getBeginPoint());
+					boolean check = this.fucked(lightLocation, prevSegment.getBeginPoint(), prevSegment.getEndPoint());
+					lc = new LightCone(lightLocation, intersection, (check ? prevSegment.getEndPoint() : prevSegment.getBeginPoint()));
 					closest.resetBeginPoint(intersection);
 				} else {
 					rcd.removePoint(point);
@@ -265,6 +266,16 @@ public class LightingEngine {
 		}
 		
 		return cones;
+	}
+
+	/**
+	 * Returns true if the segment A->B is in the wrong orientation with respect to the location 
+	 */
+	private boolean fucked(Vec2f location, Vec2f A, Vec2f B) {
+		boolean oneOnRight = A.x > location.x || B.x > location.x;
+		boolean opposite1 = A.y > location.y && B.y < location.y;
+		boolean opposite2 = A.y < location.y && B.y > location.y;
+		return oneOnRight && (opposite1 || opposite2);
 	}
 	
 	/**
@@ -476,11 +487,19 @@ public class LightingEngine {
 	public void test7(LightWorld world, Graphics2D g) {
 		List<LightCone> cones = this.run(world);
 		Artist a = new Artist();
-		a.setFillPaint(new Color(1f, 1f, 0f, 0.5f));
-		for(LightCone cone : cones) {
+
+		a.setStroke(false);
+		a.setFillPaint(new Color(1f, 1f, 0f, 0.3f));
+		for(int i = 0; i < 1; ++i) {
+			LightCone cone = cones.get(i);
 			List<Vec2f> convPoints = convertPoints(cone.getPoints());
 			a.path(g, convPoints);
 		}
+
+		// for(LightCone cone : cones) {
+		// 	List<Vec2f> convPoints = convertPoints(cone.getPoints());
+		// 	a.path(g, convPoints);
+		// }
 	}
 
 	public List<Vec2f> convertPoints(List<Vec2f> originalPoints) {
@@ -514,6 +533,12 @@ public class LightingEngine {
 				segment.setEndPoint(a);
 			}
 			
+			Vec2f lightLocation = ac.sourcePoint;
+			if(a.x > lightLocation.x && b.x > lightLocation.x && 
+				((a.y > lightLocation.y && b.y < lightLocation.y) || (a.y < lightLocation.y && b.y > lightLocation.y))) {
+				segment.reverse();
+			}
+
 			segments.add(segment);
 		}
 		

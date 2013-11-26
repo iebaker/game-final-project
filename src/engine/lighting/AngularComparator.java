@@ -9,7 +9,7 @@ import java.util.Comparator;
  */
 public class AngularComparator implements Comparator<Vec2f> {
 	
-	private Vec2f sourcePoint;
+	public Vec2f sourcePoint;
 
 	/**
 	 * Constructor.  Take a Vec2f because it needs a source point

@@ -78,6 +78,12 @@ public class Segment {
 		return endPoint;
 	}
 
+	public void reverse() {
+		Vec2f temp = this.beginPoint;
+		this.beginPoint = this.endPoint;
+		this.endPoint = temp;
+	}
+
 	@Override
 	/**
 	 * Returns a useful Stirng representation of this Segment object

@@ -44,10 +44,10 @@ public class RayCastData {
 				
 			} else if (tempDistance == distance) {
 				
-				if (otherPoint == otherSegment.getEndPoint()) {
+				if (otherPoint.equals(otherSegment.getEndPoint())) {
 					intersections.add(i, newInt);
 					break;
-				} else if (p == s.getEndPoint()) {
+				} else if (p.equals(s.getEndPoint())) {
 					intersections.add(i + 1, newInt);
 					break;
 				} else {
