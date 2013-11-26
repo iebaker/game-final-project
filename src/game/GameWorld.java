@@ -553,6 +553,7 @@ public class GameWorld extends World implements LightWorld {
 		List<Vec2fPair> pointPairs = new ArrayList<Vec2fPair>();
 
 		for(Entity e : this.getEntities()) {
+			if(e instanceof Player) continue;
 			CollisionShape shape = e.shape;
 
 			if(shape instanceof AAB) {

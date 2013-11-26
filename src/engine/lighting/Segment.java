@@ -52,6 +52,22 @@ public class Segment {
 		return beginPoint;
 	}
 
+	public Vec2f getEndPointForRayCast() {
+		Vec2f toEndPoint = endPoint.minus(beginPoint);
+		if(toEndPoint.isZero()) return endPoint;
+
+		toEndPoint = toEndPoint.normalized().smult(10);
+		return endPoint.plus(toEndPoint);
+	}
+
+	public Vec2f getBeginPointForRayCast() {
+		Vec2f toBeginPoint = beginPoint.minus(endPoint);
+		if(toBeginPoint.isZero()) return beginPoint;
+
+		toBeginPoint = toBeginPoint.normalized().smult(10);
+		return beginPoint.plus(toBeginPoint);
+	}
+
 
 	/**
 	 * Accessor method for the ending point of the segment.

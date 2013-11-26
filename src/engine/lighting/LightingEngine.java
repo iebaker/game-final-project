@@ -157,7 +157,7 @@ public class LightingEngine {
 			}
 		}
 		if(rcd_return.getIntersections().size() == 0) {
-			System.out.println(targetPoint);
+			//System.out.println(targetPoint);
 		}
 		return rcd_return;
 	}
@@ -384,8 +384,58 @@ public class LightingEngine {
  * DEBUGGING RAYCASTING
  * ========================================================================= */
 
-	public void test6() {
+	public void test6(LightWorld world, Graphics2D g) {
+		List<Vec2f> points = new ArrayList<Vec2f>();
+		LightSource source = world.getLightSources().get(0);
+		List<Vec2fPair> pairs = world.getPointsAndPairs(source.getLocation(), points);
 
+		Collections.sort(points, new AngularComparator(source.getLocation()));
+		Vec2f worldSize = world.getWorldSize();
+
+		Artist a = new Artist();
+		a.setFillPaint(Color.WHITE);
+		a.rect(g, 0, 0, worldSize.x, worldSize.y);
+
+		a.setFillPaint(Color.BLACK);
+
+		List<Segment> segs = v2f2Segment(pairs, new AngularComparator(source.getLocation()));
+
+		for(Segment s : segs) {
+			Vec2f firstPoint = s.getBeginPoint();
+			Vec2f secndPoint = s.getEndPoint();
+			Vec2f midPoint = this.midpoint(firstPoint, secndPoint);
+
+			g.setStroke(new java.awt.BasicStroke(2));
+			g.setColor(Color.RED);
+			g.drawLine((int)firstPoint.x, (int)firstPoint.y, (int)midPoint.x, (int)midPoint.y);
+			g.setColor(Color.BLUE);
+			g.drawLine((int)midPoint.x, (int)midPoint.y, (int)secndPoint.x, (int)secndPoint.y);
+		}		
+
+		g.setStroke(new java.awt.BasicStroke(1));
+		a.setFillPaint(Color.GRAY);
+
+		this.points = points;
+		this.lineSegments = segs;
+		Vec2f sp = approxPointConvert(source.getLocation());
+
+		for(Vec2f p : points) {
+			p = approxPointConvert(p);
+			a.ellipse(g, p.x, p.y, 3, 3);
+
+			RayCastData rcd = this.doRayCast(sp, p);
+			Vec2f rcdmin = null;
+			if(rcd.getIntersections().size() > 0) rcdmin = rcd.minPoint();
+			if(rcdmin != null) {
+				a.line(g, sp.x, sp.y, rcdmin.x, rcdmin.y);
+			} else {
+				g.setColor(Color.GREEN);
+				a.line(g, sp.x, sp.y, p.x, p.y);
+			}
+		}
+
+		Vec2f tester = this.intersect(new Vec2f(0,0), new Vec2f(0,1), new Vec2f(-1,0.5f), new Vec2f(1,0.5f));
+		//System.out.println(tester);
 	}
 
 	public void walls(float width, float height, Vec2f sourcePoint) {

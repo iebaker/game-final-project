@@ -87,7 +87,7 @@ public class Viewport {
 		// Set clip, draw, and unclip
 		Rectangle b = g.getClipBounds();
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
-		gameworld.getLightingEngineForTesting().run(gameworld);
+		gameworld.getLightingEngineForTesting().test6(gameworld, g);
 		//game.onDraw(g);
 		g.clip(b);
 		

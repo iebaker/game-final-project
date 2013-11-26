@@ -54,6 +54,19 @@ public class RayCastData {
 		return intersections.get(0).getPoint();
 	}
 
+	public Vec2f findMinPoint() {
+		float min_dist = Float.POSITIVE_INFINITY;
+		Vec2f minPoint = null;
+		for(Intersection i : intersections) {
+			float dist = sourcePoint.dist(i.getPoint());
+			if(dist < min_dist) {
+				min_dist = dist;
+				minPoint = i.getPoint();
+			}
+		}
+		return minPoint;
+	}
+
 	/**
 	 * Returns the closest segment to the source.
 	 */
