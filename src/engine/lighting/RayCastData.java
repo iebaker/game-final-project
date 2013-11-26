@@ -124,28 +124,22 @@ public class RayCastData {
 		}
 
 		while(i < intersections.size()) {
-			Intersection temp = intersections.get(i++);
+			Intersection temp = intersections.get(i);
 			Vec2f otherPoint = temp.getPoint();
 			Segment otherSegment = temp.getSegment();
 
 			float tempDistance = sourcePoint.dist(otherPoint);
 
 			if(tempDistance < distance) {
-				continue;
+				i++; continue;
 			} else if(tempDistance == distance) {
 
 				if(otherPoint == otherSegment.getEndPoint()) {
 					intersections.add(i, newInt); break;
 				} else if(p == s.getEndPoint()) {
-					if(i == intersections.size()) {
-						intersections.add(newInt); break;
-					}
 					intersections.add(i + 1, newInt); break;
 				} else {
 					if(opposing(sourcePoint, s.getEndPoint(), otherSegment.getBeginPoint(), otherSegment.getEndPoint())) {
-						if(i == intersections.size()) {
-							intersections.add(newInt); break;
-						}
 						intersections.add(i + 1, newInt); break;
 					} else {
 						intersections.add(i, newInt); break;

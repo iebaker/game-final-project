@@ -325,6 +325,8 @@ public class GameWorld extends World implements LightWorld {
 		
 		textBox.setVisible(false);
 		cutsceneActive = false;
+
+
 	}
 	
 	@Override
@@ -428,7 +430,7 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	@Override
 	public void onTick(float secs) {
-
+		if(player != null) unlockJump();
 		// Calculates standard tick - how many + leftover time to counter for later
 		double timeSteps = (secs / GameWorld.TICK_LENGTH) + leftoverTime;
 		long steps = (long) timeSteps;

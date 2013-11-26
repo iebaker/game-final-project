@@ -42,8 +42,8 @@ public class LightingEngine {
 		float intY;
 
 		// Check for Verticality!
-		boolean aIsVert = A2.x - A1.x == 0;
-		boolean bIsVert = B2.x - B1.x == 0;
+		boolean aIsVert = (A2.x - A1.x == 0);
+		boolean bIsVert = (B2.x - B1.x == 0);
 
 		if (aIsVert && bIsVert) {
 			return null;
@@ -220,7 +220,7 @@ public class LightingEngine {
 	private List<LightCone> sweep(Vec2f lightLocation) {
 
 		// Set up preliminary values
-		RayCastData rcd = doRayCast(approxPointConvert(lightLocation), approxPointConvert(points.get(0)));
+		RayCastData rcd = doRayCast(lightLocation, points.get(0));
 		Segment prevSegment = rcd.minSegment();
 		List<LightCone> cones = new ArrayList<LightCone>();
 		points.add(points.get(0));
@@ -233,7 +233,7 @@ public class LightingEngine {
 			}
 
 			Vec2f point = points.get(i);
-			rcd = doRayCast(approxPointConvert(lightLocation), approxPointConvert(point));
+			rcd = doRayCast(lightLocation, point);
 			Segment closest = rcd.minSegment();
 
 			if (point == prevSegment.getEndPoint()) {
@@ -249,7 +249,6 @@ public class LightingEngine {
 					i += 2;
 				}
 
-				System.out.println("!!!");
 				closest = rcd.minSegment();
 				prevSegment = closest;
 
@@ -473,7 +472,7 @@ public class LightingEngine {
 				System.out.println("!!!");
 			}
 			if (rcdmin != null) {
-				//a.line(g, sp.x, sp.y, rcdmin.x, rcdmin.y);
+				a.line(g, sp.x, sp.y, rcdmin.x, rcdmin.y);
 			} else {
 				g.setColor(Color.GREEN);
 				a.line(g, sp.x, sp.y, p.x, p.y);
@@ -484,17 +483,15 @@ public class LightingEngine {
 			a.text(g, i + "", approxPointConvert(points.get(i)).x, approxPointConvert(points.get(i)).y);
 		}
 
-		// for(Vec2f p : points) {
-		// 	RayCastData rcd = doRayCast(approxPointConvert(source.getLocation()), approxPointConvert(p));
-		// 	Vec2f rcdmin = null;
-		// 	if (rcd.getIntersections().size() > 0) {
-		// 		rcdmin = rcd.findMinPoint();
-		// 	} else {
-		// 		System.out.println("!!!!!!");
-		// 	}
-		// }
+		Vec2f intersect = this.intersect(new Vec2f(-1, 0.5f), new Vec2f(1, 1.5f), new Vec2f(-1,0), new Vec2f(1,1));
+		System.out.println("BAM! " + intersect);
 
-		List<LightCone> cones = this.sweep(source.getLocation());
+
+		// a.setFillPaint(Color.YELLOW);
+		// List<LightCone> cones = this.sweep(source.getLocation());
+		// for(LightCone cone : cones) {
+		// 	a.path(g, cone.getPoints());
+		// }
 
 		//System.exit(0);
 
