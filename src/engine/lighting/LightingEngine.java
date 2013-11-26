@@ -159,7 +159,7 @@ public class LightingEngine {
 	 * @param world
 	 *            The LightWorld object over which to perform lighting calculations
 	 */
-	public void run(LightWorld world) {
+	public List<LightCone> run(LightWorld world) {
 		Vec2f lightLocation = null;
 		for (LightSource light : world.getLightSources()) {
 			
@@ -202,7 +202,7 @@ public class LightingEngine {
 			}
 		}
 		
-		sweep(lightLocation);
+		return this.sweep(lightLocation);
 	}
 	
 	/**
@@ -474,7 +474,21 @@ public class LightingEngine {
 	}
 
 	public void test7(LightWorld world, Graphics2D g) {
-		this.run(world);
+		List<LightCone> cones = this.run(world);
+		Artist a = new Artist();
+		a.setFillPaint(new Color(1f, 1f, 0f, 0.5f));
+		for(LightCone cone : cones) {
+			List<Vec2f> convPoints = convertPoints(cone.getPoints());
+			a.path(g, convPoints);
+		}
+	}
+
+	public List<Vec2f> convertPoints(List<Vec2f> originalPoints) {
+		List<Vec2f> ret_val = new ArrayList<Vec2f>();
+		for(Vec2f point : originalPoints) {
+			ret_val.add(Viewport.gamePtToScreen(point));
+		}
+		return ret_val;
 	}
 	
 	/*

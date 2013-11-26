@@ -199,8 +199,8 @@ public class Viewport {
 		Viewport.scale = 1f;
 		float zmScale = 0.0005f * (game.getDim().mag()); // Makes same scale no matter size of game
 		Viewport.zoom = zmScale;
-		Viewport.minZoom = 0.8f * zmScale;
-		Viewport.maxZoom = 2 * zmScale;
+		Viewport.minZoom = 0.2f * zmScale;
+		Viewport.maxZoom = 5 * zmScale;
 		
 		viewHasChanged(false);
 	}
