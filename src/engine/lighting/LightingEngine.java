@@ -229,7 +229,25 @@ return new ArrayList<LightCone>();
 			rcd = doRayCast(lightLocation, point);
 			Segment closest = rcd.minSegment();
 			
-			if (point.equals(prevSegment.getEndPoint())) {
+
+			if(closest != prevSegment) {
+				Vec2f intersection = LightingEngine.intersect(closest.getBeginPoint(), closest.getEndPoint(),
+						prevSegment.getBeginPoint(), prevSegment.getEndPoint());
+				LightCone lc;
+				
+				if (intersection != null) {
+					boolean check = this.fucked(lightLocation, prevSegment.getBeginPoint(), prevSegment.getEndPoint());
+					lc = new LightCone(lightLocation, intersection, (check ? prevSegment.getEndPoint() : prevSegment.getBeginPoint()));
+					closest.resetBeginPoint(intersection);
+				} else {
+					rcd.removePoint(point);
+					lc = new LightCone(lightLocation, rcd.minPoint(), points.get(i - 1));
+				}
+				
+				cones.add(lc);
+				++i;
+				prevSegment = closest;
+			} else if(point.equals(prevSegment.getEndPoint())) {
 				LightCone lc = new LightCone(lightLocation, point, prevSegment.getBeginPoint());
 				cones.add(lc);
 				
@@ -242,25 +260,6 @@ return new ArrayList<LightCone>();
 				}
 				
 				closest = rcd.minSegment();
-				prevSegment = closest;
-				
-			} else if (closest != prevSegment) {
-				
-				Vec2f intersection = LightingEngine.intersect(closest.getBeginPoint(), closest.getEndPoint(),
-						prevSegment.getBeginPoint(), prevSegment.getEndPoint());
-				LightCone lc;
-				
-				if (intersection != null) {
-					boolean check = this.fucked(lightLocation, prevSegment.getBeginPoint(), prevSegment.getEndPoint());
-					lc = new LightCone(lightLocation, intersection, (check ? prevSegment.getEndPoint() : prevSegment.getBeginPoint()));
-					closest.resetBeginPoint(intersection);
-				} else {
-					rcd.removePoint(point);
-					lc = new LightCone(lightLocation, rcd.minPoint(), prevSegment.getBeginPoint());
-				}
-				
-				cones.add(lc);
-				++i;
 				prevSegment = closest;
 			} else {
 				++i;
@@ -493,7 +492,7 @@ return new ArrayList<LightCone>();
 		a.setStroke(false);
 		a.setFillPaint(new Color(1f, 1f, 0f, 0.5f));
 		if(cones.isEmpty()) return;
-		for(int i = 0; i < 3; ++i) {
+		for(int i = 0; i < cones.size(); ++i) {
 			LightCone cone = cones.get(i);
 			List<Vec2f> convPoints = convertPoints(cone.getPoints());
 			a.path(g, convPoints);

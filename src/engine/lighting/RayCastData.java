@@ -122,12 +122,14 @@ public class RayCastData {
 	 *            The point to remove
 	 */
 	public void removePoint(Vec2f p) {
+		//System.out.println("[rcd.removePoint] Intersection size before " + intersections.size());
 		for (int i = 0; i < intersections.size(); ++i) {
 			Intersection temp = intersections.get(i);
-			if (temp.getPoint() == p) {
-				intersections.remove(temp);
+			if (temp.getPoint().equals(p)) {
+				intersections.remove(i);
 			}
 		}
+		//System.out.println("[rcd.removePoint] Intersection size after " + intersections.size());
 	}
 	
 	/**
@@ -137,12 +139,14 @@ public class RayCastData {
 	 *            The segment to remove
 	 */
 	public void removeSegment(Segment s) {
+		//System.out.println("[rcd.removeSegment] Intersection size before " + intersections.size());
 		for (int i = 0; i < intersections.size(); ++i) {
 			Intersection temp = intersections.get(i);
 			if (temp.getSegment() == s) {
-				intersections.remove(temp);
+				intersections.remove(i);
 			}
 		}
+		//System.out.println("[rcd.removeSegment] Intersection size after " + intersections.size());
 	}
 	
 	@Override
