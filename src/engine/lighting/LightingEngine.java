@@ -34,6 +34,10 @@ public class LightingEngine {
 	 */
 	private static Vec2f intersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
 
+		System.out.println("\nAttempting intersection.");
+		System.out.println("Line A1:" + A1 + " A2:" + A2);
+		System.out.println("Line B1:" + B1 + " B2:" + B2);
+
 		float intX;
 		float intY;
 
@@ -65,8 +69,10 @@ public class LightingEngine {
 				&& within(intY, A1.y, A2.y) && within(intY, B1.y, B2.y)) {
 			Vec2f vec = null;
 			vec = new Vec2f(intX, intY);
+			System.out.println("Intersection found at " + vec);
 			return vec;
 		}
+		System.out.println("No intersection.");
 		return null;
 	}
 
@@ -129,8 +135,8 @@ public class LightingEngine {
 
 		for (Segment segment : lineSegments) {
 			Vec2f newIntersection = intersect(sourcePoint,
-					sourcePoint.plus(direction), segment.getBeginPoint(),
-					segment.getEndPoint());
+					sourcePoint.plus(direction), segment.getBeginPointForRayCast(),
+					segment.getEndPointForRayCast());
 			if (newIntersection != null) {
 				rcd_return.addIntersection(newIntersection, segment);
 			}
@@ -415,6 +421,7 @@ public class LightingEngine {
 
 	public void test6(LightWorld world, Graphics2D g) {
 		List<Vec2f> points = new ArrayList<Vec2f>();
+		if(world.getLightSources().size() == 0) return;
 		LightSource source = world.getLightSources().get(0);
 		List<Vec2fPair> pairs = world.getPointsAndPairs(source.getLocation(),
 				points);
@@ -459,6 +466,7 @@ public class LightingEngine {
 			RayCastData rcd = doRayCast(sp, p);
 			Vec2f rcdmin = null;
 			if (rcd.getIntersections().size() > 0) {
+				System.out.println("RCD INTERSECTION # " + rcd.getIntersections().size());
 				rcdmin = rcd.findMinPoint();
 			}
 			if (rcdmin != null) {
@@ -469,9 +477,11 @@ public class LightingEngine {
 			}
 		}
 
-		Vec2f tester = intersect(new Vec2f(-0.5f, 0), new Vec2f(0.5f, 1),
-				new Vec2f(0, 0.5f), new Vec2f(1, 0.5f));
-		System.out.println(tester);
+		for (int i = 0; i < points.size(); ++i) {
+			a.text(g, i + "", approxPointConvert(points.get(i)).x, approxPointConvert(points.get(i)).y);
+		}
+
+		System.exit(0);
 	}
 
 	/*

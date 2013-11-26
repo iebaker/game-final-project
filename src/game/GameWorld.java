@@ -316,7 +316,7 @@ public class GameWorld extends World implements LightWorld {
 		win = false;
 		lose = false;
 		lineCt = 0;
-		gravity = 300;
+		gravity = 0;//300;
 		entityStack = new ArrayList<Entity>();
 		
 		// Actually load the level
@@ -534,6 +534,8 @@ public class GameWorld extends World implements LightWorld {
 		if(player != null) {
 			lightSource = new LightSource(player.shape.getLocation());
 			ret.add(lightSource);
+		} else {
+			System.out.println("player was null");
 		}
 		return ret;
 	}
