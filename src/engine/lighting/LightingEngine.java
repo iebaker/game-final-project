@@ -45,6 +45,15 @@ public class LightingEngine {
 		boolean aIsVert = (A2.x - A1.x == 0);
 		boolean bIsVert = (B2.x - B1.x == 0);
 
+		if(A2.y - A1.y == 0) {
+			A1 = new Vec2f(A1.x, A1.y + 0.1f);
+		}
+
+		if(B2.y - B1.y == 0) {
+			B1 = new Vec2f(B1.x, B1.y + 0.1f);
+		}
+
+
 		if (aIsVert && bIsVert) {
 			return null;
 		}
@@ -69,10 +78,8 @@ public class LightingEngine {
 				&& within(intY, A1.y, A2.y) && within(intY, B1.y, B2.y)) {
 			Vec2f vec = null;
 			vec = new Vec2f(intX, intY);
-			//System.out.println("Intersection found at " + vec);
 			return vec;
 		}
-		//System.out.println("No intersection.");
 		return null;
 	}
 
@@ -461,6 +468,7 @@ public class LightingEngine {
 		Vec2f sp = approxPointConvert(source.getLocation());
 
 		for (Vec2f p : points) {
+
 			p = approxPointConvert(p);
 			a.ellipse(g, p.x, p.y, 3, 3);
 
@@ -468,23 +476,20 @@ public class LightingEngine {
 			Vec2f rcdmin = null;
 			if (rcd.getIntersections().size() > 0) {
 				rcdmin = rcd.findMinPoint();
-			} else {
-				System.out.println("!!!");
-			}
+			} 
 			if (rcdmin != null) {
 				a.line(g, sp.x, sp.y, rcdmin.x, rcdmin.y);
 			} else {
 				g.setColor(Color.GREEN);
 				a.line(g, sp.x, sp.y, p.x, p.y);
 			}
+
 		}
 
 		for (int i = 0; i < points.size(); ++i) {
 			a.text(g, i + "", approxPointConvert(points.get(i)).x, approxPointConvert(points.get(i)).y);
 		}
 
-		Vec2f intersect = this.intersect(new Vec2f(-1, 0.5f), new Vec2f(1, 1.5f), new Vec2f(-1,0), new Vec2f(1,1));
-		System.out.println("BAM! " + intersect);
 
 
 		// a.setFillPaint(Color.YELLOW);
