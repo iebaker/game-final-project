@@ -9,13 +9,15 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
-
 
 import cs195n.Vec2f;
 import engine.Saver;
 import engine.World;
+import engine.collision.AAB;
+import engine.collision.Circle;
 import engine.collision.CollisionInfo;
+import engine.collision.CollisionShape;
+import engine.collision.Poly;
 import engine.collision.Ray;
 import engine.entity.EnemyEntity;
 import engine.entity.Entity;
@@ -23,16 +25,11 @@ import engine.entity.PassableEntity;
 import engine.entity.RelayEntity;
 import engine.entity.SensorEntity;
 import engine.entity.StaticEntity;
-import engine.ui.TextBox;
 import engine.lighting.LightSource;
 import engine.lighting.LightWorld;
 import engine.lighting.LightingEngine;
 import engine.lighting.Vec2fPair;
-
-import engine.collision.AAB;
-import engine.collision.CollisionShape;
-import engine.collision.Circle;
-import engine.collision.Poly;
+import engine.ui.TextBox;
 
 /**
  * GameWorld for M
@@ -120,8 +117,8 @@ public class GameWorld extends World implements LightWorld {
 	private Player											player;
 	private final String									soundFile			= "sounds.xml";
 	private boolean											transferredEntities	= false;
-	private LightSource 									lightSource;
-	private LightingEngine 									lightEngine = new LightingEngine();
+	private LightSource										lightSource;
+	private final LightingEngine							lightEngine			= new LightingEngine();
 	private boolean											win;
 	
 	/**
@@ -271,14 +268,132 @@ public class GameWorld extends World implements LightWorld {
 			return player.hp;
 	}
 	
+	/**
+	 * Retrieves the world's lighting engine FOR TESTING
+	 */
+	public LightingEngine getLightingEngineForTesting() {
+		return lightEngine;
+	}
+	
+	@Override
+	/**
+	 * Returns a list of all light sources in the world.  For testing purposes, this
+	 * just moves the single lightsource to the Player's location (actually, reassigns
+	 * the variable lightsource to a new lightsource at that location) and returns
+	 * a list containing just that
+	 *
+	 * @return 		A list of all light sources in the world
+	 */
+	public List<LightSource> getLightSources() {
+		List<LightSource> ret = new ArrayList<LightSource>();
+		if (player != null) {
+			lightSource = new LightSource(player.shape.getLocation());
+			ret.add(lightSource);
+		} else {
+			System.out.println("player was null");
+		}
+		return ret;
+	}
+	
 	@Override
 	public Entity getPlayer() {
 		return player;
 	}
 	
 	@Override
+	/**
+	 * This is hacky.  Fair warning.  Takes in a point which is the source point (for
+	 * circle point calculations) and also a list which will be modified to contain all
+	 * the points in the world with respect to sourcepoint.  Returns a list of Vec2fPair
+	 * which represents all pairings of points in the world
+	 *
+	 * @param 	sourcePoint  	The point from which we calculate all points
+	 * @param   points 			A (hopefully) empty list which will be modified by this function
+	 * @return 					A list containing all the pairs of points in the world
+	 */
+	public List<Vec2fPair> getPointsAndPairs(Vec2f sourcePoint, List<Vec2f> points) {
+		List<Vec2fPair> pointPairs = new ArrayList<Vec2fPair>();
+		
+		for (Entity e : getEntities()) {
+			if (e instanceof Player) continue;
+			CollisionShape shape = e.shape;
+			
+			if (shape instanceof AAB) {
+				AAB a = (AAB) shape;
+				
+				// Construct points of AAB in order
+				Vec2f p1 = a.getMin();
+				Vec2f p2 = new Vec2f(a.getMin().x, a.getMax().y);
+				Vec2f p3 = a.getMax();
+				Vec2f p4 = new Vec2f(a.getMax().x, a.getMin().y);
+				
+				// Add to points list
+				points.add(p1);
+				points.add(p2);
+				points.add(p3);
+				points.add(p4);
+				
+				// Add to point pairs list
+				pointPairs.add(new Vec2fPair(p1, p2));
+				pointPairs.add(new Vec2fPair(p2, p3));
+				pointPairs.add(new Vec2fPair(p3, p4));
+				pointPairs.add(new Vec2fPair(p4, p1));
+				
+			} else if (shape instanceof Circle) {
+				
+				// Retrieve vector from sourcePoint
+				Vec2f toCenter = shape.getCenter().minus(sourcePoint);
+				if (toCenter.isZero()) continue;
+				
+				// Set magnitude (won't break because we already checked it was zero), and make perp.
+				toCenter = toCenter.normalized().smult(((Circle) shape).getRadius());
+				toCenter = new Vec2f(-toCenter.y, toCenter.x);
+				
+				// Find points
+				Vec2f p1 = shape.getCenter().plus(toCenter);
+				Vec2f p2 = shape.getCenter().minus(toCenter);
+				
+				// Add points
+				points.add(p1);
+				points.add(p2);
+				
+				// Add single point pair
+				pointPairs.add(new Vec2fPair(p1, p2));
+				
+			} else if (shape instanceof Poly) {
+				
+				// Make polygon out of shape
+				Poly p = (Poly) shape;
+				
+				// Add all points to "points"
+				List<Vec2f> polyPoints = p.getPoints();
+				points.addAll(polyPoints);
+				
+				// Add proper point pairs
+				polyPoints.add(polyPoints.get(0));
+				for (int i = 0; i < polyPoints.size() - 1; ++i) {
+					pointPairs.add(new Vec2fPair(polyPoints.get(i), polyPoints.get(i + 1)));
+				}
+				
+			}
+		}
+		
+		return pointPairs;
+	}
+	
+	@Override
 	public String getSoundFile() {
 		return soundFile;
+	}
+	
+	@Override
+	/**
+	 * Returns the size of the world as a Vec2f
+	 *
+	 * @return 		Exactly what I just said
+	 */
+	public Vec2f getWorldSize() {
+		return getDim();
 	}
 	
 	@Override
@@ -325,8 +440,7 @@ public class GameWorld extends World implements LightWorld {
 		
 		textBox.setVisible(false);
 		cutsceneActive = false;
-
-
+		
 	}
 	
 	@Override
@@ -353,13 +467,6 @@ public class GameWorld extends World implements LightWorld {
 		}
 		
 		super.onDraw(g); // draws all entities
-	}
-
-	/**
-	 * Retrieves the world's lighting engine FOR TESTING
-	 */
-	public LightingEngine getLightingEngineForTesting() {
-		return lightEngine;
 	}
 	
 	/**
@@ -430,7 +537,7 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	@Override
 	public void onTick(float secs) {
-		if(player != null) unlockJump();
+		if (player != null) unlockJump();
 		// Calculates standard tick - how many + leftover time to counter for later
 		double timeSteps = (secs / GameWorld.TICK_LENGTH) + leftoverTime;
 		long steps = (long) timeSteps;
@@ -485,6 +592,11 @@ public class GameWorld extends World implements LightWorld {
 		else if (ct == 0) paused = true;
 	}
 	
+	/*
+	 * ============================================================================ LightWorld stuff lives here!
+	 * =========================================================================
+	 */
+	
 	@Override
 	public void setPlayer(Entity p) {
 		player = (Player) p;
@@ -506,120 +618,5 @@ public class GameWorld extends World implements LightWorld {
 	
 	public void unlockJump() {
 		player.unlockJump();
-	}
-
-/* ============================================================================
- * LightWorld stuff lives here!
- * ========================================================================= */
-	
-	@Override
-	/**
-	 * Returns the size of the world as a Vec2f
-	 *
-	 * @return 		Exactly what I just said
-	 */
-	public Vec2f getWorldSize() {
-		return this.getDim();
-	}
-
-	@Override
-	/**
-	 * Returns a list of all light sources in the world.  For testing purposes, this
-	 * just moves the single lightsource to the Player's location (actually, reassigns
-	 * the variable lightsource to a new lightsource at that location) and returns
-	 * a list containing just that
-	 *
-	 * @return 		A list of all light sources in the world
-	 */
-	public List<LightSource> getLightSources() {
-		List<LightSource> ret = new ArrayList<LightSource>();
-		if(player != null) {
-			lightSource = new LightSource(player.shape.getLocation());
-			ret.add(lightSource);
-		} else {
-			System.out.println("player was null");
-		}
-		return ret;
-	}
-
-	@Override
-	/**
-	 * This is hacky.  Fair warning.  Takes in a point which is the source point (for
-	 * circle point calculations) and also a list which will be modified to contain all
-	 * the points in the world with respect to sourcepoint.  Returns a list of Vec2fPair
-	 * which represents all pairings of points in the world
-	 *
-	 * @param 	sourcePoint  	The point from which we calculate all points
-	 * @param   points 			A (hopefully) empty list which will be modified by this function
-	 * @return 					A list containing all the pairs of points in the world
-	 */
-	public List<Vec2fPair> getPointsAndPairs(Vec2f sourcePoint, List<Vec2f> points) {
-		List<Vec2fPair> pointPairs = new ArrayList<Vec2fPair>();
-
-		for(Entity e : this.getEntities()) {
-			if(e instanceof Player) continue;
-			CollisionShape shape = e.shape;
-
-			if(shape instanceof AAB) {
-				AAB a = (AAB) shape;
-
-				//Construct points of AAB in order
-				Vec2f p1 = a.getMin();
-				Vec2f p2 = new Vec2f(a.getMin().x, a.getMax().y);
-				Vec2f p3 = a.getMax();
-				Vec2f p4 = new Vec2f(a.getMax().x, a.getMin().y);
-
-				//Add to points list
-				points.add(p1);
-				points.add(p2);
-				points.add(p3);
-				points.add(p4);
-
-				//Add to point pairs list
-				pointPairs.add(new Vec2fPair(p1, p2));
-				pointPairs.add(new Vec2fPair(p2, p3));
-				pointPairs.add(new Vec2fPair(p3, p4));
-				pointPairs.add(new Vec2fPair(p4, p1));
-
-			} else if(shape instanceof Circle) {
-
-				//Retrieve vector from sourcePoint
-				Vec2f toCenter = shape.getCenter().minus(sourcePoint);
-				if(toCenter.isZero()) continue;
-
-				//Set magnitude (won't break because we already checked it was zero), and make perp.
-				toCenter = toCenter.normalized().smult(((Circle)shape).getRadius());
-				toCenter = new Vec2f(-toCenter.y, toCenter.x);
-
-				//Find points
-				Vec2f p1 = shape.getCenter().plus(toCenter);
-				Vec2f p2 = shape.getCenter().minus(toCenter);
-
-				//Add points
-				points.add(p1);
-				points.add(p2);
-
-				//Add single point pair
-				pointPairs.add(new Vec2fPair(p1, p2));
-
-			} else if(shape instanceof Poly) {
-
-				//Make polygon out of shape
-				Poly p = (Poly) shape;
-
-				//Add all points to "points"
-				List<Vec2f> polyPoints = p.getPoints();
-				points.addAll(polyPoints);
-
-				//Add proper point pairs
-				polyPoints.add(polyPoints.get(0));
-				for(int i = 0; i < polyPoints.size() - 1; ++i) {
-					pointPairs.add(new Vec2fPair(polyPoints.get(i), polyPoints.get(i + 1)));
-				}
-
-			}
-		}
-
-		return pointPairs;
 	}
 }
