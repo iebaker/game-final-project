@@ -137,9 +137,15 @@ public class RayCastData {
 				if(otherPoint == otherSegment.getEndPoint()) {
 					intersections.add(i, newInt); break;
 				} else if(p == s.getEndPoint()) {
+					if(i == intersections.size()) {
+						intersections.add(newInt); break;
+					}
 					intersections.add(i + 1, newInt); break;
 				} else {
 					if(opposing(sourcePoint, s.getEndPoint(), otherSegment.getBeginPoint(), otherSegment.getEndPoint())) {
+						if(i == intersections.size()) {
+							intersections.add(newInt); break;
+						}
 						intersections.add(i + 1, newInt); break;
 					} else {
 						intersections.add(i, newInt); break;
@@ -172,7 +178,7 @@ public class RayCastData {
 	 * Returns a useful String representation of this RayCastData object
 	 */ 
 	public String toString() {
-		String result =  "[engine.lighting.RayCastData ";
+		String result =  "[engine.lighting.RayCastData SOURCE=" + sourcePoint + " ";
 		if(intersections.isEmpty()) {
 			result += "<NO INTERSECTIONS>]";
 			return result;

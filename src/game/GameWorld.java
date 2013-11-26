@@ -316,7 +316,7 @@ public class GameWorld extends World implements LightWorld {
 		win = false;
 		lose = false;
 		lineCt = 0;
-		gravity = 0;//300;
+		gravity = 300;
 		entityStack = new ArrayList<Entity>();
 		
 		// Actually load the level

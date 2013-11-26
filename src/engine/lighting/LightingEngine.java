@@ -217,10 +217,10 @@ public class LightingEngine {
 	 * This method actually runs the RedBlob sweepline algorithm in order to
 	 * calculate lighting cones
 	 */
-	private void sweep(Vec2f lightLocation) {
+	private List<LightCone> sweep(Vec2f lightLocation) {
 
 		// Set up preliminary values
-		RayCastData rcd = doRayCast(lightLocation, points.get(0));
+		RayCastData rcd = doRayCast(approxPointConvert(lightLocation), approxPointConvert(points.get(0)));
 		Segment prevSegment = rcd.minSegment();
 		List<LightCone> cones = new ArrayList<LightCone>();
 		points.add(points.get(0));
@@ -233,8 +233,7 @@ public class LightingEngine {
 			}
 
 			Vec2f point = points.get(i);
-			rcd = doRayCast(lightLocation, point);
-
+			rcd = doRayCast(approxPointConvert(lightLocation), approxPointConvert(point));
 			Segment closest = rcd.minSegment();
 
 			if (point == prevSegment.getEndPoint()) {
@@ -250,6 +249,7 @@ public class LightingEngine {
 					i += 2;
 				}
 
+				System.out.println("!!!");
 				closest = rcd.minSegment();
 				prevSegment = closest;
 
@@ -277,6 +277,8 @@ public class LightingEngine {
 				++i;
 			}
 		}
+
+		return cones;
 	}
 
 	/**
@@ -466,11 +468,12 @@ public class LightingEngine {
 			RayCastData rcd = doRayCast(sp, p);
 			Vec2f rcdmin = null;
 			if (rcd.getIntersections().size() > 0) {
-				//System.out.println("RCD INTERSECTION # " + rcd.getIntersections().size());
 				rcdmin = rcd.findMinPoint();
+			} else {
+				System.out.println("!!!");
 			}
 			if (rcdmin != null) {
-				a.line(g, sp.x, sp.y, rcdmin.x, rcdmin.y);
+				//a.line(g, sp.x, sp.y, rcdmin.x, rcdmin.y);
 			} else {
 				g.setColor(Color.GREEN);
 				a.line(g, sp.x, sp.y, p.x, p.y);
@@ -481,7 +484,22 @@ public class LightingEngine {
 			a.text(g, i + "", approxPointConvert(points.get(i)).x, approxPointConvert(points.get(i)).y);
 		}
 
+		// for(Vec2f p : points) {
+		// 	RayCastData rcd = doRayCast(approxPointConvert(source.getLocation()), approxPointConvert(p));
+		// 	Vec2f rcdmin = null;
+		// 	if (rcd.getIntersections().size() > 0) {
+		// 		rcdmin = rcd.findMinPoint();
+		// 	} else {
+		// 		System.out.println("!!!!!!");
+		// 	}
+		// }
+
+		List<LightCone> cones = this.sweep(source.getLocation());
+
 		//System.exit(0);
+
+
+
 	}
 
 	/*

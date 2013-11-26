@@ -56,7 +56,7 @@ public class Segment {
 		Vec2f toEndPoint = endPoint.minus(beginPoint);
 		if(toEndPoint.isZero()) return endPoint;
 
-		toEndPoint = toEndPoint.normalized().smult(10);
+		toEndPoint = toEndPoint.normalized().smult(5);
 		return endPoint.plus(toEndPoint);
 	}
 
@@ -64,7 +64,7 @@ public class Segment {
 		Vec2f toBeginPoint = beginPoint.minus(endPoint);
 		if(toBeginPoint.isZero()) return beginPoint;
 
-		toBeginPoint = toBeginPoint.normalized().smult(10);
+		toBeginPoint = toBeginPoint.normalized().smult(5);
 		return beginPoint.plus(toBeginPoint);
 	}
 
