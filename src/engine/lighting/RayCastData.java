@@ -111,19 +111,19 @@ public class RayCastData {
 	 * the ray.
 	 */
 	public void addIntersection(Vec2f p, Segment s) {
-		System.out.println("[RCD.addIntersection] p is " + p + " and s is " + s);
-		System.out.println("[RCD.addIntersection] Starting size of intersections: " + intersections.size());
+		//System.out.println("[RCD.addIntersection] p is " + p + " and s is " + s);
+	//	System.out.println("[RCD.addIntersection] Starting size of intersections: " + intersections.size());
 		float distance = sourcePoint.dist(p);
 		Intersection newInt = new Intersection(p, s);
 		int i = 0;
 
 		if(intersections.isEmpty()) {
 			intersections.add(newInt);
-			System.out.println("[RCD.addIntersection] Ending size of intersections: " + intersections.size());
+			//System.out.println("[RCD.addIntersection] Ending size of intersections: " + intersections.size());
 			return;
 		}
 
-		while(i < intersections.size() - 1) {
+		while(i < intersections.size()) {
 			Intersection temp = intersections.get(i++);
 			Vec2f otherPoint = temp.getPoint();
 			Segment otherSegment = temp.getSegment();
@@ -150,7 +150,7 @@ public class RayCastData {
 				intersections.add(i, newInt); break;
 			}
 		}
-		System.out.println("[RCD.addIntersection] Ending size of intersections " + intersections.size());
+	//	System.out.println("[RCD.addIntersection] Ending size of intersections " + intersections.size());
 	}
 
 	/**

@@ -34,9 +34,9 @@ public class LightingEngine {
 	 */
 	private static Vec2f intersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
 
-		System.out.println("\nAttempting intersection.");
-		System.out.println("Line A1:" + A1 + " A2:" + A2);
-		System.out.println("Line B1:" + B1 + " B2:" + B2);
+		//System.out.println("\nAttempting intersection.");
+		//System.out.println("Line A1:" + A1 + " A2:" + A2);
+		//System.out.println("Line B1:" + B1 + " B2:" + B2);
 
 		float intX;
 		float intY;
@@ -69,10 +69,10 @@ public class LightingEngine {
 				&& within(intY, A1.y, A2.y) && within(intY, B1.y, B2.y)) {
 			Vec2f vec = null;
 			vec = new Vec2f(intX, intY);
-			System.out.println("Intersection found at " + vec);
+			//System.out.println("Intersection found at " + vec);
 			return vec;
 		}
-		System.out.println("No intersection.");
+		//System.out.println("No intersection.");
 		return null;
 	}
 
@@ -466,7 +466,7 @@ public class LightingEngine {
 			RayCastData rcd = doRayCast(sp, p);
 			Vec2f rcdmin = null;
 			if (rcd.getIntersections().size() > 0) {
-				System.out.println("RCD INTERSECTION # " + rcd.getIntersections().size());
+				//System.out.println("RCD INTERSECTION # " + rcd.getIntersections().size());
 				rcdmin = rcd.findMinPoint();
 			}
 			if (rcdmin != null) {
@@ -481,7 +481,7 @@ public class LightingEngine {
 			a.text(g, i + "", approxPointConvert(points.get(i)).x, approxPointConvert(points.get(i)).y);
 		}
 
-		System.exit(0);
+		//System.exit(0);
 	}
 
 	/*
