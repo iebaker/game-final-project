@@ -12,65 +12,35 @@ import cs195n.Vec2f;
 public class RayCastData {
 	private final Vec2f					sourcePoint;
 	private final List<Intersection>	intersections	= new ArrayList<Intersection>();
-	
+	private IntersectionComparator ic;	
+
 	public RayCastData(Vec2f sourcePoint) {
 		this.sourcePoint = sourcePoint;
+		ic = new IntersectionComparator(this.sourcePoint);
 	}
 	
-	/**
-	 * Inserts a new Intersection object into the list of intersections at the proper point based on the location of
-	 * intersection and the infrontedness of the segment based on the source point of the ray.
-	 */
 	public void addIntersection(Vec2f p, Segment s) {
-		// System.out.println("[RCD.addIntersection] p is " + p + " and s is " + s);
-		// System.out.println("[RCD.addIntersection] Starting size of intersections: " + intersections.size());
-		float distance = sourcePoint.dist(p);
 		Intersection newInt = new Intersection(p, s);
-		int i = 0;
-		
-		if (intersections.isEmpty()) {
+
+		if(intersections.size() == 0) {
 			intersections.add(newInt);
 			return;
 		}
-		
-		while (i < intersections.size()) {
-			Intersection temp = intersections.get(i);
-			Vec2f otherPoint = temp.getPoint();
-			Segment otherSegment = temp.getSegment();
-			
-			float tempDistance = sourcePoint.dist(otherPoint);
-			
-			if (tempDistance < distance) {
-				
-			} else if (tempDistance == distance) {
-				
-				if (otherPoint.equals(otherSegment.getEndPoint())) {
-					intersections.add(i, newInt);
-					break;
-				} else if (p.equals(s.getEndPoint())) {
-					intersections.add(i + 1, newInt);
-					break;
-				} else {
-					if (opposing(sourcePoint, s.getEndPoint(), otherSegment.getBeginPoint(), otherSegment.getEndPoint())) {
-						intersections.add(i + 1, newInt);
-						break;
-					} else {
-						intersections.add(i, newInt);
-						break;
-					}
-				}
-				
+
+		int i = 0; 
+		while(i < intersections.size()) {
+			Intersection existing = intersections.get(i);
+			int test = ic.compare(existing, newInt);
+
+			//If the new intersection is further, keep going
+			if(test == -1) {
+				++i;
 			} else {
 				intersections.add(i, newInt);
 				break;
 			}
-			i++;
 		}
-		if (i == intersections.size()) {
-			intersections.add(newInt);
-		}
-		// System.out.println("[RCD.addIntersection] Ending size of intersections " + intersections.size());
-	}
+	}	
 	
 	public Vec2f findMinPoint() {
 		float min_dist = Float.POSITIVE_INFINITY;

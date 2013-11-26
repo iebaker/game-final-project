@@ -31,7 +31,7 @@ public class LightingEngine {
 	 *            A Vec2f which will be set
 	 * @return True, if the points define intersecting segments, false otherwise
 	 */
-	private static Vec2f intersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
+	public static Vec2f intersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
 		
 		// System.out.println("\nAttempting intersection.");
 		// System.out.println("Line A1:" + A1 + " A2:" + A2);
@@ -161,6 +161,7 @@ public class LightingEngine {
 	 */
 	public List<LightCone> run(LightWorld world) {
 		Vec2f lightLocation = null;
+	  //System.out.println(world.getLightSources().size());
 		for (LightSource light : world.getLightSources()) {
 			
 			// Reset points and line segments. They must be recalculated for
@@ -202,7 +203,8 @@ public class LightingEngine {
 			}
 		}
 		
-		return this.sweep(lightLocation);
+if(this.points.size() > 0) return this.sweep(lightLocation);
+return new ArrayList<LightCone>();
 	}
 	
 	/**
@@ -489,8 +491,9 @@ public class LightingEngine {
 		Artist a = new Artist();
 
 		a.setStroke(false);
-		a.setFillPaint(new Color(1f, 1f, 0f, 0.3f));
-		for(int i = 0; i < 1; ++i) {
+		a.setFillPaint(new Color(1f, 1f, 0f, 0.5f));
+		if(cones.isEmpty()) return;
+		for(int i = 0; i < 3; ++i) {
 			LightCone cone = cones.get(i);
 			List<Vec2f> convPoints = convertPoints(cone.getPoints());
 			a.path(g, convPoints);
