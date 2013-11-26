@@ -287,7 +287,7 @@ public class GameWorld extends World implements LightWorld {
 	public List<LightSource> getLightSources() {
 		List<LightSource> ret = new ArrayList<LightSource>();
 		if (player != null) {
-			lightSource = new LightSource(player.shape.getLocation());
+			lightSource = new LightSource(player.shape.getCenter());
 			ret.add(lightSource);
 		} else {
 			System.out.println("player was null");

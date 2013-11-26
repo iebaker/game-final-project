@@ -442,6 +442,10 @@ public class LightingEngine {
 			Vec2f rcdmin = null;
 			if (rcd.getIntersections().size() > 0) {
 				rcdmin = rcd.findMinPoint();
+				if(!rcd.minPoint().equals(rcd.findMinPoint())) {
+					System.out.println("Minpoint and findminpoint didn't return equal values");
+					System.exit(0);
+				}
 			}
 			if (rcdmin != null) {
 				a.line(g, sp.x, sp.y, rcdmin.x, rcdmin.y);
@@ -450,12 +454,14 @@ public class LightingEngine {
 				a.line(g, sp.x, sp.y, p.x, p.y);
 			}
 			
-		}
+		 }
 		
 		for (int i = 0; i < points.size(); ++i) {
 			a.text(g, i + "", Viewport.gamePtToScreen(points.get(i)).x, Viewport.gamePtToScreen(points.get(i)).y);
 		}
-		
+
+
+
 		/*
 		 * a.setFillPaint(Color.YELLOW); System.out.println(source.getLocation()); List<LightCone> cones =
 		 * sweep(source.getLocation()); for (LightCone cone : cones) { List<Vec2f> convPoints = new ArrayList<Vec2f>();
@@ -465,6 +471,10 @@ public class LightingEngine {
 		
 		// System.exit(0);
 		
+	}
+
+	public void test7(LightWorld world, Graphics2D g) {
+		this.run(world);
 	}
 	
 	/*
