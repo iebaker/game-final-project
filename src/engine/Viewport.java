@@ -17,11 +17,11 @@ import cs195n.Vec2f;
  * 
  */
 public class Viewport {
-	
+
 	private static Vec2f	gameOffset; // in game space
-										
+
 	private static Vec2f	portCoord;	// in screen space
-										
+
 	/**
 	 * Calculates the point in game space transformed to screen space
 	 * 
@@ -32,7 +32,7 @@ public class Viewport {
 	public static Vec2f gamePtToScreen(Vec2f pointInGame) {
 		return (((pointInGame.minus(Viewport.getOffset())).smult(Viewport.scale)).plus(Viewport.portCoord));
 	}
-	
+
 	/**
 	 * Public getter for the current offset
 	 * 
@@ -41,7 +41,7 @@ public class Viewport {
 	public static Vec2f getOffset() {
 		return Viewport.gameOffset;
 	}
-	
+
 	/**
 	 * Calculates the point in screen space transformed to game space
 	 * 
@@ -52,7 +52,7 @@ public class Viewport {
 	public static Vec2f screenPtToGame(Vec2f pointInScreen) {
 		return ((pointInScreen.minus(Viewport.portCoord)).sdiv(Viewport.scale)).plus(Viewport.getOffset());
 	}
-	
+
 	/**
 	 * Calculates the point in screen space transformed to game space for offset setting along
 	 * 
@@ -63,25 +63,25 @@ public class Viewport {
 	public static Vec2f screenPtToGameForOffset(Vec2f pointInScreen) {
 		return (pointInScreen.minus(Viewport.portCoord)).sdiv(Viewport.scale);
 	}
-	
+
 	private Vec2f				portEndCoord;	// in screen space
 	private final Application	a;
 	private static float		scale;
 	private static float		zoom;
 	private static float		minZoom;
-	
+
 	private static float		maxZoom;
-	
+
 	private Color				c;
-	
+
 	private BasicStroke			stk;
-	
+
 	private boolean				viewChanged;
-	
+
 	public Viewport(Application a) {
 		this.a = a;
 	}
-	
+
 	/**
 	 * Constructor for Viewport
 	 * 
@@ -103,7 +103,7 @@ public class Viewport {
 		stk = new BasicStroke(10f);
 		this.c = c;
 	}
-	
+
 	/**
 	 * Public getter for the port ending dim
 	 * 
@@ -112,7 +112,7 @@ public class Viewport {
 	public Vec2f getDim() {
 		return portEndCoord;
 	}
-	
+
 	/**
 	 * Public getter for the current scale
 	 * 
@@ -121,7 +121,7 @@ public class Viewport {
 	public float getScale() {
 		return Viewport.scale;
 	}
-	
+
 	/**
 	 * Public getter for the port starting dim
 	 * 
@@ -130,7 +130,7 @@ public class Viewport {
 	public Vec2f getSDim() {
 		return Viewport.portCoord;
 	}
-	
+
 	/**
 	 * Public getter for current zoom level
 	 * 
@@ -139,7 +139,7 @@ public class Viewport {
 	public float getZoom() {
 		return Viewport.zoom;
 	}
-	
+
 	/**
 	 * Public getter for viewChanged, used to coordinate drawing in the game from the viewport
 	 * 
@@ -148,7 +148,7 @@ public class Viewport {
 	public boolean hasViewChanged() {
 		return viewChanged;
 	}
-	
+
 	/**
 	 * Draw method, which draws the gameworld and a viewport bounds border
 	 * 
@@ -159,13 +159,13 @@ public class Viewport {
 		double l = (a.getCurrentScreenSize().x + a.getCurrentScreenSize().y);
 		double l2 = (game.dim.x + game.dim.y);
 		Viewport.scale = (float) (Viewport.zoom * (l / l2));
-		
+
 		float x = Viewport.portCoord.x;
 		float y = Viewport.portCoord.y;
 		float w = portEndCoord.x - Viewport.portCoord.x;
 		float h = portEndCoord.y - Viewport.portCoord.y;
 		Rectangle2D bounds = new Rectangle2D.Float(x, y, w, h);
-		
+
 		// Set clip, draw, and unclip
 		Rectangle b = g.getClipBounds();
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
@@ -173,7 +173,7 @@ public class Viewport {
 		gameworld.getLightingEngineForTesting().test6(gameworld, g);
 		gameworld.getLightingEngineForTesting().test7(gameworld, g);
 		g.clip(b);
-		
+
 		// Draw a box to show the viewport
 		g.setColor(c);
 		if (stk != null) {
@@ -181,7 +181,7 @@ public class Viewport {
 			g.draw(bounds);
 		}
 	}
-	
+
 	/**
 	 * Changes port coord and boolean for resize view
 	 * 
@@ -193,7 +193,7 @@ public class Viewport {
 		this.portEndCoord = portEndCoord;
 		viewHasChanged(true);
 	}
-	
+
 	public void setGame(World game) {
 		game.setPort(this);
 		Viewport.gameOffset = new Vec2f(0, 0);
@@ -202,14 +202,14 @@ public class Viewport {
 		Viewport.zoom = zmScale;
 		Viewport.minZoom = 0.2f * zmScale;
 		Viewport.maxZoom = 5 * zmScale;
-		
+
 		viewHasChanged(false);
 	}
-	
+
 	public void setOffset(Vec2f offset) {
 		Viewport.gameOffset = offset;
 	}
-	
+
 	/**
 	 * Public setter for viewChanged, used to coordinate drawing in the game from the game
 	 * 
@@ -219,7 +219,7 @@ public class Viewport {
 	public void viewHasChanged(boolean viewChanged) {
 		this.viewChanged = viewChanged;
 	}
-	
+
 	/**
 	 * Zooms the view in or out but only if in bounds of port
 	 * 
@@ -231,7 +231,7 @@ public class Viewport {
 			zm = 0.95f;
 		else
 			zm = 1.05f;
-		
+
 		float newZm = Viewport.zoom * zm;
 		if (newZm > Viewport.minZoom && newZm < Viewport.maxZoom) {
 			/*
@@ -244,5 +244,5 @@ public class Viewport {
 			viewHasChanged(true);
 		}
 	}
-	
+
 }
