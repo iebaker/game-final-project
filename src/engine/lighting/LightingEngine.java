@@ -44,6 +44,7 @@ public class LightingEngine {
 		boolean aIsVert = (A2.x - A1.x == 0);
 		boolean bIsVert = (B2.x - B1.x == 0);
 
+		//Absurdly hacky way to deal with horizontal lines
 		if (A2.y - A1.y == 0) {
 			A1 = new Vec2f(A1.x, A1.y + 0.1f);
 		}
@@ -237,18 +238,18 @@ public class LightingEngine {
 
 				if (intersection != null) {
 					boolean check = this.fucked(lightLocation, prevSegment.getBeginPoint(), prevSegment.getEndPoint());
-					lc = new LightCone(lightLocation, intersection, (check ? prevSegment.getEndPoint() : prevSegment.getBeginPoint()));
+					lc = new LightCone(new Color(1f, 0f, 0f, 0.5f), lightLocation, intersection, (check ? prevSegment.getEndPoint() : prevSegment.getBeginPoint()));
 					closest.resetBeginPoint(intersection);
 				} else {
 					rcd.removePoint(point);
-					lc = new LightCone(lightLocation, rcd.minPoint(), points.get(i - 1));
+					lc = new LightCone(new Color(0f, 0f, 1f, 0.5f), lightLocation, rcd.minPoint(), points.get(i - 1));
 				}
 
 				cones.add(lc);
 				++i;
 				prevSegment = closest;
 			} else if(point.equals(prevSegment.getEndPoint())) {
-				LightCone lc = new LightCone(lightLocation, point, prevSegment.getBeginPoint());
+				LightCone lc = new LightCone(new Color(1f, 0f, 1f, 0.5f), lightLocation, point, prevSegment.getBeginPoint());
 				cones.add(lc);
 
 				if (point.isStart()) {
@@ -490,10 +491,10 @@ public class LightingEngine {
 		Artist a = new Artist();
 
 		a.setStroke(false);
-		a.setFillPaint(new Color(1f, 1f, 0f, 0.5f));
 		if(cones.isEmpty()) return;
 		for(int i = 0; i < cones.size(); ++i) {
 			LightCone cone = cones.get(i);
+			a.setFillPaint(cone.getColor());
 			List<Vec2f> convPoints = convertPoints(cone.getPoints());
 			a.path(g, convPoints);
 		}
