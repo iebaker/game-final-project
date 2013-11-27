@@ -34,7 +34,8 @@ SAWYER
 IZAAK
 - Vision cones have been implemented in the lighting package
 - The LightingEngine runs it all - see the class breakdown below
-- Can't be tested as not integrated to the game yet but it works
+- The game now runs a demonstration of raycasting -- the actual cones of light
+  are not drawn in, but the rest works fine.
 
 LightingEngine - Actually performs vision cone calculations for each light source in 
 the world.  Mutates the light sources in order to update their lit areas
