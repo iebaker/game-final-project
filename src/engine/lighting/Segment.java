@@ -14,6 +14,7 @@ public class Segment {
 	private Vec2f beginPoint = null;
 	private Vec2f endPoint = null;
 	private boolean ignored = false;
+	private boolean flipped = false;
 
 	private static Map<Vec2f, List<Segment>> byEndpoints = new HashMap<Vec2f, List<Segment>>();
 
@@ -31,6 +32,14 @@ public class Segment {
 
 	public void ignore() {
 		this.ignored = true;
+	}
+
+	public void flip() {
+		this.flipped = true;
+	}
+
+	public boolean isFlipped() {
+		return this.flipped;
 	}
 
 	public boolean isIgnored() {

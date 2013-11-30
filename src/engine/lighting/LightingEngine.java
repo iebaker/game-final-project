@@ -43,12 +43,23 @@ public class LightingEngine {
 			Vec2f a = pair.getP1();
 			Vec2f b = pair.getP2();
 
-			if(ac.compare(a, b) <= 0) {
-				segment.setBeginPoint(a);
-				segment.setEndPoint(b);
+			if(this.wrongWay(lightLocation, a, b)) {
+				if(ac.compare(a, b) <= 0) {
+					segment.setBeginPoint(b);
+					segment.setEndPoint(a);
+				} else {
+					segment.setBeginPoint(a);
+					segment.setEndPoint(b);
+				}
+				segment.flip();
 			} else {
-				segment.setBeginPoint(b);
-				segment.setEndPoint(a);
+				if(ac.compare(a, b) <= 0) {
+					segment.setBeginPoint(a);
+					segment.setEndPoint(b);
+				} else {
+					segment.setBeginPoint(b);
+					segment.setEndPoint(a);
+				}
 			}
 
 			this.lineSegments.add(segment);
@@ -156,35 +167,47 @@ public class LightingEngine {
 	}
 
 	public void rayDebug(LightWorld world, Graphics2D g) {
+		Segment.clear();
+
 		Artist a = new Artist();
 
 		LightSource source = world.getLightSources().get(0);
+		Vec2f convLSpoint = Viewport.gamePtToScreen(source.getLocation());
 
 		this.setup(source, world);
 
 		if(this.points.isEmpty()) return;
 
 		Vec2f size = ((GameWorld)world).getWorldSize();
+		a.setFillPaint(Color.WHITE);
 		a.rect(g, 0, 0, size.x, size.y);
 
 		a.setFillPaint(Color.BLACK);
+		a.ellipse(g, convLSpoint.x - 5, convLSpoint.y - 5, 10, 10);
+
 		for(Vec2f point : this.points) {
 			a.ellipse(g, Viewport.gamePtToScreen(point).x, Viewport.gamePtToScreen(point).y, 2, 2);
 		}
 
 		for(Segment segment : this.lineSegments) {
+			if(segment.isFlipped()) {
+				g.setStroke(new BasicStroke(3));
+			} else {
+				g.setStroke(new BasicStroke(1));
+			}
 			Vec2f begin = Viewport.gamePtToScreen(segment.getBeginPoint());
 			Vec2f end = Viewport.gamePtToScreen(segment.getEndPoint());
 			Vec2f mid = this.midpoint(begin, end);
-			// a.setStrokePaint(Color.RED);
-			// a.line(g, begin.x, begin.y, mid.x, mid.y);
-			// a.setStrokePaint(Color.BLUE);
-			// a.line(g, mid.x, mid.y, end.x, end.y);
-			a.setStrokePaint(Color.BLACK);
-			a.line(g, begin.x, begin.y, end.x, end.y);
+			a.setStrokePaint(Color.RED);
+			a.line(g, begin.x, begin.y, mid.x, mid.y);
+			a.setStrokePaint(Color.BLUE);
+			a.line(g, mid.x, mid.y, end.x, end.y);
+			// a.setStrokePaint(Color.BLACK);
+			// a.line(g, begin.x, begin.y, end.x, end.y);
 		}
 
 		for(Vec2f point : this.points) {
+			Segment.ignoreEndingAt(point);
 			RayCastData rcd = this.doRayCast(source.getLocation(), point);
 			Vec2f prev = Viewport.gamePtToScreen(source.getLocation());
 			Vec2f convpt = Viewport.gamePtToScreen(point);
@@ -265,6 +288,27 @@ public class LightingEngine {
 
 	private static boolean within(float a, float E1, float E2) {
 		return a >= E1 && a <= E2 || a >= E2 && a <= E1;
+	}
+
+	private boolean wrongWay(Vec2f location, Vec2f a, Vec2f b) {
+		boolean aOnRight = a.x > location.x;
+		boolean bOnRight = b.x > location.x;
+		boolean aOnTop = a.y > location.y && b.y < location.y;
+		boolean bOnTop = b.y > location.y && a.y < location.y;
+
+		if(aOnRight && bOnRight) {
+			return aOnTop || bOnTop;
+		}
+
+		if(aOnRight) {
+			return bOnTop;
+		}
+
+		if(bOnRight) {
+			return aOnTop;
+		}
+
+		return false;
 	}
 
 /* ============================================================================
