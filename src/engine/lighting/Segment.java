@@ -38,6 +38,10 @@ public class Segment {
 		return new ArrayList<Segment>();
 	}
 
+	public Vec2f asVector() {
+		return this.endPoint.minus(this.beginPoint);
+	}
+
 	public static void ignoreEndingAt(Vec2f v) {
 		for(Segment s : Segment.endingAt(v)) {
 			s.ignore();

@@ -351,8 +351,12 @@ public class LightingEngine {
 			intY = (mA * (intX - A1.x)) + A1.y;
 		}
 
-		if (LightingEngine.within(intX, A1.x, A2.x) && LightingEngine.within(intX, B1.x, B2.x)
-				&& LightingEngine.within(intY, A1.y, A2.y) && LightingEngine.within(intY, B1.y, B2.y) && seg) {
+		boolean allwithin = LightingEngine.within(intX, A1.x, A2.x) &&
+			LightingEngine.within(intX, B1.x, B2.x) &&
+			LightingEngine.within(intY, A1.y, A2.y) &&
+			LightingEngine.within(intY, B1.y, B2.y);
+
+		if (allwithin && seg) {
 			Vec2f vec = null;
 			vec = new Vec2f(intX, intY);
 			return vec;
