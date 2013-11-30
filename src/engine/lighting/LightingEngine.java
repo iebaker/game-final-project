@@ -89,9 +89,17 @@ public class LightingEngine {
 				continue;
 			}
 
-			if(comp.compare(currentPoint, points.get(i-1)) == 0) System.out.println("oops");
+			boolean closestEnded = Segment.endingAt(currentPoint).contains(closest);
+			boolean newClosest = currentClosest != closest;
+			Vec2f testInt = LightingEngine.segmentIntersect(closest.getBeginPoint(), closest.getEndPoint(), currentClosest.getBeginPoint(), currentClosest.getEndPoint());
+			boolean wasIntersection = testInt != null;
 
-			if(Segment.endingAt(currentPoint).contains(closest)) {
+
+			if(closestEnded && newClosest && wasIntersection) {
+				this.builder.close(testInt);
+				this.builder.open(testInt);
+			}
+			else if(closestEnded) {
 				this.builder.close(currentPoint);
 
 				if(currentPoint.isStart()) {
@@ -99,10 +107,9 @@ public class LightingEngine {
 				} else {
 					this.builder.open(currentRCD.minPoint());
 				}
-			} else if(currentClosest != closest) {
-				Vec2f testInt = LightingEngine.segmentIntersect(closest.getBeginPoint(), closest.getEndPoint(), currentClosest.getBeginPoint(), currentClosest.getEndPoint());
-
-				if(testInt != null) {
+			} else if(newClosest) {
+				
+				if(wasIntersection) {
 					this.builder.close(testInt);
 					this.builder.open(testInt);
 				}	else {
@@ -111,13 +118,11 @@ public class LightingEngine {
 				}
 			}
 
-
 			closest = currentClosest;
 			i++;
 		}
 
 		this.builder.close(first);
-
 		light.setLightCones(this.builder.getCones());
 	}
 
@@ -266,9 +271,11 @@ public class LightingEngine {
 
 		a.setStroke(false);		
 		for(LightCone cone : source.getLightCones()) {
-			a.setFillPaint(new RadialGradientPaint(Viewport.gamePtToScreen(source.getLocation()).x, 
-				Viewport.gamePtToScreen(source.getLocation()).y, 300f, new float[]{0f, 1f}, 
-				new Color[]{new Color(1f, 1f, 0f, 0.6f), new Color(0f, 0f, 0f, 0f)}));
+			// a.setFillPaint(new RadialGradientPaint(Viewport.gamePtToScreen(source.getLocation()).x, 
+			// 	Viewport.gamePtToScreen(source.getLocation()).y, 300f, new float[]{0f, 1f}, 
+			// 	new Color[]{new Color(1f, 1f, 0f, 0.6f), new Color(0f, 0f, 0f, 0f)}));
+			a.setFillPaint(new Color(1f, 1f, 0f, 0.5f));
+			//a.setFillPaint(Color.YELLOW);
 			a.path(g, this.pointConvert(cone.getPoints()));
 		}
 	}
@@ -335,6 +342,7 @@ public class LightingEngine {
 		if (B2.y - B1.y == 0) {
 			B1 = new Vec2f(B1.x, B1.y + 0.1f);
 		}
+
 		if (aIsVert && bIsVert) {
 			return null;
 		}
