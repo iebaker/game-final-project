@@ -14,6 +14,14 @@ import engine.Viewport;
 
 import game.GameWorld;
 
+/**
+ * LightingEngine is a class whose main function is to actually perform the sweepline algorithm which 
+ * computes for each LightSource in the world a set of LightCone objects representing the areas lit
+ * by this LightSource.  It also currently contains debugging functions which can be used to visualize
+ * the raycasting and cone creation algorithms.
+ *
+ * @author iebaker
+ */
 public class LightingEngine {
 
 	private List<Segment> lineSegments = new ArrayList<Segment>();
@@ -21,6 +29,13 @@ public class LightingEngine {
 	private ConeBuilder builder = new ConeBuilder();
 	private int rayNum4Debug = 0;
 
+	/**
+	 * Performs sweepline cone creation algorithm for every LightSource the world returns from its
+	 * getLightSources() method.  The LightSource objects themselves will be mutated, so this
+	 * method does not return anything.
+	 *
+	 * @param world  	The LightWorld in which to run these calculations.
+	 */
 	public void run(LightWorld world) {
 		for(LightSource light : world.getLightSources()) {
 			this.setup(light, world);
@@ -28,6 +43,14 @@ public class LightingEngine {
 		}
 	}
 
+	/**
+	 * Populates instance variables of this class (points, lineSegments) by querying the world
+	 * for point and pair information, ordering the points, and orienting the pairs into Segment
+	 * objects by angle around the source point. 
+	 *
+	 * @param light 	The LightSource about which to perform lighting calculations
+	 * @param world 	The LightWorld in which this LightSource lives
+	 */
 	private void setup(LightSource light, LightWorld world) {
 		this.lineSegments = new ArrayList<Segment>();
 		this.points = new ArrayList<Vec2f>();
@@ -67,6 +90,12 @@ public class LightingEngine {
 		}
 	}
 
+	/**
+	 * Actually performs the sweepline algorithm, using the ConeBuilder object owned by 
+	 * this class (maybe should make those into static methods?) in order to create LightCones
+	 *
+	 * @param light 	The LightSource around which sweeping is performed.  Mutated by the method.
+	 */
 	private void sweep(LightSource light) {
 		if(this.points.isEmpty()) return;
 
@@ -153,8 +182,10 @@ public class LightingEngine {
 			}
 		}
 		
-		Segment.noticeEndingAt(targetPoint);
-		Segment.noticeBeginningAt(targetPoint);
+		for(Vec2f point : collinears) {
+			Segment.noticeEndingAt(point);
+			Segment.noticeBeginningAt(point);
+		}
 		return rcd_return;
 	}
 
