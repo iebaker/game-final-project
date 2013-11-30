@@ -170,8 +170,7 @@ public class Viewport {
 		Rectangle b = g.getClipBounds();
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
 		game.onDraw(g);
-		gameworld.getLightingEngineForTesting().test6(gameworld, g);
-		gameworld.getLightingEngineForTesting().test7(gameworld, g);
+		gameworld.getLightingEngineForTesting().rayDebug(gameworld, g);
 		g.clip(b);
 
 		// Draw a box to show the viewport

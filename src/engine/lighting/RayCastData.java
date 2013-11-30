@@ -49,18 +49,6 @@ public class RayCastData {
 		}
 	}
 
-	public Vec2f findMinPoint() {
-		float min_dist = Float.POSITIVE_INFINITY;
-		Vec2f minPoint = null;
-		for (Intersection i : intersections) {
-			float dist = sourcePoint.dist(i.getPoint());
-			if (dist < min_dist) {
-				min_dist = dist;
-				minPoint = i.getPoint();
-			}
-		}
-		return minPoint;
-	}
 
 	public List<Intersection> getIntersections() {
 		return intersections;
@@ -74,6 +62,17 @@ public class RayCastData {
 		List<Vec2f> points = new ArrayList<Vec2f>();
 		for (Intersection i : intersections) {
 			points.add(i.getPoint());
+		}
+		return points;
+	}
+
+	public List<Vec2f> getUniquePoints() {
+		List<Vec2f> points = new ArrayList<Vec2f>();
+		for(Intersection i : intersections) {
+			Vec2f p = i.getPoint();
+			if(!points.contains(p)) {
+				points.add(p);
+			}
 		}
 		return points;
 	}

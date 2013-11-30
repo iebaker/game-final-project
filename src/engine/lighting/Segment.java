@@ -1,6 +1,10 @@
 package engine.lighting;
 
 import cs195n.Vec2f;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Segment is a class representing an ordered tuple of two points which defines
@@ -9,6 +13,33 @@ import cs195n.Vec2f;
 public class Segment {
 	private Vec2f beginPoint = null;
 	private Vec2f endPoint = null;
+	private boolean ignored = false;
+
+	private static Map<Vec2f, List<Segment>> byEndpoints = new HashMap<Vec2f, List<Segment>>();
+
+	public static void clear() {
+		byEndpoints = new HashMap<Vec2f, List<Segment>>();
+	}
+
+	public static void ignoreEndingAt(Vec2f v) {
+		if(byEndpoints.containsKey(v)) {
+			for(Segment s : byEndpoints.get(v)) {
+				s.ignore();
+			}
+		}
+	}
+
+	public void ignore() {
+		this.ignored = true;
+	}
+
+	public boolean isIgnored() {
+		return ignored;
+	}
+
+	public boolean endsAt(Vec2f v) {
+		return v.equals(this.endPoint);
+	}
 
 	/**
 	 * Setter method for the beginning point of the segment.  If the beginPoint
@@ -33,6 +64,10 @@ public class Segment {
 		if(endPoint == null) {
 			endPoint = p;
 			p.setEnd(true);
+			if(!byEndpoints.containsKey(p)) {
+				byEndpoints.put(p, new ArrayList<Segment>());
+			}
+			byEndpoints.get(p).add(this);
 		}
 	}
 

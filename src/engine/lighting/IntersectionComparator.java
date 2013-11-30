@@ -34,7 +34,7 @@ public class IntersectionComparator implements Comparator<Intersection> {
 			//Now the hard part... neither I2 or I1 are endpoints.  WLOG select I1 as our
 			//test intersection.
 
-			Vec2f test = LightingEngine.intersect(sourcePoint, s1.getEndPoint(), p2, s2.getEndPoint());
+			Vec2f test = LightingEngine.lineIntersect(sourcePoint, s1.getEndPoint(), p2, s2.getEndPoint());
 			if(test != null) {
 				return 1; 			//The line from the source to I1's segment's end point crosses I2's segment.  I2 is closer.
 			}

@@ -83,6 +83,10 @@ public class LightSource {
 	public void setLightCones(List<LightCone> cones) {
 		my_light_cones = cones;
 	}
+
+	public List<LightCone> getLightCones() {
+		return my_light_cones;
+	}
 	
 	/**
 	 * Setter for the location field
