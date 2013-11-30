@@ -1,6 +1,7 @@
 package engine.lighting;
 
 import java.awt.Color;
+import java.awt.RadialGradientPaint;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -267,7 +268,9 @@ public class LightingEngine {
 
 		a.setStroke(false);		
 		for(LightCone cone : source.getLightCones()) {
-			a.setFillPaint(cone.getColor());
+			a.setFillPaint(new RadialGradientPaint(Viewport.gamePtToScreen(source.getLocation()).x, 
+				Viewport.gamePtToScreen(source.getLocation()).y, 300f, new float[]{0f, 1f}, 
+				new Color[]{new Color(1f, 1f, 0f, 0.6f), new Color(0f, 0f, 0f, 0f)}));
 			a.path(g, this.pointConvert(cone.getPoints()));
 		}
 	}
