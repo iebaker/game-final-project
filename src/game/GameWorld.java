@@ -475,6 +475,7 @@ public class GameWorld extends World implements LightWorld {
 	 * @param e
 	 */
 	public void onKeyPressed(KeyEvent e) {
+		lightEngine.onKeyPressed(e);
 		int keyCode = e.getKeyCode();
 		if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
 			if (cutsceneActive && textBox.hasNextLine()) {

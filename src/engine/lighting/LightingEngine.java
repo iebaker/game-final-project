@@ -18,6 +18,7 @@ public class LightingEngine {
 	private List<Segment> lineSegments = new ArrayList<Segment>();
 	private List<Vec2f> points = new ArrayList<Vec2f>();
 	private ConeBuilder builder = new ConeBuilder();
+	private int rayNum4Debug = 0;
 
 	public void run(LightWorld world) {
 		for(LightSource light : world.getLightSources()) {
@@ -70,6 +71,7 @@ public class LightingEngine {
 
 		RayCastData rcd = this.doRayCast(light.getLocation(), this.points.get(0));
 		Segment closest = rcd.minSegment();
+		AngularComparator comp = new AngularComparator(light.getLocation());
 
 		int i = 0;
 		Vec2f first = null;
@@ -85,6 +87,8 @@ public class LightingEngine {
 				i++;
 				continue;
 			}
+
+			if(comp.compare(currentPoint, points.get(i-1)) == 0) System.out.println("oops");
 
 			if(Segment.endingAt(currentPoint).contains(closest)) {
 				this.builder.close(currentPoint);
@@ -218,7 +222,8 @@ public class LightingEngine {
 			// a.line(g, begin.x, begin.y, end.x, end.y);
 		}
 
-		for(Vec2f point : this.points) {
+		for(int i = 0; i < this.points.size(); ++i) {
+			Vec2f point = this.points.get(i);
 			RayCastData rcd = this.doRayCast(source.getLocation(), point);
 			Vec2f prev = Viewport.gamePtToScreen(source.getLocation());
 			Vec2f convpt = Viewport.gamePtToScreen(point);
@@ -227,9 +232,21 @@ public class LightingEngine {
 			Color color = Color.GREEN;
 			g.setStroke(new BasicStroke(2));
 
-			for(Intersection i : rcd.getIntersections()) {
+			if(i == this.rayNum4Debug) {
+				Segment min = rcd.minSegment();
+				Vec2f p1 = Viewport.gamePtToScreen(min.getBeginPoint());
+				Vec2f p2 = Viewport.gamePtToScreen(min.getEndPoint());
+				
+				a.setStrokePaint(new Color(0f, 0f, 0f, 0.5f));
+				g.setStroke(new BasicStroke(6));
+				a.line(g, p1.x, p1.y, p2.x, p2.y);
+				a.line(g, prev.x, prev.y, convpt.x, convpt.y);
+			}
+
+			g.setStroke(new BasicStroke(1));
+			for(Intersection intersection : rcd.getIntersections()) {
 				a.setStrokePaint(color);
-				Vec2f pt = Viewport.gamePtToScreen(i.getPoint());
+				Vec2f pt = Viewport.gamePtToScreen(intersection.getPoint());
 
 				a.line(g, prev.x, prev.y, pt.x, pt.y);
 
@@ -261,6 +278,28 @@ public class LightingEngine {
 			return_value.add(Viewport.gamePtToScreen(v));
 		}
 		return return_value;
+	}
+
+	public void onKeyPressed(java.awt.event.KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		switch(keyCode) {
+
+			case java.awt.event.KeyEvent.VK_ENTER:
+				if(this.rayNum4Debug == this.points.size() - 1) {
+					this.rayNum4Debug = 0;
+				} else {
+          this.rayNum4Debug++;
+				}
+				break;
+
+			case java.awt.event.KeyEvent.VK_SHIFT:
+				if(this.rayNum4Debug == 0) {
+					this.rayNum4Debug = this.points.size() - 1;
+				} else {
+					this.rayNum4Debug--;
+				} 
+				break;
+		}
 	}
 
 /* ============================================================================
