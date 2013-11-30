@@ -142,7 +142,7 @@ public class LightingEngine {
 		for (Segment segment : lineSegments) {
 			if(segment.isIgnored()) continue;
 			Vec2f newIntersection = LightingEngine.segmentIntersect(sourcePoint, sourcePoint.plus(direction),
-					segment.getBeginPointForRayCast(), segment.getEndPointForRayCast());
+					segment.getBeginPoint(), segment.getEndPoint());
 			if (newIntersection != null) {
 				rcd_return.addIntersection(newIntersection, segment);
 			}
