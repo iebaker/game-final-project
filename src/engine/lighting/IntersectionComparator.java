@@ -31,18 +31,28 @@ public class IntersectionComparator implements Comparator<Intersection> {
 				return -1;		//I2 is an endpoint for S2, so I1 is closer
 			}
 
-			//Now the hard part... neither I2 or I1 are endpoints.  WLOG select I1 as our
-			//test intersection.
+			//Now the hard part... neither I2 or I1 are endpoints.
 
-			Vec2f alongs2= s2.asVector();
-			alongs2 = alongs2.normalized().smult(1E9f);	
+			Vec2f rayVector = p1.minus(sourcePoint);
+			Vec2f v1 = s1.asVector();
+			Vec2f v2 = s2.asVector();
 
-			Vec2f test = LightingEngine.segmentIntersect(sourcePoint, s1.getEndPoint(), p2, s2.getEndPoint().plus(alongs2));
-			if(test != null) {
-				return 1; 			//The line from the source to I1's segment's end point crosses I2's segment.  I2 is closer.
+			float theta1 = this.angleBetween(rayVector, v1);
+			float theta2 = this.angleBetween(rayVector, v2);
+
+			if(theta1 > theta2) {
+				return -1;
+			} else {
+				return 1;
 			}
-
-			return -1;				//The only option left is I1 being closer.
 		}
+	}
+
+	public float angleBetween(Vec2f v, Vec2f w) {
+		float v_dot_w = v.dot(w);
+		float mag_v = v.mag();
+		float mag_w = w.mag();
+
+		return (float) Math.acos(v_dot_w/(mag_v * mag_w));
 	}
 }

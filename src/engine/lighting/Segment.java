@@ -54,15 +54,15 @@ public class Segment {
 		}
 	}
 
-	public static void attendEndingAt(Vec2f v) {
+	public static void noticeEndingAt(Vec2f v) {
 		for(Segment s : Segment.endingAt(v)) {
-			s.attend();
+			s.notice();
 		}
 	}
 
-	public static void attendBeginningAt(Vec2f v) {
+	public static void noticeBeginningAt(Vec2f v) {
 		for(Segment s : Segment.beginningAt(v)) {
-			s.attend();
+			s.notice();
 		}
 	}
 
@@ -70,7 +70,7 @@ public class Segment {
 		this.ignored = true;
 	}
 
-	public void attend() {
+	public void notice() {
 		this.ignored = false;
 	}
 

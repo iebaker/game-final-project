@@ -148,8 +148,8 @@ public class LightingEngine {
 			}
 		}
 		
-		Segment.attendEndingAt(targetPoint);
-		Segment.attendBeginningAt(targetPoint);
+		Segment.noticeEndingAt(targetPoint);
+		Segment.noticeBeginningAt(targetPoint);
 		return rcd_return;
 	}
 
@@ -219,8 +219,6 @@ public class LightingEngine {
 			a.line(g, begin.x, begin.y, mid.x, mid.y);
 			a.setStrokePaint(Color.BLUE);
 			a.line(g, mid.x, mid.y, end.x, end.y);
-			// a.setStrokePaint(Color.BLACK);
-			// a.line(g, begin.x, begin.y, end.x, end.y);
 		}
 
 		for(int i = 0; i < this.points.size(); ++i) {
@@ -291,7 +289,7 @@ public class LightingEngine {
 				if(this.rayNum4Debug == this.points.size() - 1) {
 					this.rayNum4Debug = 0;
 				} else {
-          this.rayNum4Debug++;
+          			this.rayNum4Debug++;
 				}
 				break;
 
@@ -313,6 +311,9 @@ public class LightingEngine {
 		return LightingEngine.intersect(true, A1, A2, B1, B2);
 	}
 
+	/**
+	 * This LIES and will always return null sorry oops
+	 */
 	public static Vec2f lineIntersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
 		return LightingEngine.intersect(false, A1, A2, B1, B2);
 	}
