@@ -17,21 +17,57 @@ public class Segment {
 	private boolean flipped = false;
 
 	private static Map<Vec2f, List<Segment>> byEndpoints = new HashMap<Vec2f, List<Segment>>();
-
+	private static Map<Vec2f, List<Segment>> byBeginpoints = new HashMap<Vec2f, List<Segment>>();
+	
 	public static void clear() {
 		byEndpoints = new HashMap<Vec2f, List<Segment>>();
+		byBeginpoints = new HashMap<Vec2f, List<Segment>>();
+	}
+
+	public static List<Segment> beginningAt(Vec2f v) {
+		if(byBeginpoints.containsKey(v)) {
+			return byBeginpoints.get(v);
+		} 
+		return new ArrayList<Segment>();
+	}
+
+	public static List<Segment> endingAt(Vec2f v) {
+		if(byEndpoints.containsKey(v)) {
+			return byEndpoints.get(v);
+		}
+		return new ArrayList<Segment>();
 	}
 
 	public static void ignoreEndingAt(Vec2f v) {
-		if(byEndpoints.containsKey(v)) {
-			for(Segment s : byEndpoints.get(v)) {
-				s.ignore();
-			}
+		for(Segment s : Segment.endingAt(v)) {
+			s.ignore();
+		}
+	}
+
+	public static void ignoreBeginningAt(Vec2f v) {
+		for(Segment s : Segment.beginningAt(v)) {
+			s.ignore();
+		}
+	}
+
+	public static void attendEndingAt(Vec2f v) {
+		for(Segment s : Segment.endingAt(v)) {
+			s.attend();
+		}
+	}
+
+	public static void attendBeginningAt(Vec2f v) {
+		for(Segment s : Segment.beginningAt(v)) {
+			s.attend();
 		}
 	}
 
 	public void ignore() {
 		this.ignored = true;
+	}
+
+	public void attend() {
+		this.ignored = false;
 	}
 
 	public void flip() {
@@ -60,6 +96,10 @@ public class Segment {
 		if(beginPoint == null) {
 			beginPoint = p;
 			p.setStart(true);
+			if(!byBeginpoints.containsKey(p)) {
+				byBeginpoints.put(p, new ArrayList<Segment>());
+			}
+			byBeginpoints.get(p).add(this);
 		}
 	}
 

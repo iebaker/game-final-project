@@ -30,7 +30,6 @@ public class LightingEngine {
 		this.lineSegments = new ArrayList<Segment>();
 		this.points = new ArrayList<Vec2f>();
 		this.builder.reset(light);
-		Segment.clear();
 
 		Vec2f lightLocation = light.getLocation();
 		AngularComparator ac = new AngularComparator(lightLocation);
@@ -69,38 +68,25 @@ public class LightingEngine {
 	private void sweep(LightSource light) {
 		if(this.points.isEmpty()) return;
 
-		Segment.ignoreEndingAt(this.points.get(0));
 		RayCastData rcd = this.doRayCast(light.getLocation(), this.points.get(0));
 		Segment closest = rcd.minSegment();
 
 		int i = 0;
+		Vec2f first = null;
 		while(i < this.points.size()) {
 
 			Vec2f currentPoint = points.get(i);
-			Segment.ignoreEndingAt(currentPoint);
 			RayCastData currentRCD = this.doRayCast(light.getLocation(), currentPoint);
 			Segment currentClosest = currentRCD.minSegment();
 
 			if(this.builder.unStarted()) {
-				this.builder.open(currentRCD.minPoint());
+				first = currentRCD.minPoint();
+				this.builder.open(first);
 				i++;
 				continue;
 			}
 
-			if(currentClosest != closest) {
-				Vec2f testInt = LightingEngine.segmentIntersect(currentClosest.getBeginPoint(), currentClosest.getEndPoint(), closest.getBeginPoint(), closest.getEndPoint());
-
-				if(testInt != null) {
-					this.builder.close(testInt);
-					this.builder.open(testInt);
-				} else {
-					this.builder.close(currentRCD.getUniquePoints().get(1));
-					this.builder.open(currentPoint);
-				}
-
-				closest = currentClosest;
-
-			} else if(closest.endsAt(currentPoint)) {
+			if(Segment.endingAt(currentPoint).contains(closest)) {
 				this.builder.close(currentPoint);
 
 				if(currentPoint.isStart()) {
@@ -108,20 +94,45 @@ public class LightingEngine {
 				} else {
 					this.builder.open(currentRCD.minPoint());
 				}
+			} else if(currentClosest != closest) {
+				Vec2f testInt = LightingEngine.segmentIntersect(closest.getBeginPoint(), closest.getEndPoint(), currentClosest.getBeginPoint(), currentClosest.getEndPoint());
 
-				closest = currentClosest;
-			} 
+				if(testInt != null) {
+					this.builder.close(testInt);
+					this.builder.open(testInt);
+				}	else {
+					this.builder.close(currentRCD.getUniquePoints().get(1));
+					this.builder.open(currentPoint);
+				}
+			}
 
+
+			closest = currentClosest;
 			i++;
 		}
+
+		this.builder.close(first);
 
 		light.setLightCones(this.builder.getCones());
 	}
 
 	private RayCastData doRayCast(Vec2f sourcePoint, Vec2f targetPoint) {
+		List<Vec2f> collinears = this.getCollinearPoints(sourcePoint, targetPoint);
+
+		for(Vec2f point : collinears) {
+			Segment.ignoreEndingAt(point);
+			Segment.ignoreBeginningAt(point);
+		}
+
 		RayCastData rcd_return = new RayCastData(sourcePoint);
 		Vec2f direction = targetPoint.minus(sourcePoint);
 		direction = direction.normalized().smult(10000000);
+
+		for(Vec2f point : collinears) {
+			for(Segment s : Segment.beginningAt(point)) {
+				rcd_return.addIntersection(point, s);
+			}
+		}
 
 		for (Segment segment : lineSegments) {
 			if(segment.isIgnored()) continue;
@@ -131,9 +142,9 @@ public class LightingEngine {
 				rcd_return.addIntersection(newIntersection, segment);
 			}
 		}
-		if (rcd_return.getIntersections().size() == 0) {
-			// System.out.println(targetPoint);
-		}
+		
+		Segment.attendEndingAt(targetPoint);
+		Segment.attendBeginningAt(targetPoint);
 		return rcd_return;
 	}
 
@@ -171,6 +182,7 @@ public class LightingEngine {
 
 		Artist a = new Artist();
 
+		if(world.getLightSources().isEmpty()) return;
 		LightSource source = world.getLightSources().get(0);
 		Vec2f convLSpoint = Viewport.gamePtToScreen(source.getLocation());
 
@@ -207,7 +219,6 @@ public class LightingEngine {
 		}
 
 		for(Vec2f point : this.points) {
-			Segment.ignoreEndingAt(point);
 			RayCastData rcd = this.doRayCast(source.getLocation(), point);
 			Vec2f prev = Viewport.gamePtToScreen(source.getLocation());
 			Vec2f convpt = Viewport.gamePtToScreen(point);
@@ -223,9 +234,33 @@ public class LightingEngine {
 				a.line(g, prev.x, prev.y, pt.x, pt.y);
 
 				prev = pt;
-				color = color == Color.GREEN ? Color.ORANGE : Color.GREEN;
+				color = color == Color.GREEN ? Color.ORANGE : color == Color.ORANGE ? Color.MAGENTA : Color.GREEN;
 			}
 		}
+	}
+
+	public void coneDebug(LightWorld world, Graphics2D g) {
+		Segment.clear();
+		Artist a = new Artist();
+		if(world.getLightSources().isEmpty()) return;
+		LightSource source = world.getLightSources().get(0);
+
+		this.setup(source, world);
+		this.sweep(source);
+
+		a.setStroke(false);		
+		for(LightCone cone : source.getLightCones()) {
+			a.setFillPaint(cone.getColor());
+			a.path(g, this.pointConvert(cone.getPoints()));
+		}
+	}
+
+	public List<Vec2f> pointConvert(List<Vec2f> input) {
+		List<Vec2f> return_value = new ArrayList<Vec2f>();
+		for(Vec2f v : input) {
+			return_value.add(Viewport.gamePtToScreen(v));
+		}
+		return return_value;
 	}
 
 /* ============================================================================
@@ -288,6 +323,21 @@ public class LightingEngine {
 
 	private static boolean within(float a, float E1, float E2) {
 		return a >= E1 && a <= E2 || a >= E2 && a <= E1;
+	}
+
+	private float slope(Vec2f p1, Vec2f p2) {
+		return (p1.y - p2.y) / (p1.x - p2.x);
+	}
+
+	private List<Vec2f> getCollinearPoints(Vec2f p1, Vec2f p2) {
+		List<Vec2f> return_value = new ArrayList<Vec2f>();
+		float slope = this.slope(p1, p2);
+		for(Vec2f test : this.points) {
+			if(slope == this.slope(p1, test)) {
+				return_value.add(test);
+			}
+		}
+		return return_value;
 	}
 
 	private boolean wrongWay(Vec2f location, Vec2f a, Vec2f b) {
