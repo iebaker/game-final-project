@@ -341,17 +341,25 @@ public class GameWorld extends World implements LightWorld {
 				
 			} else if (shape instanceof Circle) {
 				
-				// Retrieve vector from sourcePoint
-				Vec2f toCenter = shape.getCenter().minus(sourcePoint);
-				if (toCenter.isZero()) continue;
-				
-				// Set magnitude (won't break because we already checked it was zero), and make perp.
-				toCenter = toCenter.normalized().smult(((Circle) shape).getRadius());
-				toCenter = new Vec2f(-toCenter.y, toCenter.x);
-				
+				Circle circle = (Circle) shape;
+				Vec2f circleToSource = circle.getCenter().minus(sourcePoint);
+
+				float d = circleToSource.mag();
+				float r = circle.getRadius();
+
+				float theta = (float) Math.acos(r/d);
+
+				float out = r * (float) Math.cos(theta);
+				float wide = r * (float) Math.sin(theta);
+
+				Vec2f normC2C = circleToSource.normalized();
+				Vec2f temp = circle.getCenter().minus(normC2C.smult(out));
+
+				Vec2f finalvec = new Vec2f(-normC2C.y, normC2C.x).smult(wide);
+
 				// Find points
-				Vec2f p1 = shape.getCenter().plus(toCenter);
-				Vec2f p2 = shape.getCenter().minus(toCenter);
+				Vec2f p1 = temp.plus(finalvec);
+				Vec2f p2 = temp.minus(finalvec);
 				
 				// Add points
 				points.add(p1);
