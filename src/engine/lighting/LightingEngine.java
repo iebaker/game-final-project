@@ -112,6 +112,7 @@ public class LightingEngine {
 		
 		int i = 0;
 		Vec2f first = null;
+		points.add(points.get(0));
 		while (i < points.size()) {
 			
 			Vec2f currentPoint = points.get(i);
