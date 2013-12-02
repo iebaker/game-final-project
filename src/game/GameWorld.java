@@ -439,7 +439,7 @@ public class GameWorld extends World implements LightWorld {
 		win = false;
 		lose = false;
 		lineCt = 0;
-		gravity = 300;
+		gravity = 0; //Was 300
 		entityStack = new ArrayList<Entity>();
 		
 		// Actually load the level
@@ -534,6 +534,7 @@ public class GameWorld extends World implements LightWorld {
 	 * @param e
 	 */
 	public void onMouseClicked(MouseEvent e) {
+		lightEngine.onMouseClicked(this, e);
 		Vec2f pt = v.screenPtToGame(new Vec2f(e.getX(), e.getY()));
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			if (checkBounds(pt)) fireBullet(pt);
@@ -546,7 +547,7 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	@Override
 	public void onTick(float secs) {
-		if (player != null) unlockJump();
+		if (player != null) unlockJump(); //SHOULD REMOVE THIS!!
 		// Calculates standard tick - how many + leftover time to counter for later
 		double timeSteps = (secs / GameWorld.TICK_LENGTH) + leftoverTime;
 		long steps = (long) timeSteps;

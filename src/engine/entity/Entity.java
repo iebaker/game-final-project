@@ -48,7 +48,7 @@ public abstract class Entity implements Serializable {
 	public CollisionShape				shape;
 	private boolean						shootable;
 	private int							shotsNeeded;
-	protected Vec2f						velocity;
+	public Vec2f						velocity; //Change this back to protected!
 	protected float						width;
 	protected World						world;
 	

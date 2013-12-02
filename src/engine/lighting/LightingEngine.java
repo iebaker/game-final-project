@@ -1,6 +1,7 @@
 package engine.lighting;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.awt.RadialGradientPaint;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -100,7 +101,13 @@ public class LightingEngine {
 		if(this.points.isEmpty()) return;
 
 		RayCastData rcd = this.doRayCast(light.getLocation(), this.points.get(0));
-		Segment closest = rcd.minSegment();
+		Segment closest;
+		try {
+			closest = rcd.minSegment();
+		} catch(Exception e) {
+			System.out.println("Error raycast (1) : " + rcd);
+			return;
+		}
 		AngularComparator comp = new AngularComparator(light.getLocation());
 
 		int i = 0;
@@ -109,7 +116,14 @@ public class LightingEngine {
 
 			Vec2f currentPoint = points.get(i);
 			RayCastData currentRCD = this.doRayCast(light.getLocation(), currentPoint);
-			Segment currentClosest = currentRCD.minSegment();
+			Segment currentClosest;
+			try {
+				currentClosest = currentRCD.minSegment();
+			} catch (Exception e) {
+				System.out.println("Error raycast (2) : " + currentRCD);
+				i++;
+				continue;
+			}
 
 			if(this.builder.unStarted()) {
 				first = currentRCD.minPoint();
@@ -142,8 +156,12 @@ public class LightingEngine {
 					this.builder.close(testInt);
 					this.builder.open(testInt);
 				}	else {
-					this.builder.close(currentRCD.getUniquePoints().get(1));
-					this.builder.open(currentPoint);
+					try {
+						this.builder.close(currentRCD.getUniquePoints().get(1));
+						this.builder.open(currentPoint);
+					} catch(Exception e) {
+						System.out.println("Error raycast (3) : " + currentRCD);
+					}
 				}
 			}
 
@@ -286,7 +304,7 @@ public class LightingEngine {
 				a.line(g, prev.x, prev.y, pt.x, pt.y);
 
 				prev = pt;
-				color = color == Color.GREEN ? Color.ORANGE : color == Color.ORANGE ? Color.MAGENTA : Color.GREEN;
+				color = color == Color.GREEN ? Color.CYAN : color == Color.CYAN ? Color.MAGENTA : Color.GREEN;
 			}
 		}
 	}
@@ -302,10 +320,10 @@ public class LightingEngine {
 
 		a.setStroke(false);		
 		for(LightCone cone : source.getLightCones()) {
-			// a.setFillPaint(new RadialGradientPaint(Viewport.gamePtToScreen(source.getLocation()).x, 
-			// 	Viewport.gamePtToScreen(source.getLocation()).y, 300f, new float[]{0f, 1f}, 
-			// 	new Color[]{new Color(1f, 1f, 0f, 0.6f), new Color(0f, 0f, 0f, 0f)}));
-			a.setFillPaint(new Color(1f, 1f, 0f, 0.5f));
+			a.setFillPaint(new RadialGradientPaint(Viewport.gamePtToScreen(source.getLocation()).x, 
+				Viewport.gamePtToScreen(source.getLocation()).y, 300f, new float[]{0f, 1f}, 
+				new Color[]{new Color(1f, 1f, 0f, 0.6f), new Color(0f, 0f, 0f, 0f)}));
+			//a.setFillPaint(new Color(1f, 1f, 0f, 0.5f));
 			//a.setFillPaint(Color.YELLOW);
 			a.path(g, this.pointConvert(cone.getPoints()));
 		}
@@ -341,6 +359,13 @@ public class LightingEngine {
 		}
 	}
 
+	public void onMouseClicked(GameWorld w, MouseEvent e) {
+		Vec2f loc = new Vec2f(e.getX(), e.getY());
+
+		w.getPlayer().shape.changeLocation(Viewport.screenPtToGame(loc));
+		w.getPlayer().velocity = Vec2f.ZERO;
+	}
+
 /* ============================================================================
  * Utility methods for intersection/segment metrics
  * ========================================================================= */
@@ -360,22 +385,48 @@ public class LightingEngine {
 		return new Vec2f((p1.x + p2.x)/2, (p1.y + p2.y)/2);
 	}
 
+	public static Vec2f VHIntersect(Vec2f V1, Vec2f V2, Vec2f H1, Vec2f H2) {
+		if(H1.x > H2.x) {
+			Vec2f temp = H1;
+			H1 = H2;
+			H2 = temp;
+		}
+
+		if(V1.y > V2.y) {
+			Vec2f temp = V1;
+			V1 = V2;
+			V2 = temp;
+		}
+
+		boolean hsurrv = H1.x <= V1.x && H2.x >= V1.x;
+		boolean vsurrh = V1.y <= H1.y && V2.y >= H1.y;
+
+		if(hsurrv && vsurrh) {
+			return new Vec2f(V1.x, H1.y);
+		} 
+		return null;
+	}
+
 	private static Vec2f intersect(boolean seg, Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
 		float intX, intY;
 
 		boolean aIsVert = (A2.x - A1.x == 0);
 		boolean bIsVert = (B2.x - B1.x == 0);
 
-		if (A2.y - A1.y == 0) {
-			A1 = new Vec2f(A1.x, A1.y + 0.1f);
-		}
-
-		if (B2.y - B1.y == 0) {
-			B1 = new Vec2f(B1.x, B1.y + 0.1f);
-		}
-
 		if (aIsVert && bIsVert) {
 			return null;
+		}
+
+		if (A2.y - A1.y == 0) {
+			if(bIsVert) {
+				return LightingEngine.VHIntersect(B1, B2, A1, A2);
+			}
+			//A1 = new Vec2f(A1.x, A1.y + 0.1f);
+		} else if (B2.y - B1.y == 0) {
+			if(aIsVert) {
+				return LightingEngine.VHIntersect(A1, A2, B1, B2);
+			}
+			//B1 = new Vec2f(B1.x, B1.y + 0.1f);
 		}
 
 		if (aIsVert) {
@@ -450,6 +501,7 @@ public class LightingEngine {
 /* ============================================================================
  * ConeBuilder class
  * ========================================================================= */
+
 	private class ConeBuilder {
 		private List<LightCone> cones = new ArrayList<LightCone>();
 		private Vec2f openPoint = null;

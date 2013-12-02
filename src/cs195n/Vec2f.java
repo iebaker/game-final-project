@@ -30,6 +30,8 @@ public final class Vec2f implements Serializable {
 	
 	private boolean isStart;
 	private boolean isEnd;
+
+	public static final Vec2f ZERO = new Vec2f(0,0);
 	
 	/**
 	 * Constructor. Creates a new instance from an x and y component.
