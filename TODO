@@ -1,12 +1,25 @@
+NECESSARY
+
+Saving
+	Fix sound issue when reloading
+
+Water
+	Swim up and down, no jumping off floor, more of it!
+	
+Entities
+	Make them dark gray instead, but implement radial gradient that makes them fade to black if too far away (for water too!)
+
+Light
+	Circles - make em work
+	Weird right edge bug
+	Working for when roof is gone? (if time)
+
+----------------------------------------------------
 THINGS THAT COULD BE ADDED (REMOVE ONCE IMPLEMENTED)
 
 Make world loop on left and right sides
 	Implementation? Could this be done with some sort of mod in the viewport? Dylan, do you know?
-	
-Add water
-	Areas that player can move through that but which apply upwards force and are a partially-transparent/translucent blue. Things with enough mass would sink, maybe.
-	Some sort of oxygen-countdown would be pretty easy to add too. And adding an item to increase lung capacity would be easy
-	
+
 Clean up cutscene UI
 	The setup for cutscenes is pretty simple, so I think anyone could do this. Just better management of the UIRoundedRect and UIText in the TetBox class.
 	Look in the GameScreen class, too. Some of the management is there.
@@ -14,12 +27,18 @@ Clean up cutscene UI
 Clean up general UI
 	I think the front screen could look a little bit nicer for the final submission. Maybe add a credits page too or something. And "load game" and "new game" options.
 	
-Autosave at cutscenes
-	Should be really easy to add
-	
 More abilities
 	Digging, flying, being able to move objects by dragging them with the mouse, really anything.
 	Once abilities are there, we can start to introduce them to the game and build content around them.
 	
 Saving
 	Save files to an actual folder instead of just putting it in "home"
+	
+Font
+	Fix weird edges and switching fonts as you load
+
+Water
+	Oxygen countdown?
+
+---------------	
+TEST TEST TEST!
