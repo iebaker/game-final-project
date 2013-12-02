@@ -12,6 +12,7 @@ import java.util.List;
 
 import cs195n.Vec2f;
 import engine.Saver;
+import engine.Viewport;
 import engine.World;
 import engine.collision.AAB;
 import engine.collision.Circle;
@@ -117,8 +118,8 @@ public class GameWorld extends World implements LightWorld {
 	private Player											player;
 	private final String									soundFile			= "sounds.xml";
 	private boolean											transferredEntities	= false;
-	private LightSource										lightSource;
-	private final LightingEngine							lightEngine			= new LightingEngine();
+	private transient LightSource							lightSource;
+	private transient LightingEngine						lightEngine			= new LightingEngine();
 	private boolean											win;
 	
 	/**
@@ -343,20 +344,20 @@ public class GameWorld extends World implements LightWorld {
 				
 				Circle circle = (Circle) shape;
 				Vec2f circleToSource = circle.getCenter().minus(sourcePoint);
-
+				
 				float d = circleToSource.mag();
 				float r = circle.getRadius();
-
-				float theta = (float) Math.acos(r/d);
-
+				
+				float theta = (float) Math.acos(r / d);
+				
 				float out = r * (float) Math.cos(theta);
 				float wide = r * (float) Math.sin(theta);
-
+				
 				Vec2f normC2C = circleToSource.normalized();
 				Vec2f temp = circle.getCenter().minus(normC2C.smult(out));
-
+				
 				Vec2f finalvec = new Vec2f(-normC2C.y, normC2C.x).smult(wide);
-
+				
 				// Find points
 				Vec2f p1 = temp.plus(finalvec);
 				Vec2f p2 = temp.minus(finalvec);
@@ -439,7 +440,7 @@ public class GameWorld extends World implements LightWorld {
 		win = false;
 		lose = false;
 		lineCt = 0;
-		gravity = 0; //Was 300
+		gravity = 300;
 		entityStack = new ArrayList<Entity>();
 		
 		// Actually load the level
@@ -457,16 +458,12 @@ public class GameWorld extends World implements LightWorld {
 	 * @param g
 	 */
 	public void onDraw(Graphics2D g) {
-		// Resets viewport to be the correct offset based on player location
-		if (v != null && player != null)
-			v.setOffset(player.shape.getLocation().minus(v.screenPtToGameForOffset(v.getDim().sdiv(2))));
-		
 		// Draws the line for bullets
 		if (line != null && player != null && lineCt < 20) {
 			g.setColor(Color.blue);
 			g.setStroke(new BasicStroke(5f));
-			Vec2f p1 = v.gamePtToScreen(player.shape.getCenter());
-			Vec2f p2 = v.gamePtToScreen(line);
+			Vec2f p1 = Viewport.gamePtToScreen(player.shape.getCenter());
+			Vec2f p2 = Viewport.gamePtToScreen(line);
 			g.draw(new Line2D.Double(p1.x, p1.y, p2.x, p2.y));
 			lineCt++;
 		} else if (lineCt >= 20) {
@@ -534,8 +531,8 @@ public class GameWorld extends World implements LightWorld {
 	 * @param e
 	 */
 	public void onMouseClicked(MouseEvent e) {
-		lightEngine.onMouseClicked(this, e);
-		Vec2f pt = v.screenPtToGame(new Vec2f(e.getX(), e.getY()));
+		// lightEngine.onMouseClicked(this, e);
+		Vec2f pt = Viewport.screenPtToGame(new Vec2f(e.getX(), e.getY()));
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			if (checkBounds(pt)) fireBullet(pt);
 		}
@@ -547,7 +544,7 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	@Override
 	public void onTick(float secs) {
-		if (player != null) unlockJump(); //SHOULD REMOVE THIS!!
+		if (player != null) unlockJump(); // SHOULD REMOVE THIS!!
 		// Calculates standard tick - how many + leftover time to counter for later
 		double timeSteps = (secs / GameWorld.TICK_LENGTH) + leftoverTime;
 		long steps = (long) timeSteps;
@@ -602,11 +599,6 @@ public class GameWorld extends World implements LightWorld {
 		else if (ct == 0) paused = true;
 	}
 	
-	/*
-	 * ============================================================================ LightWorld stuff lives here!
-	 * =========================================================================
-	 */
-	
 	@Override
 	public void setPlayer(Entity p) {
 		player = (Player) p;
@@ -628,5 +620,21 @@ public class GameWorld extends World implements LightWorld {
 	
 	public void unlockJump() {
 		player.unlockJump();
+	}
+	
+	@Override
+	public void resetOffset() {
+		// Resets viewport to be the correct offset based on player location
+		if (v != null && player != null)
+			v.setOffset(player.shape.getLocation().minus(Viewport.screenPtToGameForOffset(v.getDim().sdiv(2))));
+	}
+	
+	@Override
+	public void reload() {
+		lightEngine = new LightingEngine();
+		for (Entity e : getEntities()) {
+			e.reloadSounds(); // Doesn't work
+		}
+		
 	}
 }

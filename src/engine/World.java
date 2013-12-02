@@ -232,11 +232,12 @@ public abstract class World implements Serializable {
 	public void onDraw(Graphics2D g) {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		for (Entity e : entityStack) {
-			e.onDraw(g);
-		}
+		if (getPlayer() != null) getPlayer().onDraw(g);
 		for (Entity e : passList) {
 			e.onDraw(g);
+		}
+		for (Entity e : entityStack) {
+			if (!e.equals(getPlayer())) e.onDraw(g);
 		}
 	}
 	
@@ -292,5 +293,12 @@ public abstract class World implements Serializable {
 	 * Sets a win for the game
 	 */
 	public abstract void setWin();
+	
+	public abstract void resetOffset();
+	
+	/**
+	 * When reloading from saved game
+	 */
+	public abstract void reload();
 	
 }

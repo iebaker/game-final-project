@@ -19,8 +19,8 @@ import cs195n.Vec2i;
  */
 public class Application extends SwingFrontEnd {
 	
-	private List<Screen>	screenStack	= new ArrayList<Screen>();
-	private Vec2i			currentScreenSize;
+	private final List<Screen>	screenStack	= new ArrayList<Screen>();
+	private Vec2i				currentScreenSize;
 	
 	/**
 	 * Supports creation of an Application with a title for the top of the window and a "starts in fullscreen" variable
@@ -57,10 +57,12 @@ public class Application extends SwingFrontEnd {
 	 * screen for it to respond appropriately, though onResize also saves the new size and calls onResize for all
 	 * screens in the stack
 	 */
+	@Override
 	protected void onTick(long nanosSincePreviousTick) {
 		screenStack.get(screenStack.size() - 1).onTick(nanosSincePreviousTick);
 	}
 	
+	@Override
 	protected void onDraw(Graphics2D g) {
 		g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -68,6 +70,7 @@ public class Application extends SwingFrontEnd {
 		screenStack.get(screenStack.size() - 1).onDraw(g);
 	}
 	
+	@Override
 	protected void onResize(Vec2i newSize) {
 		currentScreenSize = newSize;
 		screenStack.get(screenStack.size() - 1).onResize(getCurrentScreenSize());
@@ -76,6 +79,7 @@ public class Application extends SwingFrontEnd {
 	/**
 	 * All onXXX methods simply pass through their call to the current top stack screen
 	 */
+	@Override
 	protected void onKeyTyped(KeyEvent e) {
 		screenStack.get(screenStack.size() - 1).onKeyTyped(e);
 	}
@@ -84,34 +88,42 @@ public class Application extends SwingFrontEnd {
 		screenStack.get(screenStack.size() - 1).onKeyRepeated(e);
 	}
 	
+	@Override
 	protected void onKeyPressed(KeyEvent e) {
 		screenStack.get(screenStack.size() - 1).onKeyPressed(e);
 	}
 	
+	@Override
 	protected void onKeyReleased(KeyEvent e) {
 		screenStack.get(screenStack.size() - 1).onKeyReleased(e);
 	}
 	
+	@Override
 	protected void onMouseClicked(MouseEvent e) {
 		screenStack.get(screenStack.size() - 1).onMouseClicked(e);
 	}
 	
+	@Override
 	protected void onMousePressed(MouseEvent e) {
 		screenStack.get(screenStack.size() - 1).onMousePressed(e);
 	}
 	
+	@Override
 	protected void onMouseReleased(MouseEvent e) {
 		screenStack.get(screenStack.size() - 1).onMouseReleased(e);
 	}
 	
+	@Override
 	protected void onMouseDragged(MouseEvent e) {
 		screenStack.get(screenStack.size() - 1).onMouseDragged(e);
 	}
 	
+	@Override
 	protected void onMouseMoved(MouseEvent e) {
 		screenStack.get(screenStack.size() - 1).onMouseMoved(e);
 	}
 	
+	@Override
 	protected void onMouseWheelMoved(MouseWheelEvent e) {
 		screenStack.get(screenStack.size() - 1).onMouseWheelMoved(e);
 	}

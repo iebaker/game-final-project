@@ -89,7 +89,7 @@ public class Artist {
 	
 	public void line(Graphics2D g, float x1, float y1, float x2, float y2) {
 		g.setPaint(strokePaint);
-		if(strokeOn) {
+		if (strokeOn) {
 			g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
 		}
 	}

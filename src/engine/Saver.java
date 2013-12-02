@@ -38,7 +38,7 @@ public class Saver {
 	 *            the file to load game from
 	 */
 	public static World loadGame(String fileName, Viewport v, World w) {
-		for(Entity e : w.getEntities()) {
+		for (Entity e : w.getEntities()) {
 			e.stopSound();
 		}
 		World tempGame = null;
@@ -59,9 +59,7 @@ public class Saver {
 		}
 		if (tempGame != null) {
 			tempGame.v = v;
-			for(Entity e : tempGame.getEntities()) {
-				e.reloadSounds();
-			}
+			tempGame.reload();
 			System.out.println("Game data loaded from " + fileName);
 			return tempGame;
 		}

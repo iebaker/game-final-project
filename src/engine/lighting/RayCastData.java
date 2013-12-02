@@ -10,32 +10,32 @@ import cs195n.Vec2f;
  * of Vec2f and a Segment. The Vec2f represents the point at which the Segment intersects the Ray.
  */
 public class RayCastData {
-	private final Vec2f					sourcePoint;
-	private final List<Intersection>	intersections	= new ArrayList<Intersection>();
-	private IntersectionComparator ic;
-
+	private final Vec2f						sourcePoint;
+	private final List<Intersection>		intersections	= new ArrayList<Intersection>();
+	private final IntersectionComparator	ic;
+	
 	public RayCastData(Vec2f sourcePoint) {
 		this.sourcePoint = sourcePoint;
 		ic = new IntersectionComparator(this.sourcePoint);
 	}
-
+	
 	public void addIntersection(Vec2f p, Segment s) {
 		Intersection newInt = new Intersection(p, s);
-
-		if(intersections.size() == 0) {
+		
+		if (intersections.size() == 0) {
 			intersections.add(newInt);
 			return;
 		}
-
+		
 		boolean added = false;
-
+		
 		int i = 0;
-		while(i < intersections.size()) {
+		while (i < intersections.size()) {
 			Intersection existing = intersections.get(i);
 			int test = ic.compare(existing, newInt);
-
-			//If the new intersection is further, keep going
-			if(test == -1) {
+			
+			// If the new intersection is further, keep going
+			if (test == -1) {
 				++i;
 			} else {
 				intersections.add(i, newInt);
@@ -43,17 +43,16 @@ public class RayCastData {
 				break;
 			}
 		}
-
-		if(!added) {
+		
+		if (!added) {
 			intersections.add(newInt);
 		}
 	}
-
-
+	
 	public List<Intersection> getIntersections() {
 		return intersections;
 	}
-
+	
 	/**
 	 * Returns a list of the points at which the ray intersected segments. Sorted in order of their distance to the
 	 * source point.
@@ -65,18 +64,18 @@ public class RayCastData {
 		}
 		return points;
 	}
-
+	
 	public List<Vec2f> getUniquePoints() {
 		List<Vec2f> points = new ArrayList<Vec2f>();
-		for(Intersection i : intersections) {
+		for (Intersection i : intersections) {
 			Vec2f p = i.getPoint();
-			if(!points.contains(p)) {
+			if (!points.contains(p)) {
 				points.add(p);
 			}
 		}
 		return points;
 	}
-
+	
 	/**
 	 * Returns a list of the segments which were intersected by the ray, sorted by the distance to their intersection
 	 * points.
@@ -88,39 +87,21 @@ public class RayCastData {
 		}
 		return segments;
 	}
-
+	
 	/**
 	 * Returns the closest point to the source.
 	 */
 	public Vec2f minPoint() {
 		return intersections.get(0).getPoint();
 	}
-
+	
 	/**
 	 * Returns the closest segment to the source.
 	 */
 	public Segment minSegment() {
 		return intersections.get(0).getSegment();
 	}
-
-	/**
-	 * Determines whether two points are on opposite sides of a given line
-	 * 
-	 * @param a1
-	 *            The first point
-	 * @param a2
-	 *            The second point
-	 * @param b1
-	 *            The beginning of the line
-	 * @param b2
-	 *            The end of the line
-	 */
-	private boolean opposing(Vec2f a1, Vec2f a2, Vec2f b1, Vec2f b2) {
-		float term1 = ((b1.y - b2.y) * (a1.x - b1.x) + (b2.x - b1.x) * (a1.y - b1.y));
-		float term2 = ((b1.y - b2.y) * (a2.x - b1.x) + (b2.x - b1.x) * (a2.y - b1.y));
-		return term1 * term2 < 0;
-	}
-
+	
 	/**
 	 * Removes any intersections associated with a specified point.
 	 * 
@@ -129,16 +110,16 @@ public class RayCastData {
 	 */
 	public void removePoint(Vec2f p) {
 		intersections.remove(0);
-		//System.out.println("[rcd.removePoint] Intersection size before " + intersections.size());
+		// System.out.println("[rcd.removePoint] Intersection size before " + intersections.size());
 		// for (int i = 0; i < intersections.size(); ++i) {
-		// 	Intersection temp = intersections.get(i);
-		// 	if (temp.getPoint().equals(p)) {
-		// 		intersections.remove(i);
-		// 	}
+		// Intersection temp = intersections.get(i);
+		// if (temp.getPoint().equals(p)) {
+		// intersections.remove(i);
 		// }
-		//System.out.println("[rcd.removePoint] Intersection size after " + intersections.size());
+		// }
+		// System.out.println("[rcd.removePoint] Intersection size after " + intersections.size());
 	}
-
+	
 	/**
 	 * Removes any intersections associated with a specified segment from the object
 	 * 
@@ -146,16 +127,16 @@ public class RayCastData {
 	 *            The segment to remove
 	 */
 	public void removeSegment(Segment s) {
-		//System.out.println("[rcd.removeSegment] Intersection size before " + intersections.size());
+		// System.out.println("[rcd.removeSegment] Intersection size before " + intersections.size());
 		for (int i = 0; i < intersections.size(); ++i) {
 			Intersection temp = intersections.get(i);
 			if (temp.getSegment() == s) {
 				intersections.remove(i);
 			}
 		}
-		//System.out.println("[rcd.removeSegment] Intersection size after " + intersections.size());
+		// System.out.println("[rcd.removeSegment] Intersection size after " + intersections.size());
 	}
-
+	
 	@Override
 	/**
 	 * Returns a useful String representation of this RayCastData object
@@ -166,12 +147,12 @@ public class RayCastData {
 			result += "<NO INTERSECTIONS>]";
 			return result;
 		}
-
+		
 		result += "INTERSECTIONS=";
 		for (Intersection i : intersections) {
 			result += i.toString() + " ";
 		}
-
+		
 		result += "]";
 		return result;
 	}
