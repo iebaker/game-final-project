@@ -134,7 +134,7 @@ public class LightingEngine {
 
 			boolean closestEnded = Segment.endingAt(currentPoint).contains(closest);
 			boolean newClosest = currentClosest != closest;
-			Vec2f testInt = LightingEngine.segmentIntersect(closest.getBeginPoint(), closest.getEndPoint(), currentClosest.getBeginPoint(), currentClosest.getEndPoint());
+			Vec2f testInt = LightingEngine.intersect(closest.getBeginPoint(), closest.getEndPoint(), currentClosest.getBeginPoint(), currentClosest.getEndPoint());
 			boolean wasIntersection = testInt != null;
 
 
@@ -193,7 +193,7 @@ public class LightingEngine {
 
 		for (Segment segment : lineSegments) {
 			if(segment.isIgnored()) continue;
-			Vec2f newIntersection = LightingEngine.segmentIntersect(sourcePoint, sourcePoint.plus(direction),
+			Vec2f newIntersection = LightingEngine.intersect(sourcePoint, sourcePoint.plus(direction),
 					segment.getBeginPoint(), segment.getEndPoint());
 			if (newIntersection != null) {
 				rcd_return.addIntersection(newIntersection, segment);
@@ -370,92 +370,38 @@ public class LightingEngine {
  * Utility methods for intersection/segment metrics
  * ========================================================================= */
 
-	public static Vec2f segmentIntersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
-		return LightingEngine.intersect(true, A1, A2, B1, B2);
-	}
-
-	/**
-	 * This LIES and will always return null sorry oops
-	 */
-	public static Vec2f lineIntersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
-		return LightingEngine.intersect(false, A1, A2, B1, B2);
-	}
-
 	public static Vec2f midpoint(Vec2f p1, Vec2f p2) {
 		return new Vec2f((p1.x + p2.x)/2, (p1.y + p2.y)/2);
 	}
 
-	public static Vec2f VHIntersect(Vec2f V1, Vec2f V2, Vec2f H1, Vec2f H2) {
-		if(H1.x > H2.x) {
-			Vec2f temp = H1;
-			H1 = H2;
-			H2 = temp;
-		}
+	private static Vec2f intersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
+		Vec2f p = A1;
+		Vec2f q = B1;
 
-		if(V1.y > V2.y) {
-			Vec2f temp = V1;
-			V1 = V2;
-			V2 = temp;
-		}
+		Vec2f r = A2.minus(A1);
+		Vec2f s = B2.minus(B1);
 
-		boolean hsurrv = H1.x <= V1.x && H2.x >= V1.x;
-		boolean vsurrh = V1.y <= H1.y && V2.y >= H1.y;
+		float top = LightingEngine.twoDCross(q.minus(p), s);
+		float bottom = LightingEngine.twoDCross(r, s);
 
-		if(hsurrv && vsurrh) {
-			return new Vec2f(V1.x, H1.y);
-		} 
-		return null;
-	}
+		if(bottom == 0) return null;
 
-	private static Vec2f intersect(boolean seg, Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
-		float intX, intY;
+		float t = top/bottom;
 
-		boolean aIsVert = (A2.x - A1.x == 0);
-		boolean bIsVert = (B2.x - B1.x == 0);
+		top = LightingEngine.twoDCross(q.minus(p), r);
 
-		if (aIsVert && bIsVert) {
+		float u = top/bottom;
+
+		if(t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+			return p.plus(r.smult(t));
+		} else {
 			return null;
 		}
 
-		if (A2.y - A1.y == 0) {
-			if(bIsVert) {
-				return LightingEngine.VHIntersect(B1, B2, A1, A2);
-			}
-			//A1 = new Vec2f(A1.x, A1.y + 0.1f);
-		} else if (B2.y - B1.y == 0) {
-			if(aIsVert) {
-				return LightingEngine.VHIntersect(A1, A2, B1, B2);
-			}
-			//B1 = new Vec2f(B1.x, B1.y + 0.1f);
-		}
+	}
 
-		if (aIsVert) {
-			intX = A1.x;
-			float mB = (B2.y - B1.y) / (B2.x - B1.x);
-			intY = mB * A1.x - mB * B1.x + B1.y;
-		} else if (bIsVert) {
-			intX = B1.x;
-			float mA = (A2.y - A1.y) / (A2.x - B2.x);
-			intY = mA * B1.x - mA * A1.x + A1.y;
-		} else {
-			float mA = (A2.y - A1.y) / (A2.x - A1.x);
-			float mB = (B2.y - B1.y) / (B2.x - B1.x);
-
-			intX = ((mA * A1.x) - A1.y - (mB * B1.x) + B1.y) / (mA - mB);
-			intY = (mA * (intX - A1.x)) + A1.y;
-		}
-
-		boolean allwithin = LightingEngine.within(intX, A1.x, A2.x) &&
-			LightingEngine.within(intX, B1.x, B2.x) &&
-			LightingEngine.within(intY, A1.y, A2.y) &&
-			LightingEngine.within(intY, B1.y, B2.y);
-
-		if (allwithin && seg) {
-			Vec2f vec = null;
-			vec = new Vec2f(intX, intY);
-			return vec;
-		}
-		return null;
+	private static float twoDCross(Vec2f v, Vec2f w) {
+		return (v.x * w.y) - (v.y * w.x);
 	}
 
 	private static boolean within(float a, float E1, float E2) {
