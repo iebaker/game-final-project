@@ -25,7 +25,6 @@ public class LightingEngine {
 	
 	private List<Segment>		lineSegments	= new ArrayList<Segment>();
 	private List<Vec2f>			points			= new ArrayList<Vec2f>();
-	private final ConeBuilder	builder			= new ConeBuilder();
 	private int					rayNum4Debug	= 0;
 	
 	/**
@@ -54,7 +53,7 @@ public class LightingEngine {
 	private void setup(LightSource light, LightWorld world) {
 		lineSegments = new ArrayList<Segment>();
 		points = new ArrayList<Vec2f>();
-		builder.reset(light);
+		//builder.reset(light);
 		
 		Vec2f lightLocation = light.getLocation();
 		AngularComparator ac = new AngularComparator(lightLocation);
@@ -99,6 +98,8 @@ public class LightingEngine {
 	 */
 	private void sweep(LightSource light) {
 		if (points.isEmpty()) return;
+
+		List<Vec2f> builder = new ArrayList<Vec2f>();
 		
 		RayCastData rcd = doRayCast(light.getLocation(), points.get(0));
 		Segment closest;
@@ -124,9 +125,9 @@ public class LightingEngine {
 				continue;
 			}
 			
-			if (builder.unStarted()) {
+			if (builder.isEmpty()) {
 				first = currentRCD.minPoint();
-				builder.open(first);
+				builder.add(first);
 				i++;
 				continue;
 			}
@@ -138,25 +139,21 @@ public class LightingEngine {
 			boolean wasIntersection = testInt != null;
 			
 			if (closestEnded && newClosest && wasIntersection) {
-				builder.close(testInt);
-				builder.open(testInt);
+				builder.add(testInt);
 			} else if (closestEnded) {
-				builder.close(currentPoint);
+				builder.add(currentPoint);
 				
-				if (currentPoint.isStart()) {
-					builder.open(currentPoint);
-				} else {
-					builder.open(currentRCD.minPoint());
-				}
+				if (!currentPoint.isStart()) {
+					builder.add(currentRCD.minPoint());
+				} 
 			} else if (newClosest) {
 				
 				if (wasIntersection) {
-					builder.close(testInt);
-					builder.open(testInt);
+					builder.add(testInt);
 				} else {
 					try {
-						builder.close(currentRCD.getUniquePoints().get(1));
-						builder.open(currentPoint);
+						builder.add(currentRCD.getUniquePoints().get(1));
+						builder.add(currentPoint);
 					} catch (Exception e) {
 						System.out.println("Error raycast (3) : " + currentRCD);
 					}
@@ -167,8 +164,8 @@ public class LightingEngine {
 			i++;
 		}
 		
-		builder.close(first);
-		light.setLightCones(builder.getCones());
+		builder.add(first);
+		light.setPoly(builder);
 	}
 	
 	private RayCastData doRayCast(Vec2f sourcePoint, Vec2f targetPoint) {
@@ -318,12 +315,10 @@ public class LightingEngine {
 		sweep(source);
 		
 		a.setStroke(false);
-		for (LightCone cone : source.getLightCones()) {
-			a.setFillPaint(new RadialGradientPaint(Viewport.gamePtToScreen(source.getLocation()).x, Viewport
-					.gamePtToScreen(source.getLocation()).y, Viewport.gameFloatToScreen(800f), new float[] { 0f, 1f },
-					new Color[] { new Color(0.7f, 0.7f, 1f, 0.8f), new Color(0f, 0f, 0f, 0f) }));
-			a.path(g, pointConvert(cone.getPoints()));
-		}
+		a.setFillPaint(new RadialGradientPaint(Viewport.gamePtToScreen(source.getLocation()).x, Viewport
+				.gamePtToScreen(source.getLocation()).y, Viewport.gameFloatToScreen(800f), new float[] { 0f, 1f },
+				new Color[] { new Color(0.7f, 0.7f, 1f, 0.8f), new Color(0f, 0f, 0f, 0f) }));
+		a.path(g, pointConvert(source.getPoly()));
 	}
 	
 	public List<Vec2f> pointConvert(List<Vec2f> input) {
@@ -440,47 +435,5 @@ public class LightingEngine {
 		}
 		
 		return false;
-	}
-	
-	/* ============================================================================
-	 * ConeBuilder class
-	 * ========================================================================= */
-	
-	private class ConeBuilder {
-		private List<LightCone>	cones		= new ArrayList<LightCone>();
-		private Vec2f			openPoint	= null;
-		private Vec2f			sourcePoint	= null;
-		
-		public void reset(LightSource source) {
-			cones = new ArrayList<LightCone>();
-			openPoint = null;
-			sourcePoint = source.getLocation();
-		}
-		
-		public void open(Vec2f point) {
-			if (openPoint == null) {
-				openPoint = point;
-			} else {
-				System.err.println("Cannot open new cone, already unclosed cone!");
-			}
-		}
-		
-		public void close(Vec2f point) {
-			if (openPoint != null) {
-				LightCone cone = new LightCone(new Color(1f, 1f, 0f, 0.5f), sourcePoint, point, openPoint);
-				cones.add(cone);
-				openPoint = null;
-			} else {
-				System.err.println("Cannot close cone, no open cone to close");
-			}
-		}
-		
-		public boolean unStarted() {
-			return cones.isEmpty() && openPoint == null;
-		}
-		
-		public List<LightCone> getCones() {
-			return cones;
-		}
 	}
 }

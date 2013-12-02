@@ -16,6 +16,7 @@ public class LightSource {
 	private Color			my_color		= new Color(255, 255, 153); // FFFF99
 	private float			my_brightness	= 0.5f;
 	private List<LightCone>	my_light_cones;
+	private List<Vec2f> 	my_points;
 	
 	/**
 	 * Constructor. Just sets the light's location -- color defaults to FFFF99 (light yellow) and brightness defaults to
@@ -82,6 +83,14 @@ public class LightSource {
 	 */
 	public void setLightCones(List<LightCone> cones) {
 		my_light_cones = cones;
+	}
+
+	public void setPoly(List<Vec2f> points) {
+		this.my_points = points;
+	}
+
+	public List<Vec2f> getPoly() {
+		return this.my_points;
 	}
 
 	public List<LightCone> getLightCones() {
