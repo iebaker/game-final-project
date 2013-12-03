@@ -23,7 +23,6 @@ public class Intersection {
 
 	/**
 	 * Accessor for the point of intersection.
-	 *
 	 * @return 		The point of intersection, as a Vec2f
 	 */
 	public Vec2f getPoint() {
@@ -33,7 +32,6 @@ public class Intersection {
 
 	/** 
 	 * Accessor for the segment involved
-	 *
 	 * @return 		The segment involved, as a Vec2f.
 	 */
 	public Segment getSegment() {
