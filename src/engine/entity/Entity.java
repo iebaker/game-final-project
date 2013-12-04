@@ -51,9 +51,10 @@ public abstract class Entity implements Serializable {
 	private Vec2f						velocity;
 	protected float						width;
 	protected World						world;
+	protected boolean stopsLight = true;
 	
 	/**
-	 * Empty constructor - sets default values
+	 * Emptyoonstructor - sets default values
 	 */
 	public Entity() {
 		force = new Vec2f(0, 0);
@@ -320,13 +321,7 @@ public abstract class Entity implements Serializable {
 	 * @param g
 	 */
 	public void onDraw(Graphics2D g) {
-		if (hp > 0.99 * fullHP())
-			g.setColor(c);
-		else if (hp > 0.65 * fullHP())
-			g.setColor(Color.yellow);
-		else if (hp > 0.3 * fullHP())
-			g.setColor(Color.orange);
-		else if (hp < 0.31 * fullHP()) g.setColor(Color.red);
+		g.setColor(c);
 		
 		if (shape != null) {
 			toScreen();
@@ -483,5 +478,9 @@ public abstract class Entity implements Serializable {
 
 	public void setVelocity(Vec2f velocity) {
 		this.velocity = velocity;
+	}
+
+	public boolean stopsLight() {
+		return this.stopsLight;
 	}
 }
