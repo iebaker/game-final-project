@@ -13,7 +13,7 @@ import engine.Screen;
 import engine.ui.UIButton;
 import engine.ui.UIRect;
 import engine.ui.UIText;
-import game.M;
+import game.Umbra;
 
 /**
  * A Screen subclass supporting drawing a main menu and transitioning to gameplay
@@ -37,7 +37,7 @@ public class MainScreen extends Screen {
 		Vec2f zVec = new Vec2f(0, 0);
 		this.bkgrd = new UIRect(zVec, zVec, Color.black, new BasicStroke(0.0f));
 		this.playButton = new UIButton("New Game", zVec, zVec, new Color(0, 195, 0), Color.white, new BasicStroke(2.0f));
-		this.title = new UIText(M.gameName, Color.white, zVec, 1);
+		this.title = new UIText(Umbra.gameName, Color.white, zVec, 1);
 	}
 	
 	/**

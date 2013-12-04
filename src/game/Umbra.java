@@ -10,9 +10,10 @@ import game.screens.MainScreen;
  * @author dgattey
  * 
  */
-public class M {
+public class Umbra {
 	
-	public static final String gameName = "Light";
+	public static final String	gameName	= "Umbra";
+	
 	/**
 	 * Creates a new Application and starts up the app with the first screen being a new MenuScreen
 	 * 
@@ -21,7 +22,7 @@ public class M {
 	 */
 	public static void main(String[] args) {
 		System.setProperty("sun.java2d.opengl", "true");
-		Application a = new Application(gameName, false);
+		Application a = new Application(Umbra.gameName, false);
 		a.pushScreen(new MainScreen(a));
 		a.startup();
 		new SoundHolder("lib/sounds.xml");
