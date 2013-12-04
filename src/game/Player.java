@@ -56,8 +56,8 @@ public class Player extends Entity {
 		}
 		
 		if (!goalVelocity.equals(new Vec2f(0, 0))) {
-			if (!goalVelocity.equals(velocity)) {
-				applyImpulse((goalVelocity.minus(velocity)).smult(0.05f)); //Was 0.05f
+			if (!goalVelocity.equals(getVelocity())) {
+				applyImpulse((goalVelocity.minus(getVelocity())).smult(0.05f)); //Was 0.05f
 			}
 		}
 		if (!world.checkBounds(shape.getLocation()))

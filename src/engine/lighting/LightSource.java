@@ -12,11 +12,10 @@ import cs195n.Vec2f;
  */
 public class LightSource {
 	
-	private Vec2f			my_location;
-	private Color			my_color		= new Color(255, 255, 153); // FFFF99
-	private float			my_brightness	= 0.5f;
-	private List<LightCone>	my_light_cones;
-	private List<Vec2f> 	my_points;
+	private Vec2f		my_location;
+	private Color		my_color		= new Color(255, 255, 153); // FFFF99
+	private float		my_brightness	= 0.5f;
+	private List<Vec2f>	my_points;
 	
 	/**
 	 * Constructor. Just sets the light's location -- color defaults to FFFF99 (light yellow) and brightness defaults to
@@ -28,6 +27,7 @@ public class LightSource {
 	
 	/**
 	 * Accessor for the brightness of the light
+	 * 
 	 * @return a float between 0 and 1 representing the brightness of the light
 	 */
 	public float getBrightness() {
@@ -36,6 +36,7 @@ public class LightSource {
 	
 	/**
 	 * Accessor for the color of the light
+	 * 
 	 * @return The Color of the light
 	 */
 	public Color getColor() {
@@ -44,6 +45,7 @@ public class LightSource {
 	
 	/**
 	 * Accessor for the location of the light
+	 * 
 	 * @return a Vec2f representation of the location of the light
 	 */
 	public Vec2f getLocation() {
@@ -52,7 +54,9 @@ public class LightSource {
 	
 	/**
 	 * Setter for the brightness field
-	 * @param f 	The new brightness of the light; must be between 0 and 1
+	 * 
+	 * @param f
+	 *            The new brightness of the light; must be between 0 and 1
 	 */
 	public void setBrightness(float f) {
 		if (f >= 0 && f <= 1) {
@@ -62,31 +66,38 @@ public class LightSource {
 	
 	/**
 	 * Setter for the color field
-	 * @param c 	The new color of the light
+	 * 
+	 * @param c
+	 *            The new color of the light
 	 */
 	public void setColor(Color c) {
 		my_color = c;
 	}
-
+	
 	/**
 	 * Sets the list of points of this light source's polygon.
-	 * @param points 	The points which will now represent the polygon of this lightsource.
+	 * 
+	 * @param points
+	 *            The points which will now represent the polygon of this lightsource.
 	 */
 	public void setPoly(List<Vec2f> points) {
-		this.my_points = points;
+		my_points = points;
 	}
-
+	
 	/**
 	 * Returns a list of points representing the polygon of this lightsource's visible area
+	 * 
 	 * @return exactly what I said
 	 */
 	public List<Vec2f> getPoly() {
-		return this.my_points;
+		return my_points;
 	}
 	
 	/**
 	 * Setter for the location field
-	 * @param v 	The new location of the light
+	 * 
+	 * @param v
+	 *            The new location of the light
 	 */
 	public void setLocation(Vec2f v) {
 		my_location = v;

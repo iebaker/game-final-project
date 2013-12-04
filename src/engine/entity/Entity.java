@@ -48,7 +48,7 @@ public abstract class Entity implements Serializable {
 	public CollisionShape				shape;
 	private boolean						shootable;
 	private int							shotsNeeded;
-	protected Vec2f						velocity;
+	private Vec2f						velocity;
 	protected float						width;
 	protected World						world;
 	
@@ -479,5 +479,9 @@ public abstract class Entity implements Serializable {
 	@Override
 	public String toString() {
 		return "Entity<sh:" + shape + " rst:" + restitution + " mass:" + mass + ">";
+	}
+
+	public void setVelocity(Vec2f velocity) {
+		this.velocity = velocity;
 	}
 }
