@@ -248,6 +248,12 @@ public class GameWorld extends World implements LightWorld {
 		gravity = -gravity;
 	}
 	
+	public float doTHINGS() {
+		float x = 0;
+		x += 1;
+		return x;
+	}
+	
 	/**
 	 * Public getter for message
 	 * 
