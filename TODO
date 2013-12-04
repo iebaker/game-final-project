@@ -1,8 +1,5 @@
 NECESSARY
 
-Saving
-	Fix sound issue when reloading
-
 Water
 	Swim up and down, no jumping off floor, more of it!
 	
@@ -12,8 +9,7 @@ Entities
 Light
 	Circles - make em work
 	Weird right edge bug
-	Working for when roof is gone? (if time)
-
+	
 ----------------------------------------------------
 THINGS THAT COULD BE ADDED (REMOVE ONCE IMPLEMENTED)
 
@@ -39,6 +35,9 @@ Font
 
 Water
 	Oxygen countdown?
+
+Lighting
+	Working when no roof/walls on world
 
 ---------------	
 TEST TEST TEST!

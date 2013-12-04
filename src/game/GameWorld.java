@@ -119,7 +119,7 @@ public class GameWorld extends World implements LightWorld {
 	private final String									soundFile			= "sounds.xml";
 	private boolean											transferredEntities	= false;
 	private transient LightSource							lightSource;
-	private transient LightingEngine						lightEngine			= new LightingEngine();
+	public transient LightingEngine							lightEngine			= new LightingEngine();
 	private boolean											win;
 	
 	/**
@@ -630,10 +630,12 @@ public class GameWorld extends World implements LightWorld {
 	
 	@Override
 	public void reload() {
-		lightEngine = new LightingEngine();
 		for (Entity e : getEntities()) {
-			e.reloadSounds(); // Doesn't work
+			e.reloadSounds();
 		}
-		
+		for (Entity e : getPassableEntities()) {
+			e.reloadSounds();
+		}
+		lightEngine = new LightingEngine();
 	}
 }

@@ -135,6 +135,10 @@ public abstract class World implements Serializable {
 		return entityStack;
 	}
 	
+	public List<PassableEntity> getPassableEntities() {
+		return passList;
+	}
+	
 	public abstract Entity getPlayer();
 	
 	public abstract String getSoundFile();

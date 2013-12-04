@@ -17,7 +17,7 @@ import engine.Viewport;
 public class Circle extends Shape implements CollisionShape {
 	
 	private static final long	serialVersionUID	= 6451380434234857918L;
-	private Ellipse2D			circ;
+	private final Ellipse2D		circ;
 	protected float				radius;
 	protected Vec2f				center;
 	
@@ -41,13 +41,14 @@ public class Circle extends Shape implements CollisionShape {
 	 */
 	public Circle(Vec2f sdim, float radius) {
 		this.radius = radius;
-		this.center = sdim.plus(new Vec2f(radius, radius));
-		this.circ = new Ellipse2D.Double(sdim.x, sdim.y, radius * 2, radius * 2);
+		center = sdim.plus(new Vec2f(radius, radius));
+		circ = new Ellipse2D.Double(sdim.x, sdim.y, radius * 2, radius * 2);
 	}
 	
 	/**
 	 * Draws shape to screen
 	 */
+	@Override
 	public void drawShape(Graphics2D g) {
 		g.draw(circ);
 	}
@@ -55,6 +56,7 @@ public class Circle extends Shape implements CollisionShape {
 	/**
 	 * Does the same as just drawing the shape, but also fills it with the correct color
 	 */
+	@Override
 	public void drawAndFillShape(Graphics2D g) {
 		g.fill(circ);
 	}
@@ -78,9 +80,10 @@ public class Circle extends Shape implements CollisionShape {
 	/**
 	 * Collides a Point (Vec2f) with a Circle
 	 */
+	@Override
 	public boolean collidesPoint(Vec2f p) {
 		double radius = Math.pow(this.radius, 2);
-		double dist = Math.pow(p.x - this.center.x, 2) + Math.pow(p.y - this.center.y, 2);
+		double dist = Math.pow(p.x - center.x, 2) + Math.pow(p.y - center.y, 2);
 		return (radius > dist);
 	}
 	
@@ -89,9 +92,9 @@ public class Circle extends Shape implements CollisionShape {
 	 * Collides a Circle with a Circle
 	 */
 	public boolean collidesCircle(Circle c) {
-		double r1 = this.radius;
+		double r1 = radius;
 		double r2 = c.radius;
-		double dist = Math.pow(c.center.x - this.center.x, 2) + Math.pow(c.center.y - this.center.y, 2);
+		double dist = Math.pow(c.center.x - center.x, 2) + Math.pow(c.center.y - center.y, 2);
 		return Math.pow(r1 + r2, 2) > dist;
 	}
 	
@@ -100,8 +103,8 @@ public class Circle extends Shape implements CollisionShape {
 	 * Collides an AAB with a Circle
 	 */
 	public boolean collidesAAB(AAB aab) {
-		float x = (this.center.x < aab.min.x) ? aab.min.x : ((this.center.x > aab.max.x) ? aab.max.x : this.center.x);
-		float y = (this.center.y < aab.min.y) ? aab.min.y : ((this.center.y > aab.max.y) ? aab.max.y : this.center.y);
+		float x = (center.x < aab.min.x) ? aab.min.x : ((center.x > aab.max.x) ? aab.max.x : center.x);
+		float y = (center.y < aab.min.y) ? aab.min.y : ((center.y > aab.max.y) ? aab.max.y : center.y);
 		return collidesPoint(new Vec2f(x, y));
 	}
 	
@@ -141,9 +144,9 @@ public class Circle extends Shape implements CollisionShape {
 	 * @param d
 	 */
 	public void toScreen(Viewport v) {
-		Vec2f c = v.gamePtToScreen(center);
+		Vec2f c = Viewport.gamePtToScreen(center);
 		float r = radius * v.getScale();
-		this.circ.setFrame(c.x - r, c.y - r, r * 2, r * 2);
+		circ.setFrame(c.x - r, c.y - r, r * 2, r * 2);
 	}
 	
 	@Override
@@ -151,7 +154,7 @@ public class Circle extends Shape implements CollisionShape {
 	 * Changes the position of the Circle
 	 */
 	public void changeLocation(Vec2f move) {
-		this.center = move;
+		center = move;
 	}
 	
 	@Override
@@ -167,7 +170,7 @@ public class Circle extends Shape implements CollisionShape {
 	 * Returns the location of the upper left of a bounding box of the circle
 	 */
 	public Vec2f getLocation() {
-		return this.center.minus(radius, radius);
+		return center.minus(radius, radius);
 	}
 	
 	@Override
@@ -175,9 +178,9 @@ public class Circle extends Shape implements CollisionShape {
 	 * Returns the location of the center of the circle
 	 */
 	public Vec2f getCenter() {
-		return this.center;
+		return center;
 	}
-
+	
 	public float getRadius() {
 		return radius;
 	}
@@ -185,6 +188,7 @@ public class Circle extends Shape implements CollisionShape {
 	/**
 	 * String representation of a circle
 	 */
+	@Override
 	public String toString() {
 		return "Circle<center:" + center + ", radius:" + radius + " OR min:" + center.minus(radius, radius) + " max: "
 				+ center.plus(radius, radius) + ">";

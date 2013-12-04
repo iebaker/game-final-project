@@ -48,7 +48,7 @@ public abstract class Entity implements Serializable {
 	public CollisionShape				shape;
 	private boolean						shootable;
 	private int							shotsNeeded;
-	public Vec2f						velocity; //Change this back to protected!
+	protected Vec2f						velocity;
 	protected float						width;
 	protected World						world;
 	
@@ -65,7 +65,7 @@ public abstract class Entity implements Serializable {
 		inputs.put("playSound", new Input() {
 			
 			private static final long	serialVersionUID	= -6139328109470836482L;
-			private transient Sound		thisSound;
+			private transient Sound		thisSound			= null;
 			
 			@Override
 			public void run(Map<String, String> args) {

@@ -31,7 +31,7 @@ public class Poly extends Shape implements CollisionShape {
 	public Poly(Color c, Vec2f[] points) {
 		this.points = points;
 		this.c = c;
-		this.location = points[0];
+		location = points[0];
 	}
 	
 	/**
@@ -228,7 +228,7 @@ public class Poly extends Shape implements CollisionShape {
 	public void toScreen(Viewport v) {
 		pointsToDraw = new Vec2f[points.length];
 		for (int i = 0; i < points.length; i++) {
-			pointsToDraw[i] = v.gamePtToScreen(points[i]);
+			pointsToDraw[i] = Viewport.gamePtToScreen(points[i]);
 		}
 	}
 	
@@ -270,17 +270,18 @@ public class Poly extends Shape implements CollisionShape {
 		float ymin = Float.POSITIVE_INFINITY;
 		float ymax = Float.NEGATIVE_INFINITY;
 		for (Vec2f pt : points) {
-			if(pt.x > xmax) xmax = pt.x;
-			if(pt.x < xmin) xmin = pt.x;
-			if(pt.y > ymax) ymax = pt.y;
-			if(pt.y < ymin) ymin = pt.y;
+			if (pt.x > xmax) xmax = pt.x;
+			if (pt.x < xmin) xmin = pt.x;
+			if (pt.y > ymax) ymax = pt.y;
+			if (pt.y < ymin) ymin = pt.y;
 		}
-		return new Vec2f(xmin + (xmax-xmin)/2, ymin + (ymax-ymin)/2);
+		return new Vec2f(xmin + (xmax - xmin) / 2, ymin + (ymax - ymin) / 2);
 	}
 	
 	/**
 	 * String representation of the polygon
 	 */
+	@Override
 	public String toString() {
 		String s = "Poly<pts:";
 		for (Vec2f pt : points) {

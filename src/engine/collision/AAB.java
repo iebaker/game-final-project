@@ -18,7 +18,7 @@ import engine.Viewport;
 public class AAB extends Shape implements CollisionShape {
 	
 	private static final long	serialVersionUID	= 3574516190006117924L;
-	private Rectangle2D			rect;
+	private final Rectangle2D	rect;
 	protected Vec2f				min;
 	protected Vec2f				max;
 	
@@ -41,14 +41,15 @@ public class AAB extends Shape implements CollisionShape {
 	 * @param dim
 	 */
 	public AAB(Vec2f sdim, Vec2f dim) {
-		this.min = sdim;
-		this.max = dim;
-		this.rect = new Rectangle2D.Double(sdim.x, sdim.y, dim.x - sdim.x, dim.y - sdim.y);
+		min = sdim;
+		max = dim;
+		rect = new Rectangle2D.Double(sdim.x, sdim.y, dim.x - sdim.x, dim.y - sdim.y);
 	}
 	
 	/**
 	 * Draws shape to screen
 	 */
+	@Override
 	public void drawShape(Graphics2D g) {
 		g.draw(rect);
 	}
@@ -56,6 +57,7 @@ public class AAB extends Shape implements CollisionShape {
 	/**
 	 * Does the same as just drawing the shape, but also fills it with the correct color
 	 */
+	@Override
 	public void drawAndFillShape(Graphics2D g) {
 		g.fill(rect);
 	}
@@ -91,6 +93,7 @@ public class AAB extends Shape implements CollisionShape {
 	/**
 	 * Collides a Point (Vec2f) with an AAB
 	 */
+	@Override
 	public boolean collidesPoint(Vec2f p) {
 		return ((p.x > min.x && p.x < max.x) && (p.y > min.y && p.y < max.y));
 	}
@@ -108,8 +111,8 @@ public class AAB extends Shape implements CollisionShape {
 	 * Collides an AAB with an AAB
 	 */
 	public boolean collidesAAB(AAB aab) {
-		boolean overlapX = this.min.x < aab.max.x && this.max.x > aab.min.x;
-		boolean overlapY = this.min.y < aab.max.y && this.max.y > aab.min.y;
+		boolean overlapX = min.x < aab.max.x && max.x > aab.min.x;
+		boolean overlapY = min.y < aab.max.y && max.y > aab.min.y;
 		return (overlapX && overlapY);
 		
 	}
@@ -142,9 +145,9 @@ public class AAB extends Shape implements CollisionShape {
 	 * @param d
 	 */
 	public void toScreen(Viewport v) {
-		Vec2f m1 = v.gamePtToScreen(this.min);
-		Vec2f m2 = v.gamePtToScreen(this.max);
-		this.rect.setFrame(m1.x, m1.y, m2.x - m1.x, m2.y - m1.y);
+		Vec2f m1 = Viewport.gamePtToScreen(min);
+		Vec2f m2 = Viewport.gamePtToScreen(max);
+		rect.setFrame(m1.x, m1.y, m2.x - m1.x, m2.y - m1.y);
 	}
 	
 	@Override
@@ -152,9 +155,9 @@ public class AAB extends Shape implements CollisionShape {
 	 * Changes the position of the AAB in game
 	 */
 	public void changeLocation(Vec2f move) {
-		Vec2f diff = this.max.minus(this.min);
-		this.min = move;
-		this.max = move.plus(diff);
+		Vec2f diff = max.minus(min);
+		min = move;
+		max = move.plus(diff);
 	}
 	
 	@Override
@@ -170,7 +173,7 @@ public class AAB extends Shape implements CollisionShape {
 	 * Returns the location (upper corner) of the shape
 	 */
 	public Vec2f getLocation() {
-		return this.min;
+		return min;
 	}
 	
 	@Override
@@ -178,13 +181,13 @@ public class AAB extends Shape implements CollisionShape {
 	 * Returns the center of this shape
 	 */
 	public Vec2f getCenter() {
-		return this.min.plus(this.max.minus(min).sdiv(2));
+		return min.plus(max.minus(min).sdiv(2));
 	}
-
+	
 	public Vec2f getMin() {
 		return min;
 	}
-
+	
 	public Vec2f getMax() {
 		return max;
 	}
@@ -192,6 +195,7 @@ public class AAB extends Shape implements CollisionShape {
 	/**
 	 * Returns a string representing this AAB
 	 */
+	@Override
 	public String toString() {
 		return "AAB<min" + min + ", max" + max + ">";
 	}

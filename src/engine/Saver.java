@@ -38,9 +38,6 @@ public class Saver {
 	 *            the file to load game from
 	 */
 	public static World loadGame(String fileName, Viewport v, World w) {
-		for (Entity e : w.getEntities()) {
-			e.stopSound();
-		}
 		World tempGame = null;
 		try {
 			FileInputStream fileIn = new FileInputStream(new File(fileName));
@@ -56,6 +53,12 @@ public class Saver {
 			System.err.println("World class not found");
 			c.printStackTrace();
 			return null;
+		}
+		for (Entity e : w.getEntities()) {
+			e.stopSound();
+		}
+		for (Entity e : w.getPassableEntities()) {
+			e.stopSound();
 		}
 		if (tempGame != null) {
 			tempGame.v = v;
