@@ -246,6 +246,7 @@ public class GameWorld extends World implements LightWorld {
 	@Override
 	public void flipGravity() {
 		gravity = -gravity;
+		player.collideWithEntity(this.getTextBox());
 	}
 	
 	/**
