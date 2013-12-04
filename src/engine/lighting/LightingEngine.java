@@ -495,6 +495,6 @@ public class LightingEngine {
 		Vec2f loc = new Vec2f(e.getX(), e.getY());
 		
 		w.getPlayer().shape.changeLocation(Viewport.screenPtToGame(loc));
-		w.getPlayer().velocity = Vec2f.ZERO;
+		w.getPlayer().setVelocity(Vec2f.ZERO);
 	}
 }
