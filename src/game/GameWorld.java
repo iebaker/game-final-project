@@ -245,14 +245,7 @@ public class GameWorld extends World implements LightWorld {
 	
 	@Override
 	public void flipGravity() {
-		player.applyForce(new Vec2f(100,0));
 		gravity = -gravity;
-	}
-	
-	public float doTHINGS() {
-		float x = 0;
-		x += 1;
-		return x;
 	}
 	
 	/**
