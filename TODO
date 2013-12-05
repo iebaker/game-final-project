@@ -3,12 +3,13 @@ NECESSARY
 Water
 	Swim up and down, no jumping off floor, more of it!
 	
-Entities
-	Make them dark gray instead, but implement radial gradient that makes them fade to black if too far away (for water too!)
-
 Light
-	Circles - make em work
-	Weird right edge bug
+	Circles
+	
+DYLAN
+
+- Enemy tooltips
+- Store
 	
 ----------------------------------------------------
 THINGS THAT COULD BE ADDED (REMOVE ONCE IMPLEMENTED)

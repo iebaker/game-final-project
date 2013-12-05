@@ -23,15 +23,16 @@ import game.GameWorld;
  */
 public class LightingEngine {
 	
-	private List<Segment>		lineSegments	= new ArrayList<Segment>();
-	private List<Vec2f>			points			= new ArrayList<Vec2f>();
-	private int					rayNum4Debug	= 0;
+	private List<Segment>	lineSegments	= new ArrayList<Segment>();
+	private List<Vec2f>		points			= new ArrayList<Vec2f>();
+	private int				rayNum4Debug	= 0;
 	
 	/**
 	 * Performs sweepline cone creation algorithm for every LightSource the world returns from its getLightSources()
 	 * method. The LightSource objects themselves will be mutated, so this method does not return anything.
 	 * 
-	 * @param world 	The LightWorld in which to run these calculations.
+	 * @param world
+	 *            The LightWorld in which to run these calculations.
 	 */
 	public void run(LightWorld world) {
 		for (LightSource light : world.getLightSources()) {
@@ -44,13 +45,15 @@ public class LightingEngine {
 	 * Populates instance variables of this class (points, lineSegments) by querying the world for point and pair
 	 * information, ordering the points, and orienting the pairs into Segment objects by angle around the source point.
 	 * 
-	 * @param light 	The LightSource about which to perform lighting calculations
-	 * @param world 	The LightWorld in which this LightSource lives
+	 * @param light
+	 *            The LightSource about which to perform lighting calculations
+	 * @param world
+	 *            The LightWorld in which this LightSource lives
 	 */
 	private void setup(LightSource light, LightWorld world) {
 		lineSegments = new ArrayList<Segment>();
 		points = new ArrayList<Vec2f>();
-		//builder.reset(light);
+		// builder.reset(light);
 		
 		Vec2f lightLocation = light.getLocation();
 		AngularComparator ac = new AngularComparator(lightLocation);
@@ -90,15 +93,16 @@ public class LightingEngine {
 	 * Actually performs the sweepline algorithm, using the ConeBuilder object owned by this class (maybe should make
 	 * those into static methods?) in order to create LightCones
 	 * 
-	 * @param light 	The LightSource around which sweeping is performed. Mutated by the method.
+	 * @param light
+	 *            The LightSource around which sweeping is performed. Mutated by the method.
 	 */
 	private void sweep(LightSource light) {
 		if (points.isEmpty()) return;
-
+		
 		List<Vec2f> builder = new ArrayList<Vec2f>();
 		
 		// Cast to find the closest segment.
-		Segment closest = this.doRayCast(light.getLocation(), points.get(0)).minSegment();
+		Segment closest = doRayCast(light.getLocation(), points.get(0)).minSegment();
 		
 		int i = 0;
 		Vec2f first = null;
@@ -121,7 +125,7 @@ public class LightingEngine {
 			// Make booleans for the end of the closest segment, and a new segment becoming closer
 			boolean closestEnded = Segment.endingAt(currentPoint).contains(closest);
 			boolean newClosest = currentClosest != closest;
-
+			
 			// Attempt to intersect new closest segment with previous closest segment
 			Vec2f testInt = LightingEngine.intersect(closest.getBeginPoint(), closest.getEndPoint(),
 					currentClosest.getBeginPoint(), currentClosest.getEndPoint());
@@ -130,8 +134,8 @@ public class LightingEngine {
 			// If all 3 are true, just add a point at the intersection
 			if (closestEnded && newClosest && wasIntersection) {
 				builder.add(testInt);
-			} 
-
+			}
+			
 			// If the closest ended, add a point at the current point, and if that point doesn't
 			// start any segments, add a point at the RCD's min point.
 			else if (closestEnded) {
@@ -139,9 +143,9 @@ public class LightingEngine {
 				
 				if (!currentPoint.isStart()) {
 					builder.add(currentRCD.minPoint());
-				} 
-			} 
-
+				}
+			}
+			
 			// If a new segment becomes closer, if there was an intersection between the new closest
 			// segment and the prev. closest, add an intersection there, otherwise add a point at
 			// the next point in the cast as well as the current point.
@@ -167,15 +171,17 @@ public class LightingEngine {
 	
 	/**
 	 * Performs a raycast into the world.
-	 *
-	 * @param sourcePoint 		The beginning point of this raycast (probably the location of the light source)
-	 * @param targetPoint  		The point at which we are raycasting (probably the endpoint of a segment)
-	 * @return 					A RayCastData object representing the result of this raycast
+	 * 
+	 * @param sourcePoint
+	 *            The beginning point of this raycast (probably the location of the light source)
+	 * @param targetPoint
+	 *            The point at which we are raycasting (probably the endpoint of a segment)
+	 * @return A RayCastData object representing the result of this raycast
 	 */
 	private RayCastData doRayCast(Vec2f sourcePoint, Vec2f targetPoint) {
 		List<Vec2f> collinears = getCollinearPoints(sourcePoint, targetPoint);
 		
-		//Ignore all segments which end or begin at targetPoint, or a point collinear to the raycast line
+		// Ignore all segments which end or begin at targetPoint, or a point collinear to the raycast line
 		for (Vec2f point : collinears) {
 			Segment.ignoreEndingAt(point);
 			Segment.ignoreBeginningAt(point);
@@ -185,14 +191,14 @@ public class LightingEngine {
 		Vec2f direction = targetPoint.minus(sourcePoint);
 		direction = direction.normalized().smult(10000000);
 		
-		//Manually add intersections for all collinear points, since it's a bitch to intersect with them
+		// Manually add intersections for all collinear points, since it's a bitch to intersect with them
 		for (Vec2f point : collinears) {
 			for (Segment s : Segment.beginningAt(point)) {
 				rcd_return.addIntersection(point, s);
 			}
 		}
 		
-		//Find all the intersections with non collinear points
+		// Find all the intersections with non collinear points
 		for (Segment segment : lineSegments) {
 			if (segment.isIgnored()) continue;
 			Vec2f newIntersection = LightingEngine.intersect(sourcePoint, sourcePoint.plus(direction),
@@ -202,7 +208,7 @@ public class LightingEngine {
 			}
 		}
 		
-		//Notice all segments which end or begin at targetPoint, or a point collinear to the raycast line
+		// Notice all segments which end or begin at targetPoint, or a point collinear to the raycast line
 		for (Vec2f point : collinears) {
 			Segment.noticeEndingAt(point);
 			Segment.noticeBeginningAt(point);
@@ -215,12 +221,17 @@ public class LightingEngine {
 	 * ========================================================================= */
 	
 	/**
-	 * Checks two line segments for intersection.  
-	 * @param A1 	One endpoint of the first line segment
-	 * @param A2 	The other endpoint of the first line segment
-	 * @param B1 	One endpoint of the second line segment
-	 * @param B2 	The other endpoint of the second line segment
-	 * @return 		A Vec2f view of the intersection between the segments, if they intersect, null otherwise
+	 * Checks two line segments for intersection.
+	 * 
+	 * @param A1
+	 *            One endpoint of the first line segment
+	 * @param A2
+	 *            The other endpoint of the first line segment
+	 * @param B1
+	 *            One endpoint of the second line segment
+	 * @param B2
+	 *            The other endpoint of the second line segment
+	 * @return A Vec2f view of the intersection between the segments, if they intersect, null otherwise
 	 */
 	private static Vec2f intersect(Vec2f A1, Vec2f A2, Vec2f B1, Vec2f B2) {
 		Vec2f p = A1;
@@ -247,18 +258,19 @@ public class LightingEngine {
 		}
 		
 	}
-
 	
 	/**
 	 * Performs the 2D cross product of two vectors (magnitude of the 3D cross product)
-	 * @param v 	The first vector
-	 * @param w 	The second vector
-	 * @return 		The magnitude of the cross product v x w
+	 * 
+	 * @param v
+	 *            The first vector
+	 * @param w
+	 *            The second vector
+	 * @return The magnitude of the cross product v x w
 	 */
 	private static float twoDCross(Vec2f v, Vec2f w) {
 		return (v.x * w.y) - (v.y * w.x);
 	}
-
 	
 	@SuppressWarnings("unused")
 	/**
@@ -271,36 +283,41 @@ public class LightingEngine {
 	private static boolean within(float a, float E1, float E2) {
 		return a >= E1 && a <= E2 || a >= E2 && a <= E1;
 	}
-
 	
 	/**
 	 * Calculates the slope from one vector to another
-	 * @param p1 	The first vector
-	 * @param p2 	The second vector
-	 * @return 		A float representation of the slope between p1 and p2
+	 * 
+	 * @param p1
+	 *            The first vector
+	 * @param p2
+	 *            The second vector
+	 * @return A float representation of the slope between p1 and p2
 	 */
 	private float slope(Vec2f p1, Vec2f p2) {
 		return (p1.y - p2.y) / (p1.x - p2.x);
 	}
-
-
+	
 	/**
 	 * Calculates the midpoint between two vectors
-	 * @param p1 	The first vector
-	 * @param p2 	The second vector
-	 * @return 		A Vec2f which is the midpoint between the two vectors
+	 * 
+	 * @param p1
+	 *            The first vector
+	 * @param p2
+	 *            The second vector
+	 * @return A Vec2f which is the midpoint between the two vectors
 	 */
 	public static Vec2f midpoint(Vec2f p1, Vec2f p2) {
 		return new Vec2f((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
 	}
-
 	
 	/**
-	 * Returns a list of all points in the world which are collinear with the line defined by two
-	 * points
-	 * @param p1 	The first point
-	 * @param p2 	The second point
-	 * @return 		A list of Vec2f containing all points collinear with p1 -> p2.
+	 * Returns a list of all points in the world which are collinear with the line defined by two points
+	 * 
+	 * @param p1
+	 *            The first point
+	 * @param p2
+	 *            The second point
+	 * @return A list of Vec2f containing all points collinear with p1 -> p2.
 	 */
 	private List<Vec2f> getCollinearPoints(Vec2f p1, Vec2f p2) {
 		List<Vec2f> return_value = new ArrayList<Vec2f>();
@@ -312,15 +329,18 @@ public class LightingEngine {
 		}
 		return return_value;
 	}
-
 	
 	/**
-	 * Determines if a line segment will be judged to be oriented incorrectly by an
-	 * angularcomparator object centered at a specific location
-	 * @param location 		The location of the center of the angularcomparator
-	 * @param a 			One endpoint of the segment
-	 * @param b 			The other endpoint of the segment
-	 * @return 				true, if the segment will end up incorrectly oriented, false otherwise
+	 * Determines if a line segment will be judged to be oriented incorrectly by an angularcomparator object centered at
+	 * a specific location
+	 * 
+	 * @param location
+	 *            The location of the center of the angularcomparator
+	 * @param a
+	 *            One endpoint of the segment
+	 * @param b
+	 *            The other endpoint of the segment
+	 * @return true, if the segment will end up incorrectly oriented, false otherwise
 	 */
 	private boolean wrongWay(Vec2f location, Vec2f a, Vec2f b) {
 		boolean aOnRight = a.x > location.x;
@@ -342,16 +362,19 @@ public class LightingEngine {
 		
 		return false;
 	}
-
-/* ============================================================================
- * Debugging yay!
- * ========================================================================= */
+	
+	/* ============================================================================
+	 * Debugging yay!
+	 * ========================================================================= */
 	
 	/**
-	 * Debugger for raycasting that displays a nice visual representation of
-	 * all rays cast, as well as the orientation and flipped-ness of segments. 
-	 * @param world 	The world in which to run the debugger
-	 * @param g 		A graphics2D object to be used for drawing
+	 * Debugger for raycasting that displays a nice visual representation of all rays cast, as well as the orientation
+	 * and flipped-ness of segments.
+	 * 
+	 * @param world
+	 *            The world in which to run the debugger
+	 * @param g
+	 *            A graphics2D object to be used for drawing
 	 */
 	public void rayDebug(LightWorld world, Graphics2D g) {
 		Segment.clear();
@@ -424,12 +447,15 @@ public class LightingEngine {
 				color = color == Color.GREEN ? Color.CYAN : color == Color.CYAN ? Color.MAGENTA : Color.GREEN;
 			}
 		}
-	}		
+	}
 	
 	/**
 	 * Runs lighting cone calculations for debugging
-	 * @param world 	The world which should be illumiated
-	 * @param g 		A Graphics2D object to be used for drawing
+	 * 
+	 * @param world
+	 *            The world which should be illumiated
+	 * @param g
+	 *            A Graphics2D object to be used for drawing
 	 */
 	public void coneDebug(LightWorld world, Graphics2D g) {
 		Segment.clear();
@@ -447,18 +473,21 @@ public class LightingEngine {
 		float radius = Viewport.gameFloatToScreen(800 * source.getBrightness());
 		float[] fractions = new float[] { 0f, 1f };
 		Color[] colors = new Color[] { new Color(0.7f, 0.7f, 1f, 0.8f), new Color(0f, 0f, 0f, 0f) };
-		
-		RadialGradientPaint rgp = new RadialGradientPaint(centerx, centery, radius, fractions, colors);
-		
-		a.setFillPaint(rgp);
-		
+		if (radius > 0) {
+			RadialGradientPaint rgp = new RadialGradientPaint(centerx, centery, radius, fractions, colors);
+			
+			a.setFillPaint(rgp);
+		} else
+			a.setFillPaint(Color.black);
 		a.path(g, pointConvert(source.getPoly()));
 	}
 	
 	/**
 	 * Converts a list of coordinates (Vec2f) from game coordinates to screen coordinates
-	 * @param input 	The list of vectors in game coords.
-	 * @return 			A list containing all elements of the input list convert to screen coords.
+	 * 
+	 * @param input
+	 *            The list of vectors in game coords.
+	 * @return A list containing all elements of the input list convert to screen coords.
 	 */
 	public List<Vec2f> pointConvert(List<Vec2f> input) {
 		List<Vec2f> return_value = new ArrayList<Vec2f>();
@@ -470,7 +499,9 @@ public class LightingEngine {
 	
 	/**
 	 * Handles key input for the ray degbugger
-	 * @param e 	The KeyEvent recorded by the key listener
+	 * 
+	 * @param e
+	 *            The KeyEvent recorded by the key listener
 	 */
 	public void onKeyPressed(java.awt.event.KeyEvent e) {
 		int keyCode = e.getKeyCode();
@@ -496,8 +527,11 @@ public class LightingEngine {
 	
 	/**
 	 * Handles mouse clicking for the ray debugger
-	 * @param w 	The world in which rays are begin cast
-	 * @param e 	The MouseEvent recorded by the mouse listener
+	 * 
+	 * @param w
+	 *            The world in which rays are begin cast
+	 * @param e
+	 *            The MouseEvent recorded by the mouse listener
 	 */
 	public void onMouseClicked(GameWorld w, MouseEvent e) {
 		Vec2f loc = new Vec2f(e.getX(), e.getY());
