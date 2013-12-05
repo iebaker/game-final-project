@@ -36,5 +36,6 @@ public class DuskBall extends EnemyEntity {
 		float topLeftx = Viewport.gamePtToScreen(this.shape.getLocation()).x;
 		float topLefty = Viewport.gamePtToScreen(this.shape.getLocation()).y;
 		a.ellipse(g, topLeftx - 100, topLefty - 100, (centerx - topLeftx + 100)*2, (centery - topLefty + 100)*2);
+		super.onDraw(g);
 	}
 }

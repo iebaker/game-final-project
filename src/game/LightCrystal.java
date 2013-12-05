@@ -34,6 +34,7 @@ public class LightCrystal extends Entity {
 		float topLeftx = Viewport.gamePtToScreen(this.shape.getLocation()).x;
 		float topLefty = Viewport.gamePtToScreen(this.shape.getLocation()).y;
 		a.ellipse(g, topLeftx - 40, topLefty - 40, (centerx - topLeftx + 40)*2, (centery - topLefty + 40)*2);
+		super.onDraw(g);
 	}
 
 }
