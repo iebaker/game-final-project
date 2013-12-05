@@ -146,6 +146,7 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("WinEntity", WinEntity.class);
 		classes.put("PassableEntity", PassableEntity.class);
 		classes.put("Water", WaterEntity.class);
+		classes.put("DarkBall", DarkBall.class);
 		
 		newGame();
 	}
@@ -316,7 +317,7 @@ public class GameWorld extends World implements LightWorld {
 		List<Vec2fPair> pointPairs = new ArrayList<Vec2fPair>();
 		
 		for (Entity e : getEntities()) {
-			if (e instanceof Player) continue;
+			if (!e.stopsLight()) continue;
 			CollisionShape shape = e.shape;
 			
 			if (shape instanceof AAB) {
@@ -482,8 +483,8 @@ public class GameWorld extends World implements LightWorld {
 	public void onKeyPressed(KeyEvent e) {
 		lightEngine.onKeyPressed(e);
 		int keyCode = e.getKeyCode();
-		if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
-			if (cutsceneActive && textBox.hasNextLine()) {
+		if (cutsceneActive) {
+			if (textBox.hasNextLine()) {
 				textBox.displayNext();
 			} else {
 				cutsceneActive = false;

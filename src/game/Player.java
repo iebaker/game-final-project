@@ -23,6 +23,7 @@ public class Player extends Entity {
 	
 	public Player() {
 		super();
+		this.stopsLight = false;
 		this.goalVelocity = new Vec2f(0, 0);
 		
 		/**
