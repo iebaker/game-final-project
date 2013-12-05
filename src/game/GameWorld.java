@@ -172,7 +172,17 @@ public class GameWorld extends World implements LightWorld {
 						b.hp += ((EnemyEntity) b).getDamage();
 					}
 				}
-				if (a.collideWithEntity(b)) {
+				
+				if (a instanceof LightCrystal && b instanceof Player && a.collideWithEntity(b)) {
+					this.removeEntity(a);
+					((Player) b).addCrystal();
+				} else if (b instanceof LightCrystal && a instanceof Player && b.collideWithEntity(a)) {
+					this.removeEntity(b);
+					((Player) a).addCrystal();
+				}
+				
+				
+				else if (a.collideWithEntity(b)) {
 					CollisionInfo aCol = new CollisionInfo(a, b);
 					if (aCol.mtv != null && !aCol.mtv.isZero()) a.onCollide(aCol);
 					a.afterCollision(b);
@@ -213,6 +223,7 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	public void enterCutscene() {
 		cutsceneActive = true;
+
 		Saver.saveGame(GameWorld.saveFile, this);
 	}
 	

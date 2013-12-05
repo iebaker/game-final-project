@@ -22,6 +22,7 @@ public class Player extends Entity {
 	private boolean moveRight = false;
 	private float lightCountdown = 1;
 	private float lightTime = 1;
+	private int crystals = 0;
 	
 	public Player() {
 		super();
@@ -38,6 +39,16 @@ public class Player extends Entity {
 			@Override
 			public void run(Map<String, String> args) {
 				world.flipGravity();
+			}
+		});
+		
+		inputs.put("addCrystal", new Input() {
+
+			private static final long serialVersionUID = -563821758280686045L;
+
+			@Override
+			public void run(Map<String, String> args) {
+				Player.this.addCrystal();
 			}
 		});
 	}
@@ -154,5 +165,21 @@ public class Player extends Entity {
 		default:
 			break;
 		}
+	}
+	
+	public void addCrystal() {
+		crystals++;
+		this.hp += 10;
+		if(this.hp > this.fullHP()) {
+			this.hp = this.fullHP();
+		}
+	}
+	
+	public int getCrystals() {
+		return crystals;
+	}
+	
+	public void spendCrystals(int spent) {
+		crystals -= spent;
 	}
 }
