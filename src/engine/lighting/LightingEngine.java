@@ -441,9 +441,17 @@ public class LightingEngine {
 		sweep(source);
 		
 		a.setStroke(false);
-		a.setFillPaint(new RadialGradientPaint(Viewport.gamePtToScreen(source.getLocation()).x, Viewport
-				.gamePtToScreen(source.getLocation()).y, Viewport.gameFloatToScreen(800f), new float[] { 0f, 1f },
-				new Color[] { new Color(0.7f, 0.7f, 1f, 0.8f), new Color(0f, 0f, 0f, 0f) }));
+		float centerx = Viewport.gamePtToScreen(source.getLocation()).x;
+		float centery = Viewport.gamePtToScreen(source.getLocation()).y;
+		
+		float radius = Viewport.gameFloatToScreen(800 * source.getBrightness());
+		float[] fractions = new float[] { 0f, 1f };
+		Color[] colors = new Color[] { new Color(0.7f, 0.7f, 1f, 0.8f), new Color(0f, 0f, 0f, 0f) };
+		
+		RadialGradientPaint rgp = new RadialGradientPaint(centerx, centery, radius, fractions, colors);
+		
+		a.setFillPaint(rgp);
+		
 		a.path(g, pointConvert(source.getPoly()));
 	}
 	

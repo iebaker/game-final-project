@@ -17,9 +17,11 @@ public class Player extends Entity {
 	
 	private static final long	serialVersionUID	= 1654501146675497149L;
 	public Vec2f				goalVelocity;
-	private boolean jumpUnlocked = false;
+	private boolean jumpUnlocked = true;
 	private boolean moveLeft = false;
 	private boolean moveRight = false;
+	private float lightCountdown = 1;
+	private float lightTime = 1;
 	
 	public Player() {
 		super();
@@ -61,6 +63,16 @@ public class Player extends Entity {
 				applyImpulse((goalVelocity.minus(getVelocity())).smult(0.05f)); //Was 0.05f
 			}
 		}
+		
+		if(lightCountdown > 0) {
+			lightCountdown -= t;
+		}
+		
+		if(lightCountdown <= 0) {
+			lightCountdown = lightTime;
+			this.hp -= 1;
+		}
+		
 		if (!world.checkBounds(shape.getLocation()))
 			world.setLose("You fell (or jumped) out of the world!");
 		else if (hp < 0) world.setLose("Your health dropped below zero...");

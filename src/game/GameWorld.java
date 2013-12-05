@@ -146,7 +146,8 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("WinEntity", WinEntity.class);
 		classes.put("PassableEntity", PassableEntity.class);
 		classes.put("Water", WaterEntity.class);
-		classes.put("DarkBall", DarkBall.class);
+		classes.put("DuskBall", DuskBall.class);
+		classes.put("LightCrystal", LightCrystal.class);
 		
 		newGame();
 	}
@@ -162,8 +163,14 @@ public class GameWorld extends World implements LightWorld {
 				
 				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
 					b.hp -= ((EnemyEntity) a).getDamage();
+					if(((EnemyEntity) a).drains()) {
+						a.hp += ((EnemyEntity) a).getDamage();
+					}
 				} else if (b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
 					a.hp -= ((EnemyEntity) b).getDamage();
+					if(((EnemyEntity) b).drains()) {
+						b.hp += ((EnemyEntity) b).getDamage();
+					}
 				}
 				if (a.collideWithEntity(b)) {
 					CollisionInfo aCol = new CollisionInfo(a, b);
@@ -290,6 +297,7 @@ public class GameWorld extends World implements LightWorld {
 		List<LightSource> ret = new ArrayList<LightSource>();
 		if (player != null) {
 			lightSource = new LightSource(player.shape.getCenter());
+			lightSource.setBrightness(player.hp / player.fullHP());
 			ret.add(lightSource);
 		} else {
 			System.out.println("player was null");

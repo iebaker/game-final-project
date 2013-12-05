@@ -194,7 +194,7 @@ public abstract class Entity implements Serializable {
 	 * 
 	 * @return a value for full hp
 	 */
-	protected float fullHP() {
+	public float fullHP() {
 		return 100;
 	}
 	

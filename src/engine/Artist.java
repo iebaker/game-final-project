@@ -56,9 +56,9 @@ public class Artist {
 	 *            The height of the ellipse
 	 */
 	public void ellipse(Graphics2D g, float x, float y, float width, float height) {
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		//g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		shape(g, new Ellipse2D.Float(x, y, width, height));
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		//g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 	
 	/* --------------------------------- */

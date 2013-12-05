@@ -17,6 +17,7 @@ public class EnemyEntity extends Entity {
 	
 	private static final long	serialVersionUID	= -6022185589322028097L;
 	private float				damage;
+	protected boolean drains = false;
 	
 	@Override
 	public void setProperties(EntityData ed, World world) {
@@ -45,5 +46,9 @@ public class EnemyEntity extends Entity {
 	
 	public float getDamage() {
 		return damage;
+	}
+	
+	public boolean drains() {
+		return drains;
 	}
 }
