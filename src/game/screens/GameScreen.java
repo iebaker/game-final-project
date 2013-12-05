@@ -23,6 +23,7 @@ import engine.Saver;
 import engine.Screen;
 import engine.Viewport;
 import engine.entity.Entity;
+import engine.sound.MusicPlayer;
 import engine.ui.TextBox;
 import engine.ui.UIButton;
 import engine.ui.UIRect;
@@ -56,6 +57,8 @@ public class GameScreen extends Screen {
 	private UIText		levelText;
 	private boolean		gameOver;
 	private TextBox textBox;
+	private boolean soundsOn = true;
+	private volatile MusicPlayer music;
 	
 	/**
 	 * Constructor creates relevant items and places them based on ratios
@@ -65,14 +68,24 @@ public class GameScreen extends Screen {
 	public GameScreen(Application a) {
 		super(a);
 		/*Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+			@Override
 			public void run() {
 				if(game != null && game.getEntities() != null) {
+					for(Entity e : game.getPassableEntities()) {
+						e.stopSound();
+					}
 					for(Entity e : game.getEntities()) {
 						e.stopSound();
 					}
 				}
 			}
 		}));*/
+		//TODO convert to wav once I have internet
+		//MusicPlayer m = new MusicPlayer("lib/equinox.wav");
+		//m.run();
+		music = new MusicPlayer("lib/equinox.wav");
+		music.start();
+		
 		Vec2f zVec = new Vec2f(0, 0);
 		try {
 			LevelData data = CS195NLevelReader.readLevel(new File("lib/Level1.nlf"));
@@ -113,6 +126,7 @@ public class GameScreen extends Screen {
 	 * Changes game state and checks end conditions, passing onTick through to gameview.getGame() if still playing after
 	 * updating score text, health text, level text, bomb count, and message if applicable
 	 */
+	@Override
 	protected void onTick(long nanosSincePreviousTick) {
 		GameState state = game.checkEndConditions();
 		if (gameOver)
@@ -147,6 +161,7 @@ public class GameScreen extends Screen {
 	/**
 	 * Draws the background, viewport, relevant rects and texts, and game over screen if needed
 	 */
+	@Override
 	protected void onDraw(Graphics2D g) {
 		bkgrd.drawAndFillShape(g);
 		view.onDraw(game, g);
@@ -173,6 +188,7 @@ public class GameScreen extends Screen {
 	 * @param newSize
 	 *            The new size to use for the items onscreen
 	 */
+	@Override
 	protected void onResize(Vec2i newSize) {
 		float w = newSize.x;
 		float h = newSize.y;
@@ -200,6 +216,7 @@ public class GameScreen extends Screen {
 	 * @param e
 	 *            The KeyEvent corresponding to the press
 	 */
+	@Override
 	protected void onKeyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case (KeyEvent.VK_R):
@@ -207,9 +224,13 @@ public class GameScreen extends Screen {
 			break;
 		case (KeyEvent.VK_ESCAPE): // ESC pressed (quit)
 		case (KeyEvent.VK_Q): // Q pressed (quit)
-			for(Entity ent :game.getEntities()) {
+			for(Entity ent : game.getEntities()) {
 				ent.stopSound();
 			}
+			for(Entity ent : game.getPassableEntities()) {
+				ent.stopSound();
+			}
+			music.pause(true);
 			a.popScreen();
 			break;
 		case (KeyEvent.VK_3): // 3 pressed, save game
@@ -224,6 +245,16 @@ public class GameScreen extends Screen {
 				}
 			//}
 			break;
+		case (KeyEvent.VK_M):
+			if(soundsOn) {
+				game.mute();
+				music.pause(true);
+			}
+			else {
+				game.unmute();
+				music.pause(false);
+			}
+			soundsOn = !soundsOn;
 		default:
 			game.onKeyPressed(e);
 			break;
@@ -233,6 +264,7 @@ public class GameScreen extends Screen {
 	/**
 	 * Passes event through to view.getGame()
 	 */
+	@Override
 	protected void onKeyReleased(KeyEvent e) {
 		game.onKeyReleased(e);
 	}
@@ -243,6 +275,7 @@ public class GameScreen extends Screen {
 	 * @param e
 	 *            The MouseEvent corresponding to the press
 	 */
+	@Override
 	protected void onMousePressed(MouseEvent e) {
 		mouseLocation = new Vec2f(e.getX(), e.getY());
 		if (gameStatus != GameState.PLAYING && newGame.hitTarget(e)) {
@@ -258,6 +291,7 @@ public class GameScreen extends Screen {
 	 * @param e
 	 *            The MouseEvent corresponding to the drag
 	 */
+	@Override
 	protected void onMouseDragged(MouseEvent e) {
 		if (gameStatus == GameState.PLAYING) {
 			Vec2f m = new Vec2f(e.getX(), e.getY());
@@ -271,6 +305,7 @@ public class GameScreen extends Screen {
 	 * @param e
 	 *            The MouseWheelEvent representing the scroll
 	 */
+	@Override
 	protected void onMouseWheelMoved(MouseWheelEvent e) {
 		if (gameStatus == GameState.PLAYING) {
 			float zm = e.getWheelRotation();
@@ -310,5 +345,4 @@ public class GameScreen extends Screen {
 	private boolean checkBounds(Vec2f p, float x1, float x2, float y1, float y2) {
 		return (p.x > x1 && p.x <= x2 && p.y > y1 && p.y <= y2);
 	}
-	
 }

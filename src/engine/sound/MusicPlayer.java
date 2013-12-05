@@ -7,6 +7,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -27,6 +28,7 @@ public class MusicPlayer extends Thread {
 		_file = file;
 	}
 	
+	@Override
 	public void run() {
 		SourceDataLine soundLine = null;
 		int BUFFER_SIZE = 64 * 1024; // 64 KB
@@ -39,15 +41,27 @@ public class MusicPlayer extends Thread {
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 			soundLine = (SourceDataLine) AudioSystem.getLine(info);
 			soundLine.open(audioFormat);
+			if (soundLine.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+				FloatControl volume = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);
+				volume.setValue(-0.5F);
+	         }
 			soundLine.start();
 			int nBytesRead = 0;
 			byte[] sampledData = new byte[BUFFER_SIZE];
-			while (nBytesRead != -1) {
-				if (!_soundPaused) {
-					nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
-					if (nBytesRead >= 0) {
-						// Writes audio data to the mixer via this source data line.
-						soundLine.write(sampledData, 0, nBytesRead);
+			while(true) {
+				while (nBytesRead != -1) {
+					if (!_soundPaused) {
+						if(!soundLine.isActive()) {
+							soundLine.start();
+						}
+						nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
+						if (nBytesRead >= 0) {
+							// Writes audio data to the mixer via this source data line.
+							soundLine.write(sampledData, 0, nBytesRead);
+						}
+					}
+					else {
+						soundLine.stop();
 					}
 				}
 			}
@@ -62,5 +76,9 @@ public class MusicPlayer extends Thread {
 			soundLine.drain();
 			soundLine.close();
 		}
+	}
+	
+	public void pause(boolean pstatus) {
+		_soundPaused = pstatus;
 	}
 }

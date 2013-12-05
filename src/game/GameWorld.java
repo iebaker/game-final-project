@@ -30,6 +30,7 @@ import engine.lighting.LightSource;
 import engine.lighting.LightWorld;
 import engine.lighting.LightingEngine;
 import engine.lighting.Vec2fPair;
+import engine.sound.Sound;
 import engine.ui.TextBox;
 
 /**
@@ -121,6 +122,7 @@ public class GameWorld extends World implements LightWorld {
 	private transient LightSource							lightSource;
 	public transient LightingEngine							lightEngine			= new LightingEngine();
 	private boolean											win;
+	private transient ArrayList<Sound> allSounds = new ArrayList<Sound>();
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -447,11 +449,11 @@ public class GameWorld extends World implements LightWorld {
 	 *            the restitution to give all entities
 	 */
 	public void newGame(int lvl) {
-		if (getEntities() != null) {
-			for (Entity e : getEntities()) {
-				e.stopSound();
-			}
+		for(Sound s : allSounds) {
+			s.stop();
+			s.close();
 		}
+		allSounds.clear();
 		player = null;
 		level = new Level(lvl, 0f);
 		if (v != null) v.viewHasChanged(true);
@@ -656,6 +658,24 @@ public class GameWorld extends World implements LightWorld {
 		for (Entity e : getPassableEntities()) {
 			e.reloadSounds();
 		}
+		allSounds = new ArrayList<Sound>();
 		lightEngine = new LightingEngine();
+	}
+	
+	@Override
+	public void addSound(Sound s) {
+		allSounds.add(s);
+	}
+	
+	public void mute() {
+		for(Sound s : allSounds) {
+			s.pause(true);
+		}
+	}
+	
+	public void unmute() {
+		for(Sound s : allSounds) {
+			s.pause(false);
+		}
 	}
 }

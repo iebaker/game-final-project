@@ -131,11 +131,9 @@ public class Sound implements Runnable {
 			aClip = (Clip) AudioSystem.getLine(dataLineInfo);
 			aClip.open(audioIn);
 			// For volume control
-			// gainControl = (FloatControl) aClip.getControl(FloatControl.Type.VOLUME);
 			if(aClip.isControlSupported( FloatControl.Type.MASTER_GAIN)) {
 				gainControl = (FloatControl) aClip.getControl(FloatControl.Type.MASTER_GAIN);
 			}
-			// muteControl = (BooleanControl)clip.getControl(BooleanControl.Type.MUTE);
 		} catch (LineUnavailableException e2) {
 			e2.printStackTrace();
 		} catch (IOException e3) {
@@ -177,10 +175,13 @@ public class Sound implements Runnable {
 	 * if arg is true, stop the clip if arg is false, restart the clip at the last pause position
 	 */
 	public void pause(boolean stop) {
+		System.out.println(looping);
 		if (stop) {
+			System.out.println("pausing");
 			pausePosition = clip.getMicrosecondPosition();
 			clip.stop();
 			paused = true;
+			looping = false;
 		} else if (!isPlaying()) {
 			play(pausePosition);
 		}
@@ -254,6 +255,7 @@ public class Sound implements Runnable {
 	 * Run by thread, this will step the volume up or down to a target level. Applets need fadePerStep=.1 to minimize
 	 * clicks. Apps can get away with fadePerStep=1.0 for a faster fade with no clicks.
 	 */
+	@Override
 	public void run() {
 		fading = true; // prevent running twice on same sound
 		if (currDB > targetDB) {

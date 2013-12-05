@@ -75,6 +75,7 @@ public abstract class Entity implements Serializable {
 					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
 					thisSound.loop();
 					currentSounds.add(thisSound);
+					Entity.this.world.addSound(thisSound);
 				}
 			}
 		});
@@ -360,9 +361,6 @@ public abstract class Entity implements Serializable {
 				// calculate how far the source of the sound is from the player
 				Float dist = world.getPlayer().shape.getCenter().minus(shape.getCenter()).mag();
 				if (dist < 2500) {
-					if (!s.isPlaying()) {
-						s.play();
-					}
 					s.setVolume(1 - Math.sqrt(.00033 * dist));
 				} else {
 					s.setVolume(0);
@@ -456,7 +454,8 @@ public abstract class Entity implements Serializable {
 	 */
 	public void stopSound() {
 		for (Sound s : currentSounds) {
-			s.pause(true);
+			s.stop();
+			s.close();
 		}
 	}
 	

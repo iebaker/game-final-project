@@ -182,7 +182,7 @@ public class Viewport {
 		Rectangle b = g.getClipBounds();
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
 		gameworld.resetOffset();
-		// gameworld.getLightingEngineForTesting().rayDebug(gameworld, g);
+		//gameworld.getLightingEngineForTesting().rayDebug(gameworld, g);
 		gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
 		game.onDraw(g);
 		g.clip(b);

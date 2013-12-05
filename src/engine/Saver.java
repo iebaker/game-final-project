@@ -57,9 +57,11 @@ public class Saver {
 		for (Entity e : w.getEntities()) {
 			e.stopSound();
 		}
+		
 		for (Entity e : w.getPassableEntities()) {
 			e.stopSound();
 		}
+		
 		if (tempGame != null) {
 			tempGame.v = v;
 			tempGame.reload();

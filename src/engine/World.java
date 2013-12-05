@@ -22,6 +22,7 @@ import engine.connections.Input;
 import engine.connections.Output;
 import engine.entity.Entity;
 import engine.entity.PassableEntity;
+import engine.sound.Sound;
 import engine.ui.TextBox;
 
 /**
@@ -304,5 +305,7 @@ public abstract class World implements Serializable {
 	 * When reloading from saved game
 	 */
 	public abstract void reload();
+	
+	public abstract void addSound(Sound s);
 	
 }
