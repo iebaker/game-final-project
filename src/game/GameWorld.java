@@ -122,7 +122,7 @@ public class GameWorld extends World implements LightWorld {
 	private transient LightSource							lightSource;
 	public transient LightingEngine							lightEngine			= new LightingEngine();
 	private boolean											win;
-	private transient ArrayList<Sound> allSounds = new ArrayList<Sound>();
+	private transient ArrayList<Sound>						allSounds			= new ArrayList<Sound>();
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -165,24 +165,23 @@ public class GameWorld extends World implements LightWorld {
 				
 				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
 					b.hp -= ((EnemyEntity) a).getDamage();
-					if(((EnemyEntity) a).drains()) {
+					if (((EnemyEntity) a).drains()) {
 						a.hp += ((EnemyEntity) a).getDamage();
 					}
 				} else if (b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
 					a.hp -= ((EnemyEntity) b).getDamage();
-					if(((EnemyEntity) b).drains()) {
+					if (((EnemyEntity) b).drains()) {
 						b.hp += ((EnemyEntity) b).getDamage();
 					}
 				}
 				
 				if (a instanceof LightCrystal && b instanceof Player && a.collideWithEntity(b)) {
-					this.removeEntity(a);
+					removeEntity(a);
 					((Player) b).addCrystal();
 				} else if (b instanceof LightCrystal && a instanceof Player && b.collideWithEntity(a)) {
-					this.removeEntity(b);
+					removeEntity(b);
 					((Player) a).addCrystal();
 				}
-				
 				
 				else if (a.collideWithEntity(b)) {
 					CollisionInfo aCol = new CollisionInfo(a, b);
@@ -225,7 +224,7 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	public void enterCutscene() {
 		cutsceneActive = true;
-
+		
 		Saver.saveGame(GameWorld.saveFile, this);
 	}
 	
@@ -449,7 +448,7 @@ public class GameWorld extends World implements LightWorld {
 	 *            the restitution to give all entities
 	 */
 	public void newGame(int lvl) {
-		for(Sound s : allSounds) {
+		for (Sound s : allSounds) {
 			s.stop();
 			s.close();
 		}
@@ -464,10 +463,14 @@ public class GameWorld extends World implements LightWorld {
 		lineCt = 0;
 		gravity = 300;
 		entityStack = new ArrayList<Entity>();
+		passList = new ArrayList<PassableEntity>();
+		transferredEntities = false;
 		
 		// Actually load the level
 		loadLevelFromFile("lib/Level" + lvl + ".nlf", classes, this);
 		if (lvl == 1) setMessage("Game starts in 3", 0.5f);
+		
+		moveEntitiesToPassable();
 		
 		textBox.setVisible(false);
 		cutsceneActive = false;
@@ -513,16 +516,6 @@ public class GameWorld extends World implements LightWorld {
 			}
 		}
 		switch (keyCode) {
-		case (KeyEvent.VK_1): // 1 - Load level 1
-			if (player != null) {
-				newGame(1);
-			}
-			break;
-		case (KeyEvent.VK_2): // 2 - Load level 2
-			if (player != null) {
-				// newGame(2);
-			}
-			break;
 		case (KeyEvent.VK_P): // Pause
 			if (player != null && !lose && !win)
 				paused = !paused;
@@ -668,13 +661,13 @@ public class GameWorld extends World implements LightWorld {
 	}
 	
 	public void mute() {
-		for(Sound s : allSounds) {
+		for (Sound s : allSounds) {
 			s.pause(true);
 		}
 	}
 	
 	public void unmute() {
-		for(Sound s : allSounds) {
+		for (Sound s : allSounds) {
 			s.pause(false);
 		}
 	}
