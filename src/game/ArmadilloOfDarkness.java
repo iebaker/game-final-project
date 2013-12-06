@@ -18,23 +18,25 @@ public class ArmadilloOfDarkness extends ShadowEnemy {
 	
 	@Override
 	public void onTick(float t) {
-		float absDist = ((Player) this.world.getPlayer()).getCenterPosition().minus(this.shape.getCenter()).mag2();
-		if(absDist <= 300000) {
-			float xDist = ((Player) this.world.getPlayer()).getCenterPosition().x - this.shape.getCenter().x;
-			if(xDist > 0) {
-				goalVelocity = new Vec2f(600, 0);
+		if(this.world.getPlayer() != null) {
+			float absDist = ((Player) this.world.getPlayer()).getCenterPosition().minus(this.shape.getCenter()).mag2();
+			if(absDist <= 300000) {
+				float xDist = ((Player) this.world.getPlayer()).getCenterPosition().x - this.shape.getCenter().x;
+				if(xDist > 0) {
+					goalVelocity = new Vec2f(600, 0);
+				}
+				else {
+					goalVelocity = new Vec2f(-600, 0);
+				}
 			}
-			else {
-				goalVelocity = new Vec2f(-600, 0);
+			
+			if (!goalVelocity.equals(new Vec2f(0, 0))) {
+				if (!goalVelocity.equals(getVelocity())) {
+					applyImpulse((goalVelocity.minus(getVelocity())).smult(0.05f));
+				}
 			}
+			
+			super.onTick(t);
 		}
-		
-		if (!goalVelocity.equals(new Vec2f(0, 0))) {
-			if (!goalVelocity.equals(getVelocity())) {
-				applyImpulse((goalVelocity.minus(getVelocity())).smult(0.05f));
-			}
-		}
-		
-		super.onTick(t);
 	}
 }

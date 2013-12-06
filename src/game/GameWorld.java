@@ -104,7 +104,6 @@ public class GameWorld extends World implements LightWorld {
 	private static final long								serialVersionUID	= 6619354971290257104L;
 	private static final float								TICK_LENGTH			= 0.005f;
 	private final HashMap<String, Class<? extends Entity>>	classes;
-	private float											countdown;
 	private boolean											cutsceneActive;
 	private float											gravity;
 	private float											hp;
@@ -124,7 +123,6 @@ public class GameWorld extends World implements LightWorld {
 	public transient LightingEngine							lightEngine			= new LightingEngine();
 	private boolean											win;
 	private transient ArrayList<Sound> allSounds = new ArrayList<Sound>();
-	private transient ArrayList<Sound>						allSounds			= new ArrayList<Sound>();
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -169,9 +167,6 @@ public class GameWorld extends World implements LightWorld {
 				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
 					if(((EnemyEntity) a).drains()) {
 						a.hp += ((Player) b).damage(((EnemyEntity) a).getDamage());
-					b.hp -= ((EnemyEntity) a).getDamage();
-					if (((EnemyEntity) a).drains()) {
-						a.hp += ((EnemyEntity) a).getDamage();
 					}
 					else {
 						((Player) b).damage(((EnemyEntity) a).getDamage());
@@ -179,9 +174,7 @@ public class GameWorld extends World implements LightWorld {
 				} else if (b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
 					if(((EnemyEntity) b).drains()) {
 						b.hp += ((Player) a).damage(((EnemyEntity) b).getDamage());
-					a.hp -= ((EnemyEntity) b).getDamage();
-					if (((EnemyEntity) b).drains()) {
-						b.hp += ((EnemyEntity) b).getDamage();
+						a.hp -= ((EnemyEntity) b).getDamage();
 					}
 					else {
 						((Player) a).damage(((EnemyEntity) b).getDamage());
@@ -253,7 +246,6 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	private void fireBullet(Vec2f dest) {
 		if (player.laserUnlocked() && !paused && !cutsceneActive && player != null) {
-		if (!paused && !cutsceneActive && player != null) {
 			Vec2f src = player.shape.getCenter();
 			Ray ray = new Ray(src, dest);
 			Entity affected = null;
@@ -468,7 +460,6 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	public void newGame(int lvl) {
 		for(Sound s : allSounds) {
-		for (Sound s : allSounds) {
 			s.stop();
 			s.close();
 		}
@@ -508,8 +499,6 @@ public class GameWorld extends World implements LightWorld {
 		// Draws the line for bullets
 		if (line != null && player != null && laserCooldown > 0) {
 			g.setColor(new Color(0.7f, 0.7f, 1f, 0.6f));
-		if (line != null && player != null && lineCt < 20) {
-			g.setColor(Color.blue);
 			g.setStroke(new BasicStroke(5f));
 			Vec2f p1 = Viewport.gamePtToScreen(player.shape.getCenter());
 			Vec2f p2 = Viewport.gamePtToScreen(line);
@@ -603,17 +592,8 @@ public class GameWorld extends World implements LightWorld {
 		leftoverTime = timeSteps - steps;
 		for (int i = 0; i < steps; i++) {
 			
-			// Updates message while there's a countdown
-			/*if (countdown > 1) {
-			if (countdown > 1) {
-				setMessage(message.subSequence(0, message.length() - 1).toString() + (int) countdown, countdown
-						- GameWorld.TICK_LENGTH);
-			}*/
-			}
-			
 			// Shows paused message
 			if (paused)
-			else if (paused)
 				message = "Game paused";
 			
 			// Ticks through each entity and checks collisions
@@ -657,10 +637,6 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	private void setMessage(String msg, float ct) {
 		message = msg;
-		if (ct == 0) paused = true;
-		if (ct > 0)
-			countdown = ct;
-		else if (ct == 0) paused = true;
 	}
 	
 	@Override
@@ -711,14 +687,12 @@ public class GameWorld extends World implements LightWorld {
 	}
 	
 	public void mute() {
-		for(Sound s : allSounds) {
 		for (Sound s : allSounds) {
 			s.pause(true);
 		}
 	}
 	
 	public void unmute() {
-		for(Sound s : allSounds) {
 		for (Sound s : allSounds) {
 			s.pause(false);
 		}
