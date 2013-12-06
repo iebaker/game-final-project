@@ -12,7 +12,7 @@ import game.screens.MainScreen;
  */
 public class Umbra {
 	
-	public static final String	gameName	= "Umbra";
+	public static final String	gameName = "Umbra";
 	
 	/**
 	 * Creates a new Application and starts up the app with the first screen being a new MenuScreen

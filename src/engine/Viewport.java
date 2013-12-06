@@ -2,6 +2,8 @@ package engine;
 
 import game.GameWorld;
 
+import game.flora.trees.BinaryTree;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -184,6 +186,7 @@ public class Viewport {
 		gameworld.resetOffset();
 		//gameworld.getLightingEngineForTesting().rayDebug(gameworld, g);
 		gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
+		BinaryTree.treeTest(gameworld, g);
 		game.onDraw(g);
 		g.clip(b);
 		
