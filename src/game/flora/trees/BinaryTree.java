@@ -23,17 +23,21 @@ public class BinaryTree extends Tree {
 	public Tree newTree(Set<Branch> b) {
 		Tree t = new Tree(b);
 
-		Transformation t1 = new Transformation((float)Math.PI/4, 0.5f, 0.4f);
-		Transformation t2 = new Transformation(-(float)Math.PI/4, 0.5f, 0.6f);
-		Transformation t3 = new Transformation((float)Math.PI/4, 0.5f, 0.8f);
+		float fourth_pi = (float)Math.PI/4;
+		float third_pi = (float)Math.PI/3;
+		float half_pi = (float)Math.PI/2;
+
+		Transformation t1 = new Transformation(third_pi, 0.4f, 0.2f);
+		Transformation t2 = new Transformation(-third_pi, 0.4f, 0.2f);
+		Transformation t3 = new Transformation(fourth_pi, 0.4f, 0.6f);
+		Transformation t4 = new Transformation(-fourth_pi, 0.4f, 0.6f);
+		Transformation t5 = new Transformation(0, 0.4f, 1f);
 
 		for(int i = 0; i < depth; ++i) {
-			t.addRule(new Rule(t1, t2, t3));
-			t.addRule(new Rule(t2, t3));
-			t.addRule(new Rule(t3));
+			t.addRule(new Rule(t1, t2, t3, t4, t5));
 		}		
 
-		t.grow();
+		t.populate();
 		return t;
 	}
 
@@ -44,7 +48,7 @@ public class BinaryTree extends Tree {
 		Set<Branch> branches = new HashSet<Branch>();
 		branches.add(new Branch(loc1, loc2));
 
-		Tree btree = new BinaryTree(3).newTree(branches);
+		Tree btree = new BinaryTree(4).newTree(branches);
 		btree.onDraw(g);
 	}
 }

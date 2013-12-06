@@ -13,51 +13,59 @@ import cs195n.Vec2f;
 public class Tree {
 
 	private List<Rule> rules;
-	private Set<Branch> branches;
-	private boolean grown = false;
+	private List<Set<Branch>> branches;
+	private boolean populated = false;
 
 	public Tree() {
 		rules = new ArrayList<Rule>();
-		branches = new HashSet<Branch>();
+		branches = new ArrayList<Set<Branch>>();
 	}
 
 	public Tree(Set<Branch> b) {
 		rules = new ArrayList<Rule>();
-		branches = b;
+		branches = new ArrayList<Set<Branch>>();
+		branches.add(b);
 	}
 
 	public Tree(Branch b) {
 		rules = new ArrayList<Rule>();
-		branches = new HashSet<Branch>();
-		branches.add(b);
+		branches = new ArrayList<Set<Branch>>();
+		Set<Branch> branch = new HashSet<Branch>();
+		branch.add(b);
+		branches.add(branch);
 	}
 
 	public Tree newTree(Set<Branch> b) {
 		return new Tree(b);
 	}
 
-	public void grow() {
-		if(grown) return;
+	public void populate() {
+		if(populated) return;
 
-		Set<Branch> open = new HashSet<Branch>(branches);
+		Set<Branch> open = new HashSet<Branch>();
+		if(!branches.isEmpty()) open.addAll(branches.get(0));
 		for(Rule r : rules) {
 			open = r.applyTo(open);
-			branches.addAll(open);
+			branches.add(open);
 		}
-		grown = true;
+		populated = true;
 	}
 
 	public void onDraw(java.awt.Graphics2D g) {
-		g.setStroke(new java.awt.BasicStroke(2));
+		int width = branches.size();
 		Artist a = new Artist();
 		a.setStrokePaint(Color.BLACK);
 
-		if(grown) {
-			for(Branch b : branches) {
-				Vec2f start = Viewport.gamePtToScreen(b.getStartPoint());
-				Vec2f end = Viewport.gamePtToScreen(b.getEndPoint());
+		if(populated) {
+			for(Set<Branch> bs : branches) {
+				g.setStroke(new java.awt.BasicStroke(width));
+				for(Branch b : bs) {
+					Vec2f start = Viewport.gamePtToScreen(b.getStartPoint());
+					Vec2f end = Viewport.gamePtToScreen(b.getEndPoint());
 
-				a.line(g, start.x, start.y, end.x, end.y);
+					a.line(g, start.x, start.y, end.x, end.y);
+				}
+				width--;
 			}
 		}
 	}
