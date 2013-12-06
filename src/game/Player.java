@@ -18,11 +18,13 @@ public class Player extends Entity {
 	private static final long	serialVersionUID	= 1654501146675497149L;
 	public Vec2f				goalVelocity;
 	private boolean jumpUnlocked = true;
+	private boolean laserUnlocked = true;
 	private boolean moveLeft = false;
 	private boolean moveRight = false;
 	private float lightCountdown = 1;
 	private float lightTime = 1;
 	private int crystals = 0;
+	private float damageCooldown = 0;
 	
 	public Player() {
 		super();
@@ -84,6 +86,10 @@ public class Player extends Entity {
 			this.hp -= 1;
 		}
 		
+		if(damageCooldown > 0) {
+			damageCooldown -= t;
+		}
+		
 		if (!world.checkBounds(shape.getLocation()))
 			world.setLose("You fell (or jumped) out of the world!");
 		else if (hp < 0) world.setLose("Your health dropped below zero...");
@@ -128,6 +134,21 @@ public class Player extends Entity {
 	}
 	
 	/**
+	 * Allows the player to fire a laser
+	 */
+	public void unlockLaser() {
+		laserUnlocked = true;
+	}
+	
+	/**
+	 * 
+	 * @return true if laser is unlocked
+	 */
+	public boolean laserUnlocked() {
+		return laserUnlocked;
+	}
+	
+	/**
 	 * Allows the player to respond to keyboard input
 	 * @param e
 	 */
@@ -167,6 +188,9 @@ public class Player extends Entity {
 		}
 	}
 	
+	/**
+	 * Adds a crystal to the player's count and gives the player some light
+	 */
 	public void addCrystal() {
 		crystals++;
 		this.hp += 10;
@@ -175,11 +199,33 @@ public class Player extends Entity {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return number of crystals the player has
+	 */
 	public int getCrystals() {
 		return crystals;
 	}
 	
+	/**
+	 * Spends a certain number of crystals
+	 * @param spent
+	 */
 	public void spendCrystals(int spent) {
 		crystals -= spent;
+	}
+
+	/**
+	 * deals damage to the player
+	 * @param f
+	 * @return float damage dealt
+	 */
+	public float damage(float f) {
+		if(damageCooldown <= 0) {
+			this.hp -= f;
+			this.damageCooldown = 0.5f;
+			return f;
+		}
+		return 0;
 	}
 }

@@ -104,14 +104,13 @@ public class GameWorld extends World implements LightWorld {
 	private static final long								serialVersionUID	= 6619354971290257104L;
 	private static final float								TICK_LENGTH			= 0.005f;
 	private final HashMap<String, Class<? extends Entity>>	classes;
-	private float											countdown;
 	private boolean											cutsceneActive;
 	private float											gravity;
 	private float											hp;
 	private double											leftoverTime;
 	public Level											level;
 	private Vec2f											line;
-	private int												lineCt;
+	private float												laserCooldown = 0;
 	private boolean											lose;
 	private String											message;
 	private final int										numLevels;
@@ -150,6 +149,7 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("Water", WaterEntity.class);
 		classes.put("DuskBall", DuskBall.class);
 		classes.put("LightCrystal", LightCrystal.class);
+		classes.put("ArmadilloOfDarkness", ArmadilloOfDarkness.class);
 		
 		newGame();
 	}
@@ -164,14 +164,18 @@ public class GameWorld extends World implements LightWorld {
 				Entity b = entityStack.get(j);
 				
 				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
-					b.hp -= ((EnemyEntity) a).getDamage();
 					if(((EnemyEntity) a).drains()) {
-						a.hp += ((EnemyEntity) a).getDamage();
+						a.hp += ((Player) b).damage(((EnemyEntity) a).getDamage());
+					}
+					else {
+						((Player) b).damage(((EnemyEntity) a).getDamage());
 					}
 				} else if (b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
-					a.hp -= ((EnemyEntity) b).getDamage();
 					if(((EnemyEntity) b).drains()) {
-						b.hp += ((EnemyEntity) b).getDamage();
+						b.hp += ((Player) a).damage(((EnemyEntity) b).getDamage());
+					}
+					else {
+						((Player) a).damage(((EnemyEntity) b).getDamage());
 					}
 				}
 				
@@ -236,7 +240,7 @@ public class GameWorld extends World implements LightWorld {
 	 *            the destination of the ray
 	 */
 	private void fireBullet(Vec2f dest) {
-		if (!paused && !cutsceneActive && player != null) {
+		if (player.laserUnlocked() && !paused && !cutsceneActive && player != null) {
 			Vec2f src = player.shape.getCenter();
 			Ray ray = new Ray(src, dest);
 			Entity affected = null;
@@ -261,6 +265,7 @@ public class GameWorld extends World implements LightWorld {
 				}
 				line = castTo;
 			}
+			laserCooldown = 0.1f;
 		}
 	}
 	
@@ -461,13 +466,13 @@ public class GameWorld extends World implements LightWorld {
 		line = null;
 		win = false;
 		lose = false;
-		lineCt = 0;
+		laserCooldown = 0;
 		gravity = 300;
 		entityStack = new ArrayList<Entity>();
 		
 		// Actually load the level
 		loadLevelFromFile("lib/Level" + lvl + ".nlf", classes, this);
-		if (lvl == 1) setMessage("Game starts in 3", 0.5f);
+		//if (lvl == 1) setMessage("Game starts in 3", 0.5f);
 		
 		textBox.setVisible(false);
 		cutsceneActive = false;
@@ -481,15 +486,13 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	public void onDraw(Graphics2D g) {
 		// Draws the line for bullets
-		if (line != null && player != null && lineCt < 20) {
-			g.setColor(Color.blue);
+		if (line != null && player != null && laserCooldown > 0) {
+			g.setColor(new Color(0.7f, 0.7f, 1f, 0.6f));
 			g.setStroke(new BasicStroke(5f));
 			Vec2f p1 = Viewport.gamePtToScreen(player.shape.getCenter());
 			Vec2f p2 = Viewport.gamePtToScreen(line);
 			g.draw(new Line2D.Double(p1.x, p1.y, p2.x, p2.y));
-			lineCt++;
-		} else if (lineCt >= 20) {
-			lineCt = 0;
+		} else if (laserCooldown <= 0) {
 			line = null;
 		}
 		
@@ -556,7 +559,9 @@ public class GameWorld extends World implements LightWorld {
 		// lightEngine.onMouseClicked(this, e);
 		Vec2f pt = Viewport.screenPtToGame(new Vec2f(e.getX(), e.getY()));
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			if (checkBounds(pt)) fireBullet(pt);
+			if (checkBounds(pt)) {
+				fireBullet(pt);
+			}
 		}
 	}
 	
@@ -573,13 +578,13 @@ public class GameWorld extends World implements LightWorld {
 		for (int i = 0; i < steps; i++) {
 			
 			// Updates message while there's a countdown
-			if (countdown > 1) {
+			/*if (countdown > 1) {
 				setMessage(message.subSequence(0, message.length() - 1).toString() + (int) countdown, countdown
 						- GameWorld.TICK_LENGTH);
-			}
+			}*/
 			
 			// Shows paused message
-			else if (paused)
+			if (paused)
 				message = "Game paused";
 			
 			// Ticks through each entity and checks collisions
@@ -593,6 +598,14 @@ public class GameWorld extends World implements LightWorld {
 		if (!transferredEntities) {
 			transferredEntities = true;
 			moveEntitiesToPassable();
+		}
+		if(laserCooldown > 0) {
+			float secs2 = secs;
+			if(secs2 > laserCooldown) {
+				secs2 = laserCooldown;
+			}
+			laserCooldown -= secs2;
+			player.hp -= secs2 * 20;
 		}
 	}
 	
@@ -615,9 +628,7 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	private void setMessage(String msg, float ct) {
 		message = msg;
-		if (ct > 0)
-			countdown = ct;
-		else if (ct == 0) paused = true;
+		if (ct == 0) paused = true;
 	}
 	
 	@Override
