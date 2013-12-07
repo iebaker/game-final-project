@@ -84,6 +84,9 @@ public class Player extends Entity {
 		if(lightCountdown <= 0) {
 			lightCountdown = lightTime;
 			this.hp -= 1;
+			if(this.hp <= 0) {
+				((GameWorld) world).die();
+			}
 		}
 		
 		if((((GameWorld) this.world).getStartCrystal() != null) && ((GameWorld) this.world).getStartCrystal().shape.getCenter().minus(this.shape.getCenter()).mag2() <= 80000) {
@@ -219,16 +222,8 @@ public class Player extends Entity {
 	}
 	
 	@Override
-	public float damage(float damage) {
-		if(damageCooldown <= 0) {
-			this.hp -= damage;
-			if(this.hp <= 0) {
-				((GameWorld) world).die();
-			}
-			this.damageCooldown = 0.5f;
-			return damage;
-		}
-		return 0;
+	public void die() {
+		((GameWorld) world).die();
 	}
 	
 	@Override

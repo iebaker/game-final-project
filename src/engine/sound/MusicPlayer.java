@@ -35,20 +35,20 @@ public class MusicPlayer extends Thread {
 		
 		// Set up an audio input stream piped from the sound file.
 		try {
-			File soundFile = new File(_file);
-			AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-			AudioFormat audioFormat = audioInputStream.getFormat();
-			DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-			soundLine = (SourceDataLine) AudioSystem.getLine(info);
-			soundLine.open(audioFormat);
-			if (soundLine.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
-				FloatControl volume = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);
-				volume.setValue(-0.5F);
-	         }
-			soundLine.start();
-			int nBytesRead = 0;
-			byte[] sampledData = new byte[BUFFER_SIZE];
 			while(true) {
+				File soundFile = new File(_file);
+				AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+				AudioFormat audioFormat = audioInputStream.getFormat();
+				DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+				soundLine = (SourceDataLine) AudioSystem.getLine(info);
+				soundLine.open(audioFormat);
+				if (soundLine.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+					FloatControl volume = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);
+					volume.setValue(-0.5F);
+		         }
+				soundLine.start();
+				int nBytesRead = 0;
+				byte[] sampledData = new byte[BUFFER_SIZE];
 				while (nBytesRead != -1) {
 					if (!_soundPaused) {
 						if(!soundLine.isActive()) {

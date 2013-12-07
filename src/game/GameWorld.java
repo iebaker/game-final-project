@@ -62,7 +62,6 @@ public class GameWorld extends World implements LightWorld {
 	private int												lineCt;
 	private boolean											lose;
 	private String											message;
-	private final int										numLevels;
 	private boolean											paused;
 	private Player											player;
 	private final String									soundFile			= "sounds.xml";
@@ -85,7 +84,6 @@ public class GameWorld extends World implements LightWorld {
 	public GameWorld(Vec2f dim, TextBox tb) {
 		super(dim, tb, GameWorld.defaults);
 		GameWorld.wt.setWorld(this);
-		numLevels = 2;
 		textBox = tb;
 		tb.setWorld(this);
 		
@@ -120,15 +118,14 @@ public class GameWorld extends World implements LightWorld {
 				
 				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
 					if(((EnemyEntity) a).drains()) {
-						a.hp += ((Player) b).damage(((EnemyEntity) a).getDamage());
+						a.heal(((Player) b).damage(((EnemyEntity) a).getDamage()));
 					}
 					else {
 						((Player) b).damage(((EnemyEntity) a).getDamage());
 					}
 				} else if (b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
 					if(((EnemyEntity) b).drains()) {
-						b.hp += ((Player) a).damage(((EnemyEntity) b).getDamage());
-						a.hp -= ((EnemyEntity) b).getDamage();
+						b.heal(((Player) a).damage(((EnemyEntity) b).getDamage()));
 					}
 					else {
 						((Player) a).damage(((EnemyEntity) b).getDamage());
@@ -170,10 +167,7 @@ public class GameWorld extends World implements LightWorld {
 	 * Enters cutscene mode
 	 */
 	public void enterCutscene() {
-		cutsceneActive = true;
-
-		
-		Saver.saveGame(GameWorld.saveFile, this);
+		cutsceneActive = true;		
 	}
 	
 	/**
@@ -237,7 +231,7 @@ public class GameWorld extends World implements LightWorld {
 		if (player == null)
 			return 100;
 		else
-			return player.hp;
+			return player.getHP();
 	}
 	
 	/**
@@ -260,7 +254,7 @@ public class GameWorld extends World implements LightWorld {
 		List<LightSource> ret = new ArrayList<LightSource>();
 		if (player != null) {
 			lightSource = new LightSource(player.shape.getCenter());
-			lightSource.setBrightness(player.hp / 100);
+			lightSource.setBrightness(player.getHP() / 100);
 			ret.add(lightSource);
 		}
 		return ret;
@@ -563,7 +557,7 @@ public class GameWorld extends World implements LightWorld {
 				secs2 = laserCooldown;
 			}
 			laserCooldown -= secs2;
-			player.hp -= secs2 * 20;
+			player.flatDamage(secs2 * 20);
 		}
 		
 		if(saveCooldown > 0) {
@@ -590,21 +584,9 @@ public class GameWorld extends World implements LightWorld {
 	@Override
 	public void setPlayer(Entity p) {
 		player = (Player) p;
-		if (hp > 0) player.hp = hp;
+		if (hp > 0) player.heal(hp);
 	}
-	
-	@Override
-	/**
-	 * Sets a win if over, or goes to next level if there's one more
-	 */
-	public void setWin() {
-		if (level.getLevel() < numLevels) {
-			hp = player.hp;
-			setMessage("Level " + (level.getLevel() + 1) + " starts in 3", 3.5f);
-			newGame(level.getLevel() + 1);
-		} else
-			win = true;
-	}
+
 	
 	public void unlockJump() {
 		player.unlockJump();
@@ -670,7 +652,7 @@ public class GameWorld extends World implements LightWorld {
 	
 	@Override
 	public void save() {
-		if(saveCooldown == 0) {
+		if(saveCooldown <= 0) {
 			Saver.saveGame(saveFile, this);
 			saveCooldown = 5;
 		}
@@ -678,5 +660,11 @@ public class GameWorld extends World implements LightWorld {
 
 	public boolean isOver() {
 		return gameOver;
+	}
+
+	@Override
+	public void setWin() {
+		// TODO Auto-generated method stub
+		
 	}
 }

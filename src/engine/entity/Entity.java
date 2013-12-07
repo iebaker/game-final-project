@@ -37,7 +37,7 @@ public abstract class Entity implements Serializable {
 	private Vec2f						force;
 	protected float						friction;
 	protected float						height;
-	public float						hp;
+	protected float						hp;
 	protected float maxHP = 100;
 	private Vec2f						impulse;
 	protected Map<String, Input>		inputs;
@@ -503,7 +503,7 @@ public abstract class Entity implements Serializable {
 		if(damageCooldown <= 0) {
 			this.hp -= damage;
 			if(this.hp <= 0) {
-				world.removeEntity(this);
+				this.die();
 			}
 			this.damageCooldown = 0.5f;
 			return damage;
@@ -522,5 +522,37 @@ public abstract class Entity implements Serializable {
 			return toHeal;
 		}
 		return 0;
+	}
+	
+	/**
+	 * Heals with no cooldown
+	 */
+	public void flatHeal(float toHeal) {
+		this.hp += toHeal;
+		if(this.hp > this.maxHP) {
+			this.hp = this.maxHP;
+		}
+	}
+	
+	/**
+	 * Damages with no cooldown
+	 * @param toDamage
+	 */
+	public void flatDamage(float toDamage) {
+		this.hp -= toDamage;
+		if(this.hp <= 0) {
+			this.die();
+		}
+	}
+	
+	public float getHP() {
+		return this.hp;
+	}
+	
+	/**
+	 * Kills the entity. Override for special behavior.
+	 */
+	public void die() {
+		world.removeEntity(this);
 	}
 }
