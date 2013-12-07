@@ -205,9 +205,21 @@ public class GameScreen extends Screen {
 		case (KeyEvent.VK_M):
 			if(!MuteHolder.muted) {
 				music.pause(true);
+				for(Entity ent : game.getEntities()) {
+					ent.stopSound();
+				}
+				for(Entity ent : game.getPassableEntities()) {
+					ent.stopSound();
+				}	
 			}
 			else {
 				music.pause(false);
+				for(Entity ent : game.getEntities()) {
+					ent.startSound();
+				}
+				for(Entity ent : game.getPassableEntities()) {
+					ent.startSound();
+				}	
 			}
 			MuteHolder.muted = !MuteHolder.muted;
 		default:

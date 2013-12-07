@@ -20,6 +20,7 @@ import engine.connections.Input;
 import engine.connections.Output;
 import engine.sound.Sound;
 import engine.sound.SoundHolder;
+import game.MuteHolder;
 
 /**
  * Abstract Entity class for GameWorld
@@ -76,7 +77,9 @@ public abstract class Entity implements Serializable {
 				// gets the sound file passed as an argument and plays it.
 				if (thisSound == null || !currentSounds.contains(thisSound)) {
 					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
-					thisSound.loop();
+					if(!MuteHolder.muted) {
+						thisSound.loop();
+					}
 					currentSounds.add(thisSound);
 					Entity.this.world.addSound(thisSound);
 				}
@@ -467,12 +470,20 @@ public abstract class Entity implements Serializable {
 	}
 	
 	/**
-	 * Stops all sounds. Currently not working totally right.
+	 * Stops all sounds.
 	 */
 	public void stopSound() {
 		for (Sound s : currentSounds) {
 			s.stop();
-			s.close();
+		}
+	}
+	
+	/**
+	 * Starts all sounds.
+	 */
+	public void startSound() {
+		for (Sound s : currentSounds) {
+			s.loop();
 		}
 	}
 	
