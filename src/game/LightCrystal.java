@@ -6,6 +6,7 @@ import java.awt.RadialGradientPaint;
 import engine.Artist;
 import engine.Viewport;
 import engine.entity.Entity;
+import engine.sound.SoundHolder;
 
 public class LightCrystal extends Entity {
 
@@ -35,6 +36,11 @@ public class LightCrystal extends Entity {
 		float topLefty = Viewport.gamePtToScreen(this.shape.getLocation()).y;
 		a.ellipse(g, topLeftx - 40, topLefty - 40, (centerx - topLeftx + 40)*2, (centery - topLefty + 40)*2);
 		super.onDraw(g);
+	}
+	
+	public void destroy() {
+		SoundHolder.soundTable.get("pickup").duplicate().play();
+		this.world.removeEntity(this);
 	}
 
 }

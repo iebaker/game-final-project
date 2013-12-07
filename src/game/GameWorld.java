@@ -182,12 +182,10 @@ public class GameWorld extends World implements LightWorld {
 				}
 				
 				if (a instanceof LightCrystal && b instanceof Player && a.collideWithEntity(b)) {
-					this.removeEntity(a);
-					removeEntity(a);
+					((LightCrystal) a).destroy();
 					((Player) b).addCrystal();
 				} else if (b instanceof LightCrystal && a instanceof Player && b.collideWithEntity(a)) {
-					this.removeEntity(b);
-					removeEntity(b);
+					((LightCrystal) b).destroy();
 					((Player) a).addCrystal();
 				}
 				
