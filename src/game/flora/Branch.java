@@ -2,20 +2,34 @@ package game.flora;
 
 import cs195n.Vec2f;
 
+/**
+ * Branch is a class representing a single branch of a fractal tree.
+ * A Branch can be modified by a Transformation to produce a new 
+ * Branch.
+ */
 public class Branch {
 
 	private Vec2f startPoint;
 	private Vec2f endPoint;
-
 	private Vec2f repVector;
 
+	/**
+	 * Constructor. Takes a starting point and ending point, in that order
+	 * @param s 	The starting point
+	 * @param e 	The ending point
+	 */
 	public Branch(Vec2f s, Vec2f e) {
 		this.startPoint = s;
 		this.endPoint = e;	
-
 		this.repVector = e.minus(s);
 	}
 
+	/**
+	 * Constructor. Takes an already existing branch and constructs a new one
+	 * with the same starting and ending points
+	 *
+	 * @param b  	The branch to copy
+	 */
 	public Branch(Branch b) {
 		this.startPoint = new Vec2f(b.getStartPoint().x, b.getStartPoint().y);
 		this.endPoint = new Vec2f(b.getEndPoint().x, b.getEndPoint().y);

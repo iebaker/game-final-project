@@ -14,7 +14,11 @@ public class Tree {
 
 	private List<Rule> rules;
 	private List<Set<Branch>> branches;
+	private List<Set<Branch>> grown = new ArrayList<Set<Branch>>();
+	private Set<Branch> fringe = new HashSet<Branch>();
 	private boolean populated = false;
+	private float percent = 1.0f;
+	private float growthrate = 0.2f;
 
 	public Tree() {
 		rules = new ArrayList<Rule>();
@@ -51,22 +55,48 @@ public class Tree {
 		populated = true;
 	}
 
+	public void onTick(long nanos) {
+		//System.out.println();
+		//System.out.println(percent);
+		if(percent >= 1) {
+
+			if(!fringe.isEmpty()) grown.add(fringe);
+
+			if(!branches.isEmpty()) {
+				fringe = branches.get(0);
+				branches.remove(0);
+			} else {
+				fringe = new HashSet<Branch>();
+			}
+			percent = 0.0f;
+
+		} else {
+			percent += growthrate;
+		}
+		//System.out.println(percent);
+	}
+
 	public void onDraw(java.awt.Graphics2D g) {
-		int width = branches.size();
+		if(!populated) return;
+
 		Artist a = new Artist();
 		a.setStrokePaint(Color.BLACK);
+		g.setStroke(new java.awt.BasicStroke(2));
 
-		if(populated) {
-			for(Set<Branch> bs : branches) {
-				g.setStroke(new java.awt.BasicStroke(width));
-				for(Branch b : bs) {
-					Vec2f start = Viewport.gamePtToScreen(b.getStartPoint());
-					Vec2f end = Viewport.gamePtToScreen(b.getEndPoint());
+		for(Set<Branch> current : grown) {
+			for(Branch branch : current) {
+				Vec2f start = Viewport.gamePtToScreen(branch.getStartPoint());
+				Vec2f end = Viewport.gamePtToScreen(branch.getEndPoint());
 
-					a.line(g, start.x, start.y, end.x, end.y);
-				}
-				width--;
+				a.line(g, start.x, start.y, end.x, end.y);
 			}
+		}
+
+		for(Branch branch : fringe) {
+			Vec2f start = Viewport.gamePtToScreen(branch.getStartPoint());
+			Vec2f end = Viewport.gamePtToScreen(branch.getStartPoint().lerpTo(branch.getEndPoint(), percent));
+
+			a.line(g, start.x, start.y, end.x, end.y);
 		}
 	}
 
