@@ -1,13 +1,14 @@
 package game.flora.trees;
 
+import game.GameWorld;
+import game.flora.Branch;
 import game.flora.Rule;
 import game.flora.Transformation;
 import game.flora.Tree;
-import game.flora.Branch;
-import game.GameWorld;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
+
 import cs195n.Vec2f;
 
 public class BinaryTree extends Tree {
@@ -42,13 +43,15 @@ public class BinaryTree extends Tree {
 	}
 
 	public static void treeTest(GameWorld world, java.awt.Graphics2D g) {
-		Vec2f loc1 = world.getPlayer().shape.getCenter();
-		Vec2f loc2 = loc1.plus(new Vec2f(0, -250));
-
-		Set<Branch> branches = new HashSet<Branch>();
-		branches.add(new Branch(loc1, loc2));
-
-		Tree btree = new BinaryTree(4).newTree(branches);
-		btree.onDraw(g);
+		if(world.getPlayer() != null) {
+			Vec2f loc1 = world.getPlayer().shape.getCenter();
+			Vec2f loc2 = loc1.plus(new Vec2f(0, -250));
+	
+			Set<Branch> branches = new HashSet<Branch>();
+			branches.add(new Branch(loc1, loc2));
+	
+			Tree btree = new BinaryTree(4).newTree(branches);
+			btree.onDraw(g);
+		}
 	}
 }

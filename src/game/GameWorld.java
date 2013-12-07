@@ -40,58 +40,6 @@ import engine.ui.TextBox;
  */
 public class GameWorld extends World implements LightWorld {
 	
-	/**
-	 * Enum for game state that displays a message
-	 * 
-	 * @author dgattey
-	 * 
-	 */
-	public static enum GameState {
-		LOSE("Game Over", "You lost... Try again"), PLAYING("...", "Still in play"), WIN("Nice Work!", "You won");
-		
-		private final String	headline;
-		private String			message;
-		
-		/**
-		 * Private constructor with headline and message
-		 * 
-		 * @param par
-		 * @param msg
-		 */
-		private GameState(String head, String msg) {
-			message = msg;
-			headline = head;
-		}
-		
-		/**
-		 * Public getter for the headline
-		 * 
-		 * @return
-		 */
-		public String getHeadline() {
-			return headline;
-		}
-		
-		/**
-		 * Public getter for the message
-		 * 
-		 * @return
-		 */
-		public String getMessage() {
-			return message;
-		}
-		
-		/**
-		 * Public setter for the message
-		 * 
-		 * @param msg
-		 *            the message to set
-		 */
-		public void setMessage(String msg) {
-			message = msg;
-		}
-	}
-	
 	private static HashMap<String, Entity>					defaults;
 	private static WorldTrigger								wt					= new WorldTrigger();
 	static {
@@ -123,6 +71,10 @@ public class GameWorld extends World implements LightWorld {
 	public transient LightingEngine							lightEngine			= new LightingEngine();
 	private boolean											win;
 	private transient ArrayList<Sound> allSounds = new ArrayList<Sound>();
+	private StartCrystal startCrystal;
+	private ArrayList<BackgroundLight> bgLights = new ArrayList<BackgroundLight>();
+	private float saveCooldown = 0;
+	private boolean gameOver = false;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -151,6 +103,8 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("DuskBall", DuskBall.class);
 		classes.put("LightCrystal", LightCrystal.class);
 		classes.put("ArmadilloOfDarkness", ArmadilloOfDarkness.class);
+		classes.put("StartCrystal", StartCrystal.class);
+		classes.put("BackgroundLight", BackgroundLight.class);
 		
 		newGame();
 	}
@@ -211,20 +165,6 @@ public class GameWorld extends World implements LightWorld {
 		}
 	}
 	
-	/**
-	 * Checks the game state - win after level 5 - but could be extended!
-	 * 
-	 * @return
-	 */
-	public GameState checkEndConditions() {
-		if (lose)
-			return GameState.LOSE;
-		else if (win)
-			return GameState.WIN;
-		else
-			return GameState.PLAYING;
-	}
-	
 	@Override
 	/**
 	 * Enters cutscene mode
@@ -260,7 +200,9 @@ public class GameWorld extends World implements LightWorld {
 			}
 			if (castTo != null) {
 				affected.applyImpulse(ray.getDirection().smult(5000f));
-				
+				if(affected instanceof ShadowEnemy) {
+					affected.damage(10);
+				}
 				// For breakable blocks
 				if (affected.isShootable()) {
 					affected.setShotsNeeded(affected.getShotsNeeded() - 1);
@@ -318,10 +260,8 @@ public class GameWorld extends World implements LightWorld {
 		List<LightSource> ret = new ArrayList<LightSource>();
 		if (player != null) {
 			lightSource = new LightSource(player.shape.getCenter());
-			lightSource.setBrightness(player.hp / player.fullHP());
+			lightSource.setBrightness(player.hp / 100);
 			ret.add(lightSource);
-		} else {
-			System.out.println("player was null");
 		}
 		return ret;
 	}
@@ -473,6 +413,8 @@ public class GameWorld extends World implements LightWorld {
 		lineCt = 0;
 		gravity = 300;
 		entityStack = new ArrayList<Entity>();
+		startCrystal = null;
+		bgLights = new ArrayList<BackgroundLight>();
 		passList = new ArrayList<PassableEntity>();
 		transferredEntities = false;
 		
@@ -506,6 +448,15 @@ public class GameWorld extends World implements LightWorld {
 		} else if (lineCt >= 20) {
 			lineCt = 0;
 			line = null;
+		}
+		
+		//Draws the starting crystal on front of everything else
+		if(startCrystal != null) {
+			startCrystal.onDraw(g);
+		}
+		
+		for(BackgroundLight light : bgLights) {
+			light.onDraw(g);
 		}
 		
 		super.onDraw(g); // draws all entities
@@ -614,18 +565,17 @@ public class GameWorld extends World implements LightWorld {
 			laserCooldown -= secs2;
 			player.hp -= secs2 * 20;
 		}
+		
+		if(saveCooldown > 0) {
+			saveCooldown -= secs;
+		}
 	}
 	
 	@Override
 	/**
 	 * Sets a lose with a message
 	 */
-	public void setLose(String msg) {
-		lose = true;
-		if (player.hp < 0) player.hp = 0;
-		GameState.LOSE.setMessage(msg);
-		player = null;
-	}
+	public void setLose(String msg) {	}
 	
 	/**
 	 * Set the message for the message display with a countdown or just pause the game
@@ -670,10 +620,10 @@ public class GameWorld extends World implements LightWorld {
 	@Override
 	public void reload() {
 		for (Entity e : getEntities()) {
-			e.reloadSounds();
+			e.reloadTransientData();
 		}
 		for (Entity e : getPassableEntities()) {
-			e.reloadSounds();
+			e.reloadTransientData();
 		}
 		allSounds = new ArrayList<Sound>();
 		lightEngine = new LightingEngine();
@@ -694,5 +644,39 @@ public class GameWorld extends World implements LightWorld {
 		for (Sound s : allSounds) {
 			s.pause(false);
 		}
+	}
+	
+	public void addStartCrystal(StartCrystal start) {
+		this.removeEntity(start);
+		startCrystal = start;
+	}
+	
+	public StartCrystal getStartCrystal() {
+		return startCrystal;
+	}
+
+	public void addBackgroundLight(BackgroundLight backgroundLight) {
+		this.removeEntity(backgroundLight);
+		bgLights.add(backgroundLight);
+	}
+
+	/**
+	 * For when the player dies
+	 */
+	public void die() {
+		//TODO add nice transition here
+		gameOver = true;
+	}
+	
+	@Override
+	public void save() {
+		if(saveCooldown == 0) {
+			Saver.saveGame(saveFile, this);
+			saveCooldown = 5;
+		}
+	}
+
+	public boolean isOver() {
+		return gameOver;
 	}
 }
