@@ -1,13 +1,14 @@
 package game.flora.trees;
 
+import game.GameWorld;
+import game.flora.Branch;
 import game.flora.Rule;
 import game.flora.Transformation;
 import game.flora.Tree;
-import game.flora.Branch;
-import game.GameWorld;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
+
 import cs195n.Vec2f;
 
 public class BinaryTree extends Tree {

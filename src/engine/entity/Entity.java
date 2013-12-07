@@ -38,6 +38,7 @@ public abstract class Entity implements Serializable {
 	protected float						friction;
 	protected float						height;
 	public float						hp;
+	protected float maxHP = 100;
 	private Vec2f						impulse;
 	protected Map<String, Input>		inputs;
 	public boolean						isStatic;
@@ -52,6 +53,8 @@ public abstract class Entity implements Serializable {
 	protected float						width;
 	protected World						world;
 	protected boolean stopsLight = true;
+	protected float damageCooldown = 0;
+	protected float healCooldown = 0;
 	
 	/**
 	 * Emptyoonstructor - sets default values
@@ -60,7 +63,7 @@ public abstract class Entity implements Serializable {
 		force = new Vec2f(0, 0);
 		impulse = new Vec2f(0, 0);
 		velocity = new Vec2f(0, 0);
-		hp = fullHP();
+		hp = maxHP;
 		inputs = new HashMap<String, Input>();
 		outputs = new HashMap<String, Output>();
 		inputs.put("playSound", new Input() {
@@ -195,8 +198,12 @@ public abstract class Entity implements Serializable {
 	 * 
 	 * @return a value for full hp
 	 */
-	public float fullHP() {
-		return 100;
+	public float getMaxHP() {
+		return maxHP;
+	}
+	
+	public void setMaxHP(float hp) {
+		maxHP = hp;
 	}
 	
 	/**
@@ -338,6 +345,14 @@ public abstract class Entity implements Serializable {
 	 *            Nanoseconds since last tick
 	 */
 	public void onTick(float t) {
+		if(damageCooldown > 0) {
+			damageCooldown -= t;
+		}
+		
+		if(healCooldown > 0) {
+			healCooldown -= t;
+		}
+		
 		contactDelay -= t;
 		applyForce(new Vec2f(0, world.gravity() * mass)); // apply gravity
 		if (mass != 0) {
@@ -372,7 +387,7 @@ public abstract class Entity implements Serializable {
 	/**
 	 * Reloads all sounds. Used when loading a save file.
 	 */
-	public void reloadSounds() {
+	public void reloadTransientData() {
 		currentSounds = new ArrayList<Sound>();
 	}
 	
@@ -381,6 +396,7 @@ public abstract class Entity implements Serializable {
 	 */
 	public void resetX() {
 		velocity = new Vec2f(0, velocity.y);
+		impulse = new Vec2f(0, impulse.y);
 	}
 	
 	/**
@@ -388,6 +404,7 @@ public abstract class Entity implements Serializable {
 	 */
 	public void resetY() {
 		velocity = new Vec2f(velocity.x, 0);
+		impulse = new Vec2f(impulse.x, 0);
 	}
 	
 	/**
@@ -480,5 +497,30 @@ public abstract class Entity implements Serializable {
 
 	public boolean stopsLight() {
 		return this.stopsLight;
+	}
+	
+	public float damage(float damage) {
+		if(damageCooldown <= 0) {
+			this.hp -= damage;
+			if(this.hp <= 0) {
+				world.removeEntity(this);
+			}
+			this.damageCooldown = 0.5f;
+			return damage;
+		}
+		return 0;
+	}
+	
+	public float heal(float toHeal) {
+		if(healCooldown <= 0) {
+			this.healCooldown = 0.5f;
+			this.hp += toHeal;
+			if(this.hp > this.maxHP) {
+				this.hp = this.maxHP;
+				return 1;
+			}
+			return toHeal;
+		}
+		return 0;
 	}
 }

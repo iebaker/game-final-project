@@ -9,4 +9,10 @@
 	<sound id="loudwater">
 		<file>lib/loudwater.wav</file>
 	</sound>
+	<sound id="pickup">
+		<file>lib/pickup.wav</file>
+	</sound>
+	<sound id="heal">
+		<file>lib/heal.wav</file>
+	</sound>
 </sounds>

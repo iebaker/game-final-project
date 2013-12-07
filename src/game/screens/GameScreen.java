@@ -30,7 +30,7 @@ import engine.ui.UIRect;
 import engine.ui.UIRoundRect;
 import engine.ui.UIText;
 import game.GameWorld;
-import game.GameWorld.GameState;
+import game.MuteHolder;
 
 /**
  * A Screen subclass supporting playing the game - creates viewport with gameview.getGame() and starts new game
@@ -46,18 +46,13 @@ public class GameScreen extends Screen {
 	private GameWorld	game;
 	private UIButton	newGame;
 	private UIText		gameStatusText;
-	private GameState	gameStatus;
 	private UIText		gameOverText;
 	private UIRect		transOverlay;
 	private UIRect		messageBG;
 	private UIText		message;
 	private UIRect		healthRect;
 	private UIText		healthText;
-	private UIRect		levelRect;
-	private UIText		levelText;
-	private boolean		gameOver;
 	private TextBox textBox;
-	private boolean soundsOn = true;
 	private volatile MusicPlayer music;
 	
 	/**
@@ -80,9 +75,6 @@ public class GameScreen extends Screen {
 				}
 			}
 		}));*/
-		//TODO convert to wav once I have internet
-		//MusicPlayer m = new MusicPlayer("lib/equinox.wav");
-		//m.run();
 		music = new MusicPlayer("lib/equinox.wav");
 		music.start();
 		
@@ -101,7 +93,6 @@ public class GameScreen extends Screen {
 			this.bkgrd = new UIRect(zVec, zVec, game.getBGColor(), new BasicStroke(0f));
 			this.newGame = new UIButton("New Game", zVec, zVec, new Color(0, 195, 0), Color.white,
 					new BasicStroke(2.0f));
-			this.gameStatus = GameState.PLAYING;
 			this.gameStatusText = new UIText("Game status here", Color.white, zVec, 1);
 			this.gameOverText = new UIText("Game Over", Color.white, zVec, 1);
 			this.transOverlay = new UIRect(zVec, zVec, new Color(0, 0, 0, 130), new BasicStroke(0f));
@@ -109,8 +100,6 @@ public class GameScreen extends Screen {
 			this.messageBG = new UIRect(zVec, zVec, new Color(0, 20, 0, 200), new BasicStroke(0f));
 			this.healthRect = new UIRect(zVec, zVec, new Color(20, 0, 0, 120), new BasicStroke(0f));
 			this.healthText = new UIText("Health: 100", Color.white, zVec, 1);
-			this.levelRect = new UIRect(zVec, zVec, new Color(0, 0, 20, 120), new BasicStroke(0f));
-			this.levelText = new UIText("Level 1", Color.white, zVec, 1);
 			
 			this.message = new UIText("Game starts in 3", Color.white, zVec, 1);
 		} catch (FileNotFoundException e) {
@@ -128,34 +117,16 @@ public class GameScreen extends Screen {
 	 */
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
-		GameState state = game.checkEndConditions();
-		if (gameOver)
-			return;
-		else if (state != GameState.PLAYING && !gameOver)
-			gameOver(state);
-		else {
-			this.message.updateText(game.getCurrentMessage());
-			float secs = (float) (nanosSincePreviousTick / 1000000000.0);
-			this.healthText.updateText("HP: " + (int) game.getHealth() + "/100");
-			this.levelText.updateText("Level " + game.level.getLevel());
-			game.onTick(secs);
+		float secs = (float) (nanosSincePreviousTick / 1000000000.0);
+		this.healthText.updateText("HP: " + (int) game.getHealth() + "/100");
+		game.onTick(secs);
+		if(game.isOver()) {
+			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
+			if (temp != null) {
+				game = temp;
+				textBox = game.getTextBox();
+			}
 		}
-	}
-	
-	/**
-	 * Shows game over stuff
-	 * 
-	 * @param state
-	 */
-	private void gameOver(GameState state) {
-		gameStatus = state;
-		gameStatusText.updateText(gameStatus.getMessage());
-		gameOverText.updateText(gameStatus.getHeadline());
-		message.updateText("");
-		int hp = (game.getHealth() < 0) ? 0 : (int) game.getHealth();
-		healthText.updateText("HP: " + hp + "/100");
-		
-		gameOver = true; // stops more updates from getting through
 	}
 	
 	/**
@@ -165,20 +136,8 @@ public class GameScreen extends Screen {
 	protected void onDraw(Graphics2D g) {
 		bkgrd.drawAndFillShape(g);
 		view.onDraw(game, g);
-		if (!message.isEmpty()) {
-			messageBG.drawAndFillShape(g);
-			message.drawShape(g);
-		}
 		healthRect.drawAndFillShape(g);
 		healthText.drawShape(g);
-		levelRect.drawAndFillShape(g);
-		levelText.drawShape(g);
-		if (gameStatus != GameState.PLAYING) {
-			transOverlay.drawAndFillShape(g);
-			gameStatusText.drawShape(g);
-			gameOverText.drawShape(g);
-			newGame.drawShape(g);
-		}
 		textBox.draw(g);
 	}
 	
@@ -204,8 +163,6 @@ public class GameScreen extends Screen {
 		message.resizeText(new Vec2f(w / 3, h / 2), h / 12);
 		healthRect.updatePosition(new Vec2f(2 * w / 3, h - h / 8), new Vec2f(w, h));
 		healthText.resizeText(new Vec2f(w - w / 3 + w / 60, h - h / 30), h / 14);
-		levelRect.updatePosition(new Vec2f(0, 0), new Vec2f(w / 3, h / 8));
-		levelText.resizeText(new Vec2f(w / 60, h / 10), h / 8);
 		textBox.getRect().updatePosition(new Vec2f(10, h - h/4), new Vec2f(w-10, h-10));
 		textBox.getText().resizeText(new Vec2f(20, h - h/8), h/16);
 	}
@@ -246,15 +203,13 @@ public class GameScreen extends Screen {
 			//}
 			break;
 		case (KeyEvent.VK_M):
-			if(soundsOn) {
-				game.mute();
+			if(!MuteHolder.muted) {
 				music.pause(true);
 			}
 			else {
-				game.unmute();
 				music.pause(false);
 			}
-			soundsOn = !soundsOn;
+			MuteHolder.muted = !MuteHolder.muted;
 		default:
 			game.onKeyPressed(e);
 			break;
@@ -278,9 +233,7 @@ public class GameScreen extends Screen {
 	@Override
 	protected void onMousePressed(MouseEvent e) {
 		mouseLocation = new Vec2f(e.getX(), e.getY());
-		if (gameStatus != GameState.PLAYING && newGame.hitTarget(e)) {
-			newGame();
-		} else if (gameStatus == GameState.PLAYING && mouseLocation != null) {
+		if (mouseLocation != null) {
 			game.onMouseClicked(e);
 		}
 	}
@@ -293,10 +246,8 @@ public class GameScreen extends Screen {
 	 */
 	@Override
 	protected void onMouseDragged(MouseEvent e) {
-		if (gameStatus == GameState.PLAYING) {
-			Vec2f m = new Vec2f(e.getX(), e.getY());
-			mouseLocation = m; // important to save it again so it doesn't jump strangely!
-		}
+		Vec2f m = new Vec2f(e.getX(), e.getY());
+		mouseLocation = m; // important to save it again so it doesn't jump strangely!
 	}
 	
 	/**
@@ -307,23 +258,19 @@ public class GameScreen extends Screen {
 	 */
 	@Override
 	protected void onMouseWheelMoved(MouseWheelEvent e) {
-		if (gameStatus == GameState.PLAYING) {
-			float zm = e.getWheelRotation();
-			Point p = MouseInfo.getPointerInfo().getLocation();
-			SwingUtilities.convertPointFromScreen(p, e.getComponent());
-			Vec2f pt = new Vec2f(p.x, p.y);
-			Vec2f sdim = view.getSDim();
-			Vec2f dim = view.getDim();
-			if (checkBounds(pt, sdim.x, dim.x, sdim.y, dim.y)) view.zoomView(pt, zm);
-		}
+		float zm = e.getWheelRotation();
+		Point p = MouseInfo.getPointerInfo().getLocation();
+		SwingUtilities.convertPointFromScreen(p, e.getComponent());
+		Vec2f pt = new Vec2f(p.x, p.y);
+		Vec2f sdim = view.getSDim();
+		Vec2f dim = view.getDim();
+		if (checkBounds(pt, sdim.x, dim.x, sdim.y, dim.y)) view.zoomView(pt, zm);
 	}
 	
 	/**
 	 * Begins a new game
 	 */
 	private void newGame() {
-		gameStatus = GameState.PLAYING;
-		gameOver = false;
 		game.newGame();
 	}
 	

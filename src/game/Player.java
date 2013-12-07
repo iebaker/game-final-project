@@ -6,6 +6,7 @@ import java.util.Map;
 import cs195n.Vec2f;
 import engine.connections.Input;
 import engine.entity.Entity;
+import engine.sound.SoundHolder;
 
 /**
  * Player entity class
@@ -19,12 +20,11 @@ public class Player extends Entity {
 	public Vec2f				goalVelocity;
 	private boolean jumpUnlocked = true;
 	private boolean laserUnlocked = true;
-	private boolean moveLeft = false;
-	private boolean moveRight = false;
+	private transient boolean moveLeft = false;
+	private transient boolean moveRight = false;
 	private float lightCountdown = 1;
 	private float lightTime = 1;
 	private int crystals = 0;
-	private float damageCooldown = 0;
 	
 	public Player() {
 		super();
@@ -86,8 +86,11 @@ public class Player extends Entity {
 			this.hp -= 1;
 		}
 		
-		if(damageCooldown > 0) {
-			damageCooldown -= t;
+		if((((GameWorld) this.world).getStartCrystal() != null) && ((GameWorld) this.world).getStartCrystal().shape.getCenter().minus(this.shape.getCenter()).mag2() <= 80000) {
+			if(this.heal(10) == 10 && !MuteHolder.muted) {
+				SoundHolder.soundTable.get("heal").play();
+			}
+			world.save();
 		}
 		
 		if (!world.checkBounds(shape.getLocation()))
@@ -194,8 +197,8 @@ public class Player extends Entity {
 	public void addCrystal() {
 		crystals++;
 		this.hp += 10;
-		if(this.hp > this.fullHP()) {
-			this.hp = this.fullHP();
+		if(this.hp > this.maxHP) {
+			this.hp = this.maxHP;
 		}
 	}
 	
@@ -214,18 +217,24 @@ public class Player extends Entity {
 	public void spendCrystals(int spent) {
 		crystals -= spent;
 	}
-
-	/**
-	 * deals damage to the player
-	 * @param f
-	 * @return float damage dealt
-	 */
-	public float damage(float f) {
+	
+	@Override
+	public float damage(float damage) {
 		if(damageCooldown <= 0) {
-			this.hp -= f;
+			this.hp -= damage;
+			if(this.hp <= 0) {
+				((GameWorld) world).die();
+			}
 			this.damageCooldown = 0.5f;
-			return f;
+			return damage;
 		}
 		return 0;
+	}
+	
+	@Override
+	public void reloadTransientData() {
+		moveLeft = false;
+		moveRight = false;
+		super.reloadTransientData();
 	}
 }

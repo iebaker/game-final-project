@@ -13,6 +13,7 @@ DYLAN
 
 SAWYER
 make unlockables level-editable
+Spawn points for enemies instead of just placing them on the map. Then they can easily be recreated so the game doesn't get boring.
 	
 ----------------------------------------------------
 THINGS THAT COULD BE ADDED (REMOVE ONCE IMPLEMENTED)

@@ -27,6 +27,14 @@ public abstract class ShadowEnemy extends EnemyEntity {
 	}
 	
 	@Override
+	public void onTick(float secs) {
+		super.onTick(secs);
+		if((((GameWorld) this.world).getStartCrystal() != null) && ((GameWorld) this.world).getStartCrystal().shape.getCenter().minus(this.shape.getCenter()).mag2() <= 80000) {
+			this.damage(10);
+		}
+	}
+	
+	@Override
 	public void onDraw(java.awt.Graphics2D g) {
 		Artist a = new Artist();
 		a.setStroke(false);
@@ -34,7 +42,7 @@ public abstract class ShadowEnemy extends EnemyEntity {
 		float centerx = Viewport.gamePtToScreen(this.shape.getCenter()).x;
 		float centery = Viewport.gamePtToScreen(this.shape.getCenter()).y;
 		
-		float radius = Viewport.gameFloatToScreen(baseRadius * this.hp / this.fullHP());
+		float radius = Viewport.gameFloatToScreen(this.shape.getCenter().x - this.shape.getLocation().x + baseRadius * this.hp / this.maxHP);
 		Color[] colors = new Color[] { new Color(0f, 0f, 0f, 1f), new Color(0f, 0f, 0f, 0f) };
 		
 		RadialGradientPaint rgp = new RadialGradientPaint(centerx, centery, radius, fractions, colors);

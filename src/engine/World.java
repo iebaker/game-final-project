@@ -308,4 +308,6 @@ public abstract class World implements Serializable {
 	
 	public abstract void addSound(Sound s);
 	
+	public abstract void save();
+	
 }
