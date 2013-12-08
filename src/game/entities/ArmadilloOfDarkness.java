@@ -3,29 +3,30 @@ package game.entities;
 import cs195n.Vec2f;
 
 /**
- * An angry armadillo that is angered by light and will do anything to smother it, preferably by rolling into a ball and running it over.
+ * An angry armadillo that is angered by light and will do anything to smother it, preferably by rolling into a ball and
+ * running it over.
+ * 
  * @author Sawyer
- *
+ * 
  */
 public class ArmadilloOfDarkness extends ShadowEnemy {
-
-	private static final long serialVersionUID = 562708050413509584L;
-	private Vec2f				goalVelocity = new Vec2f(0,0);
+	
+	private static final long	serialVersionUID	= 562708050413509584L;
+	private Vec2f				goalVelocity		= new Vec2f(0, 0);
 	
 	public ArmadilloOfDarkness() {
-		super(50, new float[] {0.2f, 1f});
+		super(50, new float[] { 0.2f, 1f });
 	}
 	
 	@Override
 	public void onTick(float t) {
-		if(this.world.getPlayer() != null) {
-			float absDist = ((Player) this.world.getPlayer()).getCenterPosition().minus(this.shape.getCenter()).mag2();
-			if(absDist <= 300000) {
-				float xDist = ((Player) this.world.getPlayer()).getCenterPosition().x - this.shape.getCenter().x;
-				if(xDist > 0) {
+		if (world.getPlayer() != null) {
+			float absDist = ((Player) world.getPlayer()).getCenterPosition().minus(shape.getCenter()).mag2();
+			if (absDist <= 300000) {
+				float xDist = ((Player) world.getPlayer()).getCenterPosition().x - shape.getCenter().x;
+				if (xDist > 0) {
 					goalVelocity = new Vec2f(600, 0);
-				}
-				else {
+				} else {
 					goalVelocity = new Vec2f(-600, 0);
 				}
 			}
@@ -38,5 +39,10 @@ public class ArmadilloOfDarkness extends ShadowEnemy {
 			
 			super.onTick(t);
 		}
+	}
+	
+	@Override
+	public String getName() {
+		return "Armadillo Of Darkness";
 	}
 }

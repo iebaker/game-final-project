@@ -20,7 +20,8 @@ public class UIText extends Shape {
 	private Font				f;
 	private Vec2f				coord;
 	private float				preferredHeight;
-	private boolean visible = true;
+	private boolean				visible				= true;
+	private float				currentWidth;
 	
 	/**
 	 * Creates a new text shape with the desired text, coordinates, and preferred width
@@ -30,23 +31,25 @@ public class UIText extends Shape {
 	 * @param w
 	 */
 	public UIText(String text, Color c, Vec2f coord, float w) {
-		this.s = text;
+		s = text;
 		this.coord = coord;
-		this.preferredHeight = w;
+		preferredHeight = w;
 		this.c = c;
-		this.f = new Font("Sans-Serif", Font.PLAIN, 1);
+		f = new Font("Arial", Font.PLAIN, 1);
 	}
 	
 	/**
 	 * Draws the shape to the screen by figuring out the preferred text size that will fit in the height of that space
 	 */
+	@Override
 	public void drawShape(Graphics2D g) {
-		if(visible) {
+		if (visible) {
 			super.drawShape(g);
 			Font tempF = g.getFont();
 			
 			float height = g.getFontMetrics(tempF).getHeight();
-			float newFSize = (tempF.getSize() * (this.preferredHeight / height));
+			currentWidth = g.getFontMetrics(tempF).getStringBounds(s, g).getBounds().width;
+			float newFSize = (tempF.getSize() * (preferredHeight / height));
 			if (!s.equals("")) f = tempF.deriveFont(newFSize);
 			g.setFont(f);
 			g.drawString(s, coord.x, coord.y);
@@ -59,7 +62,7 @@ public class UIText extends Shape {
 	 * @param text
 	 */
 	public void updateText(String text) {
-		this.s = text;
+		s = text;
 	}
 	
 	/**
@@ -69,7 +72,7 @@ public class UIText extends Shape {
 	 * @param preferredHeight
 	 */
 	public void resizeText(Vec2f dim, float preferredHeight) {
-		this.coord = dim;
+		coord = dim;
 		this.preferredHeight = preferredHeight;
 	}
 	
@@ -88,8 +91,12 @@ public class UIText extends Shape {
 	public boolean isEmpty() {
 		return (s == null) || (s.length() == 0);
 	}
-
+	
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+	}
+	
+	public float getWidth() {
+		return currentWidth;
 	}
 }

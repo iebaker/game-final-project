@@ -567,4 +567,13 @@ public abstract class Entity implements Serializable {
 	public void die() {
 		world.removeEntity(this);
 	}
+	
+	/**
+	 * By default, name of entity is toString of it - can be overridden
+	 * 
+	 * @return Name of entity
+	 */
+	public String getName() {
+		return toString();
+	}
 }

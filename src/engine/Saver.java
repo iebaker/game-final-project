@@ -24,7 +24,6 @@ public class Saver {
 			out.writeObject(game);
 			out.close();
 			fileOut.close();
-			System.out.println("Game data saved in " + fileName);
 		} catch (IOException i) {
 			System.err.println("Game couldn't be saved - see stack trace");
 			i.printStackTrace();
@@ -47,11 +46,9 @@ public class Saver {
 			fileIn.close();
 		} catch (IOException i) {
 			System.err.println("I/O issue in loading game: ");
-			i.printStackTrace();
 			return null;
 		} catch (ClassNotFoundException c) {
 			System.err.println("World class not found");
-			c.printStackTrace();
 			return null;
 		}
 		for (Entity e : w.getEntities()) {
@@ -65,7 +62,6 @@ public class Saver {
 		if (tempGame != null) {
 			tempGame.v = v;
 			tempGame.reload();
-			System.out.println("Game data loaded from " + fileName);
 			return tempGame;
 		}
 		return null;

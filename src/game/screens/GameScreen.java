@@ -280,6 +280,11 @@ public class GameScreen extends Screen {
 		if (checkBounds(pt, sdim.x, dim.x, sdim.y, dim.y)) view.zoomView(pt, zm);
 	}
 	
+	@Override
+	protected void onMouseMoved(MouseEvent e) {
+		game.onMouseMoved(e);
+	}
+	
 	/**
 	 * Begins a new game
 	 */

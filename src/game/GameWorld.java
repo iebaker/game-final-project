@@ -33,11 +33,12 @@ import engine.lighting.Vec2fPair;
 import engine.sound.Sound;
 import engine.ui.TextBox;
 import game.entities.ArmadilloOfDarkness;
-import game.entities.DuskBall;
+import game.entities.DarkFrog;
 import game.entities.LightCrystal;
 import game.entities.Player;
 import game.entities.ShadowEnemy;
 import game.entities.StartCrystal;
+import game.entities.Tooltip;
 import game.entities.WaterEntity;
 import game.entities.WinEntity;
 
@@ -83,6 +84,7 @@ public class GameWorld extends World implements LightWorld {
 	private ArrayList<BackgroundLight>						bgLights			= new ArrayList<BackgroundLight>();
 	private float											saveCooldown		= 0;
 	private boolean											gameOver			= false;
+	private transient Tooltip								tooltip;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -95,6 +97,7 @@ public class GameWorld extends World implements LightWorld {
 		GameWorld.wt.setWorld(this);
 		textBox = tb;
 		tb.setWorld(this);
+		tooltip = new Tooltip(this);
 		
 		// Classes map
 		classes = new HashMap<String, Class<? extends Entity>>();
@@ -107,7 +110,7 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("WinEntity", WinEntity.class);
 		classes.put("PassableEntity", PassableEntity.class);
 		classes.put("Water", WaterEntity.class);
-		classes.put("DuskBall", DuskBall.class);
+		classes.put("DuskBall", DarkFrog.class);
 		classes.put("LightCrystal", LightCrystal.class);
 		classes.put("ArmadilloOfDarkness", ArmadilloOfDarkness.class);
 		classes.put("StartCrystal", StartCrystal.class);
@@ -460,6 +463,7 @@ public class GameWorld extends World implements LightWorld {
 		}
 		
 		super.onDraw(g); // draws all entities
+		tooltip.onDraw(g);
 	}
 	
 	/**
@@ -527,6 +531,11 @@ public class GameWorld extends World implements LightWorld {
 			}
 			if (checkBounds(pt)) fireBullet(pt);
 		}
+	}
+	
+	public void onMouseMoved(MouseEvent e) {
+		Vec2f pt = Viewport.screenPtToGame(new Vec2f(e.getX(), e.getY()));
+		tooltip.setLocation(pt);
 	}
 	
 	/**
@@ -612,6 +621,7 @@ public class GameWorld extends World implements LightWorld {
 		for (Entity e : getPassableEntities()) {
 			e.reloadTransientData();
 		}
+		tooltip = new Tooltip(this);
 		allSounds = new ArrayList<Sound>();
 		lightEngine = new LightingEngine();
 	}
