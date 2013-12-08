@@ -39,7 +39,7 @@ public abstract class Entity implements Serializable {
 	protected float						friction;
 	protected float						height;
 	protected float						hp;
-	protected float maxHP = 100;
+	protected float						maxHP				= 100;
 	private Vec2f						impulse;
 	protected Map<String, Input>		inputs;
 	public boolean						isStatic;
@@ -53,9 +53,9 @@ public abstract class Entity implements Serializable {
 	private Vec2f						velocity;
 	protected float						width;
 	protected World						world;
-	protected boolean stopsLight = true;
-	protected float damageCooldown = 0;
-	protected float healCooldown = 0;
+	protected boolean					stopsLight			= true;
+	protected float						damageCooldown		= 0;
+	protected float						healCooldown		= 0;
 	
 	/**
 	 * Emptyoonstructor - sets default values
@@ -77,11 +77,11 @@ public abstract class Entity implements Serializable {
 				// gets the sound file passed as an argument and plays it.
 				if (thisSound == null || !currentSounds.contains(thisSound)) {
 					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
-					if(!MuteHolder.muted) {
+					if (!MuteHolder.muted) {
 						thisSound.loop();
 					}
 					currentSounds.add(thisSound);
-					Entity.this.world.addSound(thisSound);
+					world.addSound(thisSound);
 				}
 			}
 		});
@@ -348,11 +348,11 @@ public abstract class Entity implements Serializable {
 	 *            Nanoseconds since last tick
 	 */
 	public void onTick(float t) {
-		if(damageCooldown > 0) {
+		if (damageCooldown > 0) {
 			damageCooldown -= t;
 		}
 		
-		if(healCooldown > 0) {
+		if (healCooldown > 0) {
 			healCooldown -= t;
 		}
 		
@@ -369,7 +369,7 @@ public abstract class Entity implements Serializable {
 		impulse = new Vec2f(0, 0);
 		
 		// see if new sounds should be played
-		if (outputs.get("onTick").hasConnection()) {
+		if (outputs.get("onTick").hasConnection() && currentSounds != null && !currentSounds.isEmpty()) {
 			outputs.get("onTick").run();
 		}
 		
@@ -501,33 +501,33 @@ public abstract class Entity implements Serializable {
 	public String toString() {
 		return "Entity<sh:" + shape + " rst:" + restitution + " mass:" + mass + ">";
 	}
-
+	
 	public void setVelocity(Vec2f velocity) {
 		this.velocity = velocity;
 	}
-
+	
 	public boolean stopsLight() {
-		return this.stopsLight;
+		return stopsLight;
 	}
 	
 	public float damage(float damage) {
-		if(damageCooldown <= 0) {
-			this.hp -= damage;
-			if(this.hp <= 0) {
-				this.die();
+		if (damageCooldown <= 0) {
+			hp -= damage;
+			if (hp <= 0) {
+				die();
 			}
-			this.damageCooldown = 0.5f;
+			damageCooldown = 0.5f;
 			return damage;
 		}
 		return 0;
 	}
 	
 	public float heal(float toHeal) {
-		if(healCooldown <= 0) {
-			this.healCooldown = 0.5f;
-			this.hp += toHeal;
-			if(this.hp > this.maxHP) {
-				this.hp = this.maxHP;
+		if (healCooldown <= 0) {
+			healCooldown = 0.5f;
+			hp += toHeal;
+			if (hp > maxHP) {
+				hp = maxHP;
 				return 1;
 			}
 			return toHeal;
@@ -539,25 +539,26 @@ public abstract class Entity implements Serializable {
 	 * Heals with no cooldown
 	 */
 	public void flatHeal(float toHeal) {
-		this.hp += toHeal;
-		if(this.hp > this.maxHP) {
-			this.hp = this.maxHP;
+		hp += toHeal;
+		if (hp > maxHP) {
+			hp = maxHP;
 		}
 	}
 	
 	/**
 	 * Damages with no cooldown
+	 * 
 	 * @param toDamage
 	 */
 	public void flatDamage(float toDamage) {
-		this.hp -= toDamage;
-		if(this.hp <= 0) {
-			this.die();
+		hp -= toDamage;
+		if (hp <= 0) {
+			die();
 		}
 	}
 	
 	public float getHP() {
-		return this.hp;
+		return hp;
 	}
 	
 	/**

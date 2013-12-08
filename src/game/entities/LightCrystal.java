@@ -6,15 +6,16 @@ import java.awt.RadialGradientPaint;
 import engine.Artist;
 import engine.Viewport;
 import engine.entity.Entity;
+import engine.sound.Sound;
 import engine.sound.SoundHolder;
 import game.MuteHolder;
 
 public class LightCrystal extends Entity {
-
-	private static final long serialVersionUID = -324958466738745396L;
+	
+	private static final long	serialVersionUID	= -324958466738745396L;
 	
 	public LightCrystal() {
-		this.stopsLight = false;
+		stopsLight = false;
 	}
 	
 	@Override
@@ -22,8 +23,8 @@ public class LightCrystal extends Entity {
 		Artist a = new Artist();
 		a.setStroke(false);
 		
-		float centerx = Viewport.gamePtToScreen(this.shape.getCenter()).x;
-		float centery = Viewport.gamePtToScreen(this.shape.getCenter()).y;
+		float centerx = Viewport.gamePtToScreen(shape.getCenter()).x;
+		float centery = Viewport.gamePtToScreen(shape.getCenter()).y;
 		
 		float radius = Viewport.gameFloatToScreen(40);
 		float[] fractions = new float[] { 0f, 1f };
@@ -33,17 +34,19 @@ public class LightCrystal extends Entity {
 		
 		a.setFillPaint(rgp);
 		
-		float topLeftx = Viewport.gamePtToScreen(this.shape.getLocation()).x;
-		float topLefty = Viewport.gamePtToScreen(this.shape.getLocation()).y;
-		a.ellipse(g, topLeftx - 40, topLefty - 40, (centerx - topLeftx + 40)*2, (centery - topLefty + 40)*2);
+		float topLeftx = Viewport.gamePtToScreen(shape.getLocation()).x;
+		float topLefty = Viewport.gamePtToScreen(shape.getLocation()).y;
+		a.ellipse(g, topLeftx - 40, topLefty - 40, (centerx - topLeftx + 40) * 2, (centery - topLefty + 40) * 2);
 		super.onDraw(g);
 	}
 	
 	public void destroy() {
-		if(!MuteHolder.muted) {
-			SoundHolder.soundTable.get("pickup").duplicate().play();
+		if (!MuteHolder.muted) {
+			Sound pickup = null;
+			if (SoundHolder.soundTable != null) pickup = SoundHolder.soundTable.get("pickup");
+			if (pickup != null) pickup.duplicate().play();
 		}
-		this.world.removeEntity(this);
+		world.removeEntity(this);
 	}
-
+	
 }
