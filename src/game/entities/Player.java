@@ -69,12 +69,12 @@ public class Player extends Entity {
 		} else if (moveRight && !moveLeft) {
 			goalVelocity = new Vec2f(800, 0);
 		} else {
-			goalVelocity = new Vec2f(0, 0);
+			goalVelocity = Vec2f.ZERO;
 		}
 		
-		if (!goalVelocity.equals(new Vec2f(0, 0))) {
+		if (!goalVelocity.equals(Vec2f.ZERO)) {
 			if (!goalVelocity.equals(getVelocity())) {
-				applyImpulse((goalVelocity.minus(getVelocity())).smult(0.05f)); // Was 0.05f
+				applyImpulse((goalVelocity.minus(getVelocity())).smult(0.05f));
 			}
 		}
 		

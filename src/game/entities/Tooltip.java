@@ -7,6 +7,7 @@ import engine.ui.UIRoundRect;
 import engine.ui.UIText;
 import game.GameWorld;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -18,12 +19,14 @@ public class Tooltip {
 	private final UIText		text;
 	private final UIRoundRect	background;
 	private boolean				draw;
+	private Entity				current;
 	
 	public Tooltip(GameWorld world) {
 		this.world = world;
 		text = new UIText("Enemy Name Here", Color.white, Vec2f.ZERO, 20f);
 		background = new UIRoundRect(Vec2f.ZERO, Vec2f.ZERO, Color.black, null);
 		draw = false;
+		current = null;
 	}
 	
 	public void setLocation(Vec2f newLocation) {
@@ -35,6 +38,7 @@ public class Tooltip {
 				float w = text.getWidth();
 				background.updatePosition(Viewport.gamePtToScreen(newLocation).minus(10, 20),
 						Viewport.gamePtToScreen(newLocation).plus(w + 0.3f * w + 10, 10));
+				current = e;
 				hasChanged = true;
 			}
 		}
@@ -43,15 +47,21 @@ public class Tooltip {
 			text.setVisible(true);
 		} else {
 			draw = false;
+			current = null;
 			text.setVisible(false);
 		}
 	}
 	
 	public void onDraw(Graphics2D g) {
-		if (draw) {
+		if (draw && current != null) {
+			g.setStroke(new BasicStroke(0f));
 			background.drawAndFillShape(g);
 			text.drawShape(g);
 		}
+	}
+	
+	public void erase() {
+		current = null;
 	}
 	
 }

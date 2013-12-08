@@ -439,6 +439,11 @@ public class GameWorld extends World implements LightWorld {
 	 * @param g
 	 */
 	public void onDraw(Graphics2D g) {
+		// Draws the starting crystal on front of everything else
+		if (startCrystal != null) {
+			startCrystal.onDraw(g);
+		}
+		
 		// Draws the line for bullets
 		if (line != null && player != null && laserCooldown > 0) {
 			g.setColor(new Color(0.7f, 0.7f, 1f, 0.6f));
@@ -451,11 +456,6 @@ public class GameWorld extends World implements LightWorld {
 		} else if (lineCt >= 20) {
 			lineCt = 0;
 			line = null;
-		}
-		
-		// Draws the starting crystal on front of everything else
-		if (startCrystal != null) {
-			startCrystal.onDraw(g);
 		}
 		
 		for (BackgroundLight light : bgLights) {
@@ -483,16 +483,6 @@ public class GameWorld extends World implements LightWorld {
 			}
 		}
 		switch (keyCode) {
-		case (KeyEvent.VK_1): // 1 - Load level 1
-			if (player != null) {
-				newGame(1);
-			}
-			break;
-		case (KeyEvent.VK_2): // 2 - Load level 2
-			if (player != null) {
-				// newGame(2);
-			}
-			break;
 		case (KeyEvent.VK_P): // Pause
 			if (player != null && !lose && !win)
 				paused = !paused;
@@ -523,7 +513,6 @@ public class GameWorld extends World implements LightWorld {
 	 * @param e
 	 */
 	public void onMouseClicked(MouseEvent e) {
-		// lightEngine.onMouseClicked(this, e);
 		Vec2f pt = Viewport.screenPtToGame(new Vec2f(e.getX(), e.getY()));
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			if (checkBounds(pt)) {
@@ -681,5 +670,9 @@ public class GameWorld extends World implements LightWorld {
 	public void setWin() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public Tooltip getTooltip() {
+		return tooltip;
 	}
 }
