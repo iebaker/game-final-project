@@ -18,7 +18,7 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class SoundHolder {
 	
-	public static final Hashtable<String, Sound>	soundTable			= new Hashtable<String, Sound>();
+	public static final Hashtable<String, Sound>	soundTable	= new Hashtable<String, Sound>();
 	
 	/**
 	 * Consturctor. Takes in the path of an XML to parse
@@ -26,7 +26,7 @@ public class SoundHolder {
 	 * @param toRead
 	 */
 	public SoundHolder(String toRead) {
-		soundTable.clear();
+		SoundHolder.soundTable.clear();
 		String tagContent = null;
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		try {
@@ -48,17 +48,15 @@ public class SoundHolder {
 				case XMLStreamConstants.END_ELEMENT:
 					String name = reader.getLocalName();
 					if (name == "file") {
-						soundTable.put(currSoundID, new Sound(tagContent));
+						SoundHolder.soundTable.put(currSoundID, new Sound(tagContent));
 					}
 				}
 			}
 			
 		} catch (XMLStreamException e) {
-			System.out.println("XML is improperly formatted");
-			e.printStackTrace();
+			System.err.println("Sound XML is improperly formatted");
 		} catch (FileNotFoundException e) {
-			System.out.println("Could not locate file");
-			e.printStackTrace();
+			System.err.println("Could not locate sound XML file");
 		}
 	}
 }

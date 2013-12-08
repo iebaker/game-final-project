@@ -59,6 +59,7 @@ public class GameWorld extends World implements LightWorld {
 																						+ "/save.gme";
 	private static final long								serialVersionUID	= 6619354971290257104L;
 	private static final float								TICK_LENGTH			= 0.005f;
+	public static final String								LEVEL_NAME			= "lib/Level1.nlf";
 	private final HashMap<String, Class<? extends Entity>>	classes;
 	private boolean											cutsceneActive;
 	private float											gravity;
@@ -66,7 +67,7 @@ public class GameWorld extends World implements LightWorld {
 	private double											leftoverTime;
 	public Level											level;
 	private Vec2f											line;
-	private float												laserCooldown = 0;
+	private float											laserCooldown		= 0;
 	private int												lineCt;
 	private boolean											lose;
 	private String											message;
@@ -77,11 +78,11 @@ public class GameWorld extends World implements LightWorld {
 	private transient LightSource							lightSource;
 	public transient LightingEngine							lightEngine			= new LightingEngine();
 	private boolean											win;
-	private transient ArrayList<Sound> allSounds = new ArrayList<Sound>();
-	private StartCrystal startCrystal;
-	private ArrayList<BackgroundLight> bgLights = new ArrayList<BackgroundLight>();
-	private float saveCooldown = 0;
-	private boolean gameOver = false;
+	private transient ArrayList<Sound>						allSounds			= new ArrayList<Sound>();
+	private StartCrystal									startCrystal;
+	private ArrayList<BackgroundLight>						bgLights			= new ArrayList<BackgroundLight>();
+	private float											saveCooldown		= 0;
+	private boolean											gameOver			= false;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -125,17 +126,15 @@ public class GameWorld extends World implements LightWorld {
 				Entity b = entityStack.get(j);
 				
 				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
-					if(((EnemyEntity) a).drains()) {
+					if (((EnemyEntity) a).drains()) {
 						a.heal(((Player) b).damage(((EnemyEntity) a).getDamage()));
-					}
-					else {
+					} else {
 						((Player) b).damage(((EnemyEntity) a).getDamage());
 					}
 				} else if (b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
-					if(((EnemyEntity) b).drains()) {
+					if (((EnemyEntity) b).drains()) {
 						b.heal(((Player) a).damage(((EnemyEntity) b).getDamage()));
-					}
-					else {
+					} else {
 						((Player) a).damage(((EnemyEntity) b).getDamage());
 					}
 				}
@@ -147,7 +146,6 @@ public class GameWorld extends World implements LightWorld {
 					((LightCrystal) b).destroy();
 					((Player) a).addCrystal();
 				}
-				
 				
 				else if (a.collideWithEntity(b)) {
 					CollisionInfo aCol = new CollisionInfo(a, b);
@@ -175,7 +173,7 @@ public class GameWorld extends World implements LightWorld {
 	 * Enters cutscene mode
 	 */
 	public void enterCutscene() {
-		cutsceneActive = true;		
+		cutsceneActive = true;
 	}
 	
 	/**
@@ -202,7 +200,7 @@ public class GameWorld extends World implements LightWorld {
 			}
 			if (castTo != null) {
 				affected.applyImpulse(ray.getDirection().smult(5000f));
-				if(affected instanceof ShadowEnemy) {
+				if (affected instanceof ShadowEnemy) {
 					affected.damage(10);
 				}
 				// For breakable blocks
@@ -399,7 +397,7 @@ public class GameWorld extends World implements LightWorld {
 	 *            the restitution to give all entities
 	 */
 	public void newGame(int lvl) {
-		for(Sound s : allSounds) {
+		for (Sound s : allSounds) {
 			s.stop();
 			s.close();
 		}
@@ -421,8 +419,8 @@ public class GameWorld extends World implements LightWorld {
 		transferredEntities = false;
 		
 		// Actually load the level
-		loadLevelFromFile("lib/Level" + lvl + ".nlf", classes, this);
-		//if (lvl == 1) setMessage("Game starts in 3", 0.5f);
+		loadLevelFromFile(GameWorld.LEVEL_NAME, classes, this);
+		// if (lvl == 1) setMessage("Game starts in 3", 0.5f);
 		if (lvl == 1) setMessage("Game starts in 3", 0.5f);
 		
 		moveEntitiesToPassable();
@@ -452,12 +450,12 @@ public class GameWorld extends World implements LightWorld {
 			line = null;
 		}
 		
-		//Draws the starting crystal on front of everything else
-		if(startCrystal != null) {
+		// Draws the starting crystal on front of everything else
+		if (startCrystal != null) {
 			startCrystal.onDraw(g);
 		}
 		
-		for(BackgroundLight light : bgLights) {
+		for (BackgroundLight light : bgLights) {
 			light.onDraw(g);
 		}
 		
@@ -559,16 +557,16 @@ public class GameWorld extends World implements LightWorld {
 			transferredEntities = true;
 			moveEntitiesToPassable();
 		}
-		if(laserCooldown > 0) {
+		if (laserCooldown > 0) {
 			float secs2 = secs;
-			if(secs2 > laserCooldown) {
+			if (secs2 > laserCooldown) {
 				secs2 = laserCooldown;
 			}
 			laserCooldown -= secs2;
 			player.flatDamage(secs2 * 20);
 		}
 		
-		if(saveCooldown > 0) {
+		if (saveCooldown > 0) {
 			saveCooldown -= secs;
 		}
 	}
@@ -577,7 +575,7 @@ public class GameWorld extends World implements LightWorld {
 	/**
 	 * Sets a lose with a message
 	 */
-	public void setLose(String msg) {	}
+	public void setLose(String msg) {}
 	
 	/**
 	 * Set the message for the message display with a countdown or just pause the game
@@ -594,7 +592,6 @@ public class GameWorld extends World implements LightWorld {
 		player = (Player) p;
 		if (hp > 0) player.heal(hp);
 	}
-
 	
 	public void unlockJump() {
 		player.unlockJump();
@@ -637,39 +634,39 @@ public class GameWorld extends World implements LightWorld {
 	}
 	
 	public void addStartCrystal(StartCrystal start) {
-		this.removeEntity(start);
+		removeEntity(start);
 		startCrystal = start;
 	}
 	
 	public StartCrystal getStartCrystal() {
 		return startCrystal;
 	}
-
+	
 	public void addBackgroundLight(BackgroundLight backgroundLight) {
-		this.removeEntity(backgroundLight);
+		removeEntity(backgroundLight);
 		bgLights.add(backgroundLight);
 	}
-
+	
 	/**
 	 * For when the player dies
 	 */
 	public void die() {
-		//TODO add nice transition here
+		// TODO add nice transition here
 		gameOver = true;
 	}
 	
 	@Override
 	public void save() {
-		if(saveCooldown <= 0) {
-			Saver.saveGame(saveFile, this);
+		if (saveCooldown <= 0) {
+			Saver.saveGame(GameWorld.saveFile, this);
 			saveCooldown = 5;
 		}
 	}
-
+	
 	public boolean isOver() {
 		return gameOver;
 	}
-
+	
 	@Override
 	public void setWin() {
 		// TODO Auto-generated method stub

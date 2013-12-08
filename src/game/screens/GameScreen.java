@@ -40,20 +40,20 @@ import game.MuteHolder;
  */
 public class GameScreen extends Screen {
 	
-	private UIRect		bkgrd;
-	private Viewport	view;
-	private Vec2f		mouseLocation;
-	private GameWorld	game;
-	private UIButton	newGame;
-	private UIText		gameStatusText;
-	private UIText		gameOverText;
-	private UIRect		transOverlay;
-	private UIRect		messageBG;
-	private UIText		message;
-	private UIRect		healthRect;
-	private UIText		healthText;
-	private TextBox textBox;
-	private volatile MusicPlayer music;
+	private final UIRect			bkgrd;
+	private final Viewport			view;
+	private Vec2f					mouseLocation;
+	private GameWorld				game;
+	private final UIButton			newGame;
+	private final UIText			gameStatusText;
+	private final UIText			gameOverText;
+	private final UIRect			transOverlay;
+	private final UIRect			messageBG;
+	private final UIText			message;
+	private final UIRect			healthRect;
+	private final UIText			healthText;
+	private TextBox					textBox;
+	private volatile MusicPlayer	music;
 	
 	/**
 	 * Constructor creates relevant items and places them based on ratios
@@ -78,37 +78,37 @@ public class GameScreen extends Screen {
 		music = new MusicPlayer("lib/equinox.wav");
 		music.start();
 		
-		Vec2f zVec = new Vec2f(0, 0);
+		view = new Viewport(a);
+		UIRoundRect cutsceneRect = new UIRoundRect(Vec2f.ZERO, Vec2f.ZERO, new Color(255, 255, 255),
+				new BasicStroke(0f));
+		cutsceneRect.setVisible(false);
+		UIText cutsceneText = new UIText("", new Color(0, 0, 0), Vec2f.ZERO, 1);
+		cutsceneText.setVisible(false);
+		textBox = new TextBox(cutsceneRect, cutsceneText);
 		try {
 			LevelData data = CS195NLevelReader.readLevel(new File("lib/Level1.nlf"));
 			String[] dimensions = data.getProperties().get("dimensions").split("[,]");
-			this.view = new Viewport(a);
-			UIRoundRect cutsceneRect = new UIRoundRect(zVec, zVec, new Color(255, 255, 255), new BasicStroke(0f));
-			cutsceneRect.setVisible(false);
-			UIText cutsceneText = new UIText("", new Color(0,0,0), zVec, 1);
-			cutsceneText.setVisible(false);
-			textBox = new TextBox(cutsceneRect, cutsceneText);
-			this.game = new GameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])), textBox);
-			this.view.setGame(game);
-			this.bkgrd = new UIRect(zVec, zVec, game.getBGColor(), new BasicStroke(0f));
-			this.newGame = new UIButton("New Game", zVec, zVec, new Color(0, 195, 0), Color.white,
-					new BasicStroke(2.0f));
-			this.gameStatusText = new UIText("Game status here", Color.white, zVec, 1);
-			this.gameOverText = new UIText("Game Over", Color.white, zVec, 1);
-			this.transOverlay = new UIRect(zVec, zVec, new Color(0, 0, 0, 130), new BasicStroke(0f));
+			game = new GameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])), textBox);
 			
-			this.messageBG = new UIRect(zVec, zVec, new Color(0, 20, 0, 200), new BasicStroke(0f));
-			this.healthRect = new UIRect(zVec, zVec, new Color(20, 0, 0, 120), new BasicStroke(0f));
-			this.healthText = new UIText("Health: 100", Color.white, zVec, 1);
-			
-			this.message = new UIText("Game starts in 3", Color.white, zVec, 1);
 		} catch (FileNotFoundException e) {
-			System.out.println("Couldn't find level file!");
-			e.printStackTrace();
+			System.err.println("Could not locate level file");
 		} catch (InvalidLevelException e) {
-			System.out.println("Invalid level!");
-			e.printStackTrace();
+			System.err.println("Invalid level file");
 		}
+		if (game != null) view.setGame(game);
+		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, (game != null) ? game.getBGColor() : Color.black,
+				new BasicStroke(0f));
+		newGame = new UIButton("New Game", Vec2f.ZERO, Vec2f.ZERO, new Color(0, 195, 0), Color.white, new BasicStroke(
+				2.0f));
+		gameStatusText = new UIText("Game status here", Color.white, Vec2f.ZERO, 1);
+		gameOverText = new UIText("Game Over", Color.white, Vec2f.ZERO, 1);
+		transOverlay = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 0, 0, 130), new BasicStroke(0f));
+		
+		messageBG = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 20, 0, 200), new BasicStroke(0f));
+		healthRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(20, 0, 0, 120), new BasicStroke(0f));
+		healthText = new UIText("Health: 100", Color.white, Vec2f.ZERO, 1);
+		
+		message = new UIText("Game starts in 3", Color.white, Vec2f.ZERO, 1);
 	}
 	
 	/**
@@ -118,13 +118,15 @@ public class GameScreen extends Screen {
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
 		float secs = (float) (nanosSincePreviousTick / 1000000000.0);
-		this.healthText.updateText("HP: " + (int) game.getHealth() + "/100");
-		game.onTick(secs);
-		if(game.isOver()) {
-			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
-			if (temp != null) {
-				game = temp;
-				textBox = game.getTextBox();
+		if (game != null) {
+			healthText.updateText("HP: " + (int) game.getHealth() + "/100");
+			game.onTick(secs);
+			if (game.isOver()) {
+				GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
+				if (temp != null) {
+					game = temp;
+					textBox = game.getTextBox();
+				}
 			}
 		}
 	}
@@ -163,8 +165,8 @@ public class GameScreen extends Screen {
 		message.resizeText(new Vec2f(w / 3, h / 2), h / 12);
 		healthRect.updatePosition(new Vec2f(2 * w / 3, h - h / 8), new Vec2f(w, h));
 		healthText.resizeText(new Vec2f(w - w / 3 + w / 60, h - h / 30), h / 14);
-		textBox.getRect().updatePosition(new Vec2f(10, h - h/4), new Vec2f(w-10, h-10));
-		textBox.getText().resizeText(new Vec2f(20, h - h/8), h/16);
+		textBox.getRect().updatePosition(new Vec2f(10, h - h / 4), new Vec2f(w - 10, h - 10));
+		textBox.getText().resizeText(new Vec2f(20, h - h / 8), h / 16);
 	}
 	
 	/**
@@ -181,10 +183,10 @@ public class GameScreen extends Screen {
 			break;
 		case (KeyEvent.VK_ESCAPE): // ESC pressed (quit)
 		case (KeyEvent.VK_Q): // Q pressed (quit)
-			for(Entity ent : game.getEntities()) {
+			for (Entity ent : game.getEntities()) {
 				ent.stopSound();
 			}
-			for(Entity ent : game.getPassableEntities()) {
+			for (Entity ent : game.getPassableEntities()) {
 				ent.stopSound();
 			}
 			music.pause(true);
@@ -194,32 +196,31 @@ public class GameScreen extends Screen {
 			Saver.saveGame(GameWorld.saveFile, game);
 			break;
 		case (KeyEvent.VK_4): // 4 pressed, load game
-			//if(!textBox.getVisible()) {
-				GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
-				if (temp != null) {
-					game = temp;
-					textBox = game.getTextBox();
-				}
-			//}
+			// if(!textBox.getVisible()) {
+			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
+			if (temp != null) {
+				game = temp;
+				textBox = game.getTextBox();
+			}
+			// }
 			break;
 		case (KeyEvent.VK_M):
-			if(!MuteHolder.muted) {
+			if (!MuteHolder.muted) {
 				music.pause(true);
-				for(Entity ent : game.getEntities()) {
+				for (Entity ent : game.getEntities()) {
 					ent.stopSound();
 				}
-				for(Entity ent : game.getPassableEntities()) {
+				for (Entity ent : game.getPassableEntities()) {
 					ent.stopSound();
-				}	
-			}
-			else {
+				}
+			} else {
 				music.pause(false);
-				for(Entity ent : game.getEntities()) {
+				for (Entity ent : game.getEntities()) {
 					ent.startSound();
 				}
-				for(Entity ent : game.getPassableEntities()) {
+				for (Entity ent : game.getPassableEntities()) {
 					ent.startSound();
-				}	
+				}
 			}
 			MuteHolder.muted = !MuteHolder.muted;
 		default:

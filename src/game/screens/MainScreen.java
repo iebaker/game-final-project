@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import cs195n.Vec2f;
 import cs195n.Vec2i;
@@ -13,6 +14,7 @@ import engine.Screen;
 import engine.ui.UIButton;
 import engine.ui.UIRect;
 import engine.ui.UIText;
+import game.GameWorld;
 import game.Umbra;
 
 /**
@@ -35,14 +37,15 @@ public class MainScreen extends Screen {
 	public MainScreen(Application a) {
 		super(a);
 		Vec2f zVec = new Vec2f(0, 0);
-		this.bkgrd = new UIRect(zVec, zVec, Color.black, new BasicStroke(0.0f));
-		this.playButton = new UIButton("New Game", zVec, zVec, new Color(0, 195, 0), Color.white, new BasicStroke(2.0f));
-		this.title = new UIText(Umbra.gameName, Color.white, zVec, 1);
+		bkgrd = new UIRect(zVec, zVec, Color.black, new BasicStroke(0.0f));
+		playButton = new UIButton("New Game", zVec, zVec, new Color(0, 195, 0), Color.white, new BasicStroke(2.0f));
+		title = new UIText(Umbra.gameName, Color.white, zVec, 1);
 	}
 	
 	/**
 	 * Nothing happens
 	 */
+	@Override
 	protected void onTick(long nanosSincePreviousTick) {
 		
 	}
@@ -50,6 +53,7 @@ public class MainScreen extends Screen {
 	/**
 	 * Draws the background and titles
 	 */
+	@Override
 	protected void onDraw(Graphics2D g) {
 		bkgrd.drawAndFillShape(g);
 		title.drawShape(g);
@@ -71,6 +75,7 @@ public class MainScreen extends Screen {
 	/**
 	 * Gets key events: if enter key released, transition to the game
 	 */
+	@Override
 	protected void onKeyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) switchToGame("Enter key pressed");
 	}
@@ -78,6 +83,7 @@ public class MainScreen extends Screen {
 	/**
 	 * Checks if the play button was clicked and if so, transitions to the game
 	 */
+	@Override
 	protected void onMouseReleased(MouseEvent e) {
 		if (playButton.hitTarget(e)) {
 			switchToGame("Button clicked");
@@ -90,7 +96,10 @@ public class MainScreen extends Screen {
 	 * @param msg
 	 */
 	private void switchToGame(String msg) {
-		a.pushScreen(new GameScreen(a));
+		if (new File(GameWorld.LEVEL_NAME).exists())
+			a.pushScreen(new GameScreen(a));
+		else
+			a.pushScreen(new ErrorScreen(a));
 		System.out.println(msg + ", transitioning to game screen");
 	}
 }

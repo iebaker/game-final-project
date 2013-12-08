@@ -21,8 +21,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class MusicPlayer extends Thread {
 	
-	private String				_file;
-	private volatile boolean	_soundPaused		= false;
+	private final String		_file;
+	private volatile boolean	_soundPaused	= false;
 	
 	public MusicPlayer(String file) {
 		_file = file;
@@ -35,7 +35,7 @@ public class MusicPlayer extends Thread {
 		
 		// Set up an audio input stream piped from the sound file.
 		try {
-			while(true) {
+			while (true) {
 				File soundFile = new File(_file);
 				AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
 				AudioFormat audioFormat = audioInputStream.getFormat();
@@ -45,13 +45,13 @@ public class MusicPlayer extends Thread {
 				if (soundLine.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
 					FloatControl volume = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);
 					volume.setValue(-0.5F);
-		         }
+				}
 				soundLine.start();
 				int nBytesRead = 0;
 				byte[] sampledData = new byte[BUFFER_SIZE];
 				while (nBytesRead != -1) {
 					if (!_soundPaused) {
-						if(!soundLine.isActive()) {
+						if (!soundLine.isActive()) {
 							soundLine.start();
 						}
 						nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
@@ -59,22 +59,23 @@ public class MusicPlayer extends Thread {
 							// Writes audio data to the mixer via this source data line.
 							soundLine.write(sampledData, 0, nBytesRead);
 						}
-					}
-					else {
+					} else {
 						soundLine.stop();
 					}
 				}
 			}
 		} catch (UnsupportedAudioFileException ex) {
-			ex.printStackTrace();
+			System.err.println("Unsupported audio file for background music");
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			System.err.println("I/O error background music");
 		} catch (LineUnavailableException ex) {
 			ex.printStackTrace();
 		}
 		finally {
-			soundLine.drain();
-			soundLine.close();
+			if (soundLine != null) {
+				soundLine.drain();
+				soundLine.close();
+			}
 		}
 	}
 	
