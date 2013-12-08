@@ -369,7 +369,7 @@ public abstract class Entity implements Serializable {
 		impulse = new Vec2f(0, 0);
 		
 		// see if new sounds should be played
-		if (outputs.get("onTick").hasConnection() && currentSounds != null && !currentSounds.isEmpty()) {
+		if (outputs.get("onTick").hasConnection()) {
 			outputs.get("onTick").run();
 		}
 		
