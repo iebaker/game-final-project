@@ -32,6 +32,14 @@ import engine.lighting.LightingEngine;
 import engine.lighting.Vec2fPair;
 import engine.sound.Sound;
 import engine.ui.TextBox;
+import game.entities.ArmadilloOfDarkness;
+import game.entities.DuskBall;
+import game.entities.LightCrystal;
+import game.entities.Player;
+import game.entities.ShadowEnemy;
+import game.entities.StartCrystal;
+import game.entities.WaterEntity;
+import game.entities.WinEntity;
 
 /**
  * GameWorld for M

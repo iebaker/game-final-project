@@ -1,4 +1,4 @@
-package game;
+package game.entities;
 
 /**
  * The most basic enemy. Just a ball of darkness that steals light from the player

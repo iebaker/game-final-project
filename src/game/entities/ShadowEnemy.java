@@ -1,4 +1,4 @@
-package game;
+package game.entities;
 
 import java.awt.Color;
 import java.awt.RadialGradientPaint;
@@ -6,6 +6,7 @@ import java.awt.RadialGradientPaint;
 import engine.Artist;
 import engine.Viewport;
 import engine.entity.EnemyEntity;
+import game.GameWorld;
 
 /**
  * Superclass of all shadow-based enemies. Controls the shadow-drawing parts.

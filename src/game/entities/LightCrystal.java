@@ -1,4 +1,4 @@
-package game;
+package game.entities;
 
 import java.awt.Color;
 import java.awt.RadialGradientPaint;
@@ -7,6 +7,7 @@ import engine.Artist;
 import engine.Viewport;
 import engine.entity.Entity;
 import engine.sound.SoundHolder;
+import game.MuteHolder;
 
 public class LightCrystal extends Entity {
 

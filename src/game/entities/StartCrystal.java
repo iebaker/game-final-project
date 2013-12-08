@@ -1,4 +1,7 @@
-package game;
+package game.entities;
+
+import game.BackgroundLight;
+import game.GameWorld;
 
 
 public class StartCrystal extends BackgroundLight {

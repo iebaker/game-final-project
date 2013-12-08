@@ -1,4 +1,4 @@
-package game;
+package game.entities;
 
 import java.awt.event.KeyEvent;
 import java.util.Map;
@@ -7,6 +7,8 @@ import cs195n.Vec2f;
 import engine.connections.Input;
 import engine.entity.Entity;
 import engine.sound.SoundHolder;
+import game.GameWorld;
+import game.MuteHolder;
 
 /**
  * Player entity class

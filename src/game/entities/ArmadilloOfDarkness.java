@@ -1,4 +1,4 @@
-package game;
+package game.entities;
 
 import cs195n.Vec2f;
 
