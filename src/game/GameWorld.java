@@ -41,6 +41,8 @@ import game.entities.StartCrystal;
 import game.entities.Tooltip;
 import game.entities.WaterEntity;
 import game.entities.WinEntity;
+import game.flora.Tree;
+import game.flora.trees.BinaryTree;
 
 /**
  * GameWorld for M
@@ -115,6 +117,8 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("ArmadilloOfDarkness", ArmadilloOfDarkness.class);
 		classes.put("StartCrystal", StartCrystal.class);
 		classes.put("BackgroundLight", BackgroundLight.class);
+		classes.put("Tree", Tree.class);
+		classes.put("BinaryTree", BinaryTree.class);
 		
 		newGame();
 	}

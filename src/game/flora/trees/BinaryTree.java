@@ -21,9 +21,13 @@ public class BinaryTree extends Tree {
 		this.depth = depth;
 	}
 
+	public BinaryTree() {
+		super();
+		this.depth = 4;
+	}
+
 	@Override
-	public Tree newTree(Set<Branch> b) {
-		Tree t = new Tree(b);
+	public void init() {
 
 		float fourth_pi = (float)Math.PI/4;
 		float third_pi = (float)Math.PI/3;
@@ -40,30 +44,11 @@ public class BinaryTree extends Tree {
 		Transformation t8 = new Transformation(fourth_pi, 0.5f, 1f);
 		Transformation t9 = new Transformation(-fourth_pi, 0.8f, 1f);
 
-		t.addRule(new Rule(t1, t2, t3, t4, t5));
+		this.addRule(new Rule(t1, t2, t3, t4, t5));
 
 		for(int i = 0; i < depth; ++i) {
-			//t.addRule(new Rule(t1, t2, t3, t4, t5));
-			t.addRule(new Rule(t6, t7));
-			t.addRule(new Rule(t8, t9));
+			this.addRule(new Rule(t6, t7));
+			this.addRule(new Rule(t8, t9));
 		}		
-
-		t.populate();
-		return t;
-	}
-
-	public static void treeTest(GameWorld world, java.awt.Graphics2D g) {
-		if(world.getPlayer() == null) return;
-		if(btree == null) {
-			Vec2f loc1 = world.getPlayer().shape.getCenter();
-			Vec2f loc2 = loc1.plus(new Vec2f(0, -200));
-
-			Set<Branch> branches = new HashSet<Branch>();
-			branches.add(new Branch(loc1, loc2));
-
-			btree = new BinaryTree(4).newTree(branches);
-		}
-		btree.onTick(0);
-		btree.onDraw(g);
 	}
 }

@@ -7,40 +7,55 @@ import java.util.List;
 import java.util.Set;
 
 import cs195n.Vec2f;
+import cs195n.LevelData;
 import engine.Artist;
 import engine.Viewport;
+import engine.World;
+import engine.lighting.LightSource;
+import engine.collision.AAB;
+import engine.entity.PassableEntity;
 
-public class Tree {
+import game.GameWorld;
+
+
+public class Tree extends PassableEntity {
 	
 	private final List<Rule>		rules;
 	private final List<Set<Branch>>	branches;
 	private final List<Set<Branch>>	grown		= new ArrayList<Set<Branch>>();
 	private Set<Branch>				fringe		= new HashSet<Branch>();
 	private boolean					populated	= false;
+	private boolean 				enoughLight = false;
 	private float					percent		= 1.0f;
 	private final float				growthrate	= 0.2f;
 	
 	public Tree() {
+		super();
 		rules = new ArrayList<Rule>();
 		branches = new ArrayList<Set<Branch>>();
+		this.init();
 	}
 	
-	public Tree(Set<Branch> b) {
-		rules = new ArrayList<Rule>();
-		branches = new ArrayList<Set<Branch>>();
-		branches.add(b);
+	@Override
+	public void setProperties(LevelData.EntityData ed, World world) {
+		super.setProperties(ed, world);
+
+		AAB me = (AAB) this.shape;
+
+		Vec2f min = me.getMin();
+		Vec2f max = me.getMax();
+
+		float xAvg = (min.x + max.x) / 2f;
+
+		Branch b = new Branch(new Vec2f(xAvg, max.y), new Vec2f(xAvg, min.y));
+		Set<Branch> bs = new HashSet<Branch>();
+		bs.add(b);
+		branches.add(bs);
+		this.populate();
 	}
-	
-	public Tree(Branch b) {
-		rules = new ArrayList<Rule>();
-		branches = new ArrayList<Set<Branch>>();
-		Set<Branch> branch = new HashSet<Branch>();
-		branch.add(b);
-		branches.add(branch);
-	}
-	
-	public Tree newTree(Set<Branch> b) {
-		return new Tree(b);
+
+	public void init() {
+		return;
 	}
 	
 	public void populate() {
@@ -55,9 +70,13 @@ public class Tree {
 		populated = true;
 	}
 	
-	public void onTick(long nanos) {
-		// System.out.println();
-		// System.out.println(percent);
+	@Override
+	public void onTick(float seconds) {
+
+		checkLightLevels();
+		System.out.println(enoughLight);
+		if(!enoughLight) return;
+
 		if (percent >= 1) {
 			
 			if (!fringe.isEmpty()) grown.add(fringe);
@@ -73,7 +92,18 @@ public class Tree {
 		} else {
 			percent += growthrate;
 		}
-		// System.out.println(percent);
+	}
+
+	private void checkLightLevels() {
+		if(this.shape == null) return;
+		GameWorld gameworld = (GameWorld) this.world;
+
+		Vec2f myLoc = ((AAB) this.shape).getMax();
+
+		for(LightSource ls : gameworld.getLightSources()) {
+			Vec2f loc = ls.getLocation();
+			if(myLoc.dist(loc) <= 500) enoughLight = true;
+		}
 	}
 	
 	public void onDraw(java.awt.Graphics2D g) {

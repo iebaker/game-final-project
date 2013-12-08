@@ -186,7 +186,7 @@ public class Viewport {
 		gameworld.resetOffset();
 		//gameworld.getLightingEngineForTesting().rayDebug(gameworld, g);
 		gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
-		BinaryTree.treeTest(gameworld, g);
+		//BinaryTree.treeTest(gameworld, g);
 		game.onDraw(g);
 		g.clip(b);
 		
