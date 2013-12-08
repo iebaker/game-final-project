@@ -34,6 +34,7 @@ import engine.sound.Sound;
 import engine.ui.TextBox;
 import game.entities.ArmadilloOfDarkness;
 import game.entities.DarkFrog;
+import game.entities.DuskBat;
 import game.entities.LightCrystal;
 import game.entities.Player;
 import game.entities.ShadowEnemy;
@@ -110,11 +111,12 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("WinEntity", WinEntity.class);
 		classes.put("PassableEntity", PassableEntity.class);
 		classes.put("Water", WaterEntity.class);
-		classes.put("DuskBall", DarkFrog.class);
+		classes.put("DarkFrog", DarkFrog.class);
 		classes.put("LightCrystal", LightCrystal.class);
 		classes.put("ArmadilloOfDarkness", ArmadilloOfDarkness.class);
 		classes.put("StartCrystal", StartCrystal.class);
 		classes.put("BackgroundLight", BackgroundLight.class);
+		classes.put("DuskBat", DuskBat.class);
 		
 		newGame();
 	}

@@ -56,6 +56,7 @@ public abstract class Entity implements Serializable {
 	protected boolean					stopsLight			= true;
 	protected float						damageCooldown		= 0;
 	protected float						healCooldown		= 0;
+	protected boolean gravityImmune = false;
 	
 	/**
 	 * Emptyoonstructor - sets default values
@@ -357,7 +358,9 @@ public abstract class Entity implements Serializable {
 		}
 		
 		contactDelay -= t;
-		applyForce(new Vec2f(0, world.gravity() * mass)); // apply gravity
+		if(!gravityImmune) {
+			applyForce(new Vec2f(0, world.gravity() * mass)); // apply gravity
+		}
 		if (mass != 0) {
 			velocity = getVelocity().plus(force.sdiv(mass).smult(t).plus(impulse.sdiv(mass))); // new velocity
 			if (shape != null) {
