@@ -23,7 +23,7 @@ public class Tooltip {
 	
 	public Tooltip(GameWorld world) {
 		this.world = world;
-		text = new UIText("Enemy Name Here", Color.white, Vec2f.ZERO, 20f);
+		text = new UIText("Enemy Name Here", Color.white, Vec2f.ZERO, 25f);
 		background = new UIRoundRect(Vec2f.ZERO, Vec2f.ZERO, Color.black, null);
 		draw = false;
 		current = null;
@@ -34,10 +34,10 @@ public class Tooltip {
 		for (Entity e : world.getEntities()) {
 			if (e instanceof EnemyEntity && e.shape.collidesPoint(newLocation)) {
 				text.updateText(e.getName());
-				text.updatePosition(Viewport.gamePtToScreen(newLocation), new Vec2f(0, 20f));
+				text.updatePosition(Viewport.gamePtToScreen(newLocation), new Vec2f(0, 25f));
 				float w = text.getWidth();
-				background.updatePosition(Viewport.gamePtToScreen(newLocation).minus(10, 20),
-						Viewport.gamePtToScreen(newLocation).plus(w + 0.3f * w + 10, 10));
+				background.updatePosition(Viewport.gamePtToScreen(newLocation).minus(10, 25),
+						Viewport.gamePtToScreen(newLocation).plus(w + 0.5f * w + 10, 10));
 				current = e;
 				hasChanged = true;
 			}

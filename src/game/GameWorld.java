@@ -447,7 +447,7 @@ public class GameWorld extends World implements LightWorld {
 		// Draws the line for bullets
 		if (line != null && player != null && laserCooldown > 0) {
 			g.setColor(new Color(0.7f, 0.7f, 1f, 0.6f));
-			g.setStroke(new BasicStroke(5f));
+			g.setStroke(new BasicStroke(Viewport.gameFloatToScreen(10f)));
 			Vec2f p1 = Viewport.gamePtToScreen(player.shape.getCenter());
 			Vec2f p2 = Viewport.gamePtToScreen(line);
 			g.draw(new Line2D.Double(p1.x, p1.y, p2.x, p2.y));
