@@ -6,20 +6,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import cs195n.Vec2f;
 import cs195n.LevelData;
+import cs195n.Vec2f;
 import engine.Artist;
 import engine.Viewport;
 import engine.World;
-import engine.lighting.LightSource;
 import engine.collision.AAB;
+import engine.collision.CollisionInfo;
 import engine.entity.PassableEntity;
-
+import engine.lighting.LightSource;
 import game.GameWorld;
 
 
 public class Tree extends PassableEntity {
-	
+
+	private static final long serialVersionUID = -7955399708850859349L;
 	private final List<Rule>		rules;
 	private final List<Set<Branch>>	branches;
 	private final List<Set<Branch>>	grown		= new ArrayList<Set<Branch>>();
@@ -106,6 +107,7 @@ public class Tree extends PassableEntity {
 		}
 	}
 	
+	@Override
 	public void onDraw(java.awt.Graphics2D g) {
 		if (!populated) return;
 		
@@ -136,4 +138,7 @@ public class Tree extends PassableEntity {
 	public void addRule(Rule r) {
 		rules.add(r);
 	}
+	
+	@Override
+	public void onCollide(CollisionInfo c) {};
 }
