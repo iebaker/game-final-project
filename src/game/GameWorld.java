@@ -64,6 +64,8 @@ public class GameWorld extends World implements LightWorld {
 	public static final String								saveFile			= System.getProperty("user.home")
 																						+ "/save.gme";
 	private static final long								serialVersionUID	= 6619354971290257104L;
+	public static final Color								DUSKY_VIOLET		= new Color(126, 126, 191);
+	public static final Color								DARK_LAVENDER		= new Color(45, 30, 50);
 	private static final float								TICK_LENGTH			= 0.005f;
 	public static final String								LEVEL_NAME			= "lib/TestWorld.nlf";
 	private final HashMap<String, Class<? extends Entity>>	classes;
@@ -253,7 +255,7 @@ public class GameWorld extends World implements LightWorld {
 	}
 	
 	/**
-	 * Retrieves the world's lighting engine FOR TESTING
+	 * Retrieves the world's lighting engine
 	 */
 	public LightingEngine getLightingEngineForTesting() {
 		return lightEngine;

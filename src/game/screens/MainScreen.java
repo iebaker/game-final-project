@@ -36,10 +36,10 @@ public class MainScreen extends Screen {
 	 */
 	public MainScreen(Application a) {
 		super(a);
-		Vec2f zVec = new Vec2f(0, 0);
-		bkgrd = new UIRect(zVec, zVec, Color.black, new BasicStroke(0.0f));
-		playButton = new UIButton("New Game", zVec, zVec, new Color(0, 195, 0), Color.white, new BasicStroke(2.0f));
-		title = new UIText(Umbra.gameName, Color.white, zVec, 1);
+		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, Color.black, new BasicStroke(0.0f));
+		playButton = new UIButton("New Game", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
+				new BasicStroke(0f));
+		title = new UIText(Umbra.gameName, Color.white, Vec2f.ZERO, 1);
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class MainScreen extends Screen {
 	 */
 	@Override
 	protected void onKeyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ENTER) switchToGame("Enter key pressed");
+		if(e.getKeyCode() == KeyEvent.VK_ENTER) switchToGame("Enter key pressed");
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class MainScreen extends Screen {
 	 */
 	@Override
 	protected void onMouseReleased(MouseEvent e) {
-		if (playButton.hitTarget(e)) {
+		if(playButton.hitTarget(e)) {
 			switchToGame("Button clicked");
 		}
 	}
@@ -96,7 +96,7 @@ public class MainScreen extends Screen {
 	 * @param msg
 	 */
 	private void switchToGame(String msg) {
-		if (new File(GameWorld.LEVEL_NAME).exists())
+		if(new File(GameWorld.LEVEL_NAME).exists())
 			a.pushScreen(new GameScreen(a));
 		else
 			a.pushScreen(new ErrorScreen(a));

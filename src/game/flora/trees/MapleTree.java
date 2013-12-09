@@ -6,12 +6,13 @@ import game.flora.Tree;
 
 public class MapleTree extends Tree {
 	
+	private static final long	serialVersionUID	= 1617617412421888417L;
+	
 	@Override
 	public void init() {
 		
 		float fourth_pi = (float) Math.PI / 4;
 		float third_pi = (float) Math.PI / 3;
-		float half_pi = (float) Math.PI / 2;
 		
 		Transformation t1 = new Transformation(third_pi, 0.4f, 0.2f);
 		Transformation t2 = new Transformation(-third_pi, 0.4f, 0.2f);

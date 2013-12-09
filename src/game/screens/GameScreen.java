@@ -57,8 +57,8 @@ public class GameScreen extends Screen {
 	private final UIText			crystalText;
 	private TextBox					textBox;
 	private volatile MusicPlayer	music;
-	private float fadeCount = 0;
-	private UIRect fadeRect;
+	private float					fadeCount	= 0;
+	private final UIRect			fadeRect;
 	
 	/**
 	 * Constructor creates relevant items and places them based on ratios
@@ -118,7 +118,7 @@ public class GameScreen extends Screen {
 		crystalRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(20, 0, 0, 120), new BasicStroke(0f));
 		crystalText = new UIText("Crystals: 0", Color.white, Vec2f.ZERO, 1);
 		
-		fadeRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0,0,0,0), new BasicStroke(0f));
+		fadeRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 0, 0, 0), new BasicStroke(0f));
 		
 		message = new UIText("Game starts in 3", Color.white, Vec2f.ZERO, 1);
 	}
@@ -135,7 +135,7 @@ public class GameScreen extends Screen {
 			if(fadeCount < 0) {
 				fadeCount = 0;
 			}
-			fadeRect.changeColor(new Color(0,0,0, (int) fadeCount));
+			fadeRect.changeColor(new Color(0, 0, 0, (int) fadeCount));
 		}
 		if(game != null) {
 			healthText.updateText("Light: " + (int) game.getHealth() + "/100");
@@ -144,7 +144,7 @@ public class GameScreen extends Screen {
 			game.onTick(secs);
 			if(game.isOver()) {
 				GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
-				this.die();
+				die();
 				if(temp != null) {
 					game = temp;
 					textBox = game.getTextBox();
@@ -229,11 +229,14 @@ public class GameScreen extends Screen {
 			// if(!textBox.getVisible()) {
 			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
 			if(temp != null) {
-				this.fadeIn();
+				fadeIn();
 				game = temp;
 				textBox = game.getTextBox();
 			}
 			// }
+			break;
+		case (KeyEvent.VK_5): // 5, load upgrades
+			a.pushScreen(new ShopScreen(a));
 			break;
 		case (KeyEvent.VK_M):
 			if(!MuteHolder.muted) {
@@ -344,10 +347,10 @@ public class GameScreen extends Screen {
 	
 	private void fadeIn() {
 		fadeCount = 255;
-		fadeRect.changeColor(new Color(0,0,0,255));
+		fadeRect.changeColor(new Color(0, 0, 0, 255));
 	}
 	
 	private void die() {
-		this.fadeIn();
+		fadeIn();
 	}
 }

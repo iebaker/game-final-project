@@ -5,6 +5,8 @@ import game.flora.Transformation;
 import game.flora.Tree;
 
 public class PineTree extends Tree {
+	private static final long	serialVersionUID	= 7446859587442962093L;
+	
 	@Override
 	public void init() {
 		
@@ -13,9 +15,9 @@ public class PineTree extends Tree {
 		Transformation t3 = new Transformation(Transformation.FIFTH_PI, 0.5f, 0.6f);
 		Transformation t4 = new Transformation(-Transformation.FIFTH_PI, 0.5f, 0.8f);
 		Transformation t5 = new Transformation(0, 0.4f, 1f);
-
+		
 		for(int i = 0; i < 5; ++i) {
-			this.addRule(new Rule(t1, t2, t3, t4, t5));
+			addRule(new Rule(t1, t2, t3, t4, t5));
 		}
 	}
 }
