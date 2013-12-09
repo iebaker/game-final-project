@@ -43,15 +43,16 @@ public class UIText extends Shape {
 	 */
 	@Override
 	public void drawShape(Graphics2D g) {
-		if (visible) {
+		if(visible) {
 			super.drawShape(g);
 			Font tempF = g.getFont();
 			
 			float height = g.getFontMetrics(tempF).getHeight();
-			currentWidth = g.getFontMetrics(tempF).getStringBounds(s, g).getBounds().width;
 			float newFSize = (tempF.getSize() * (preferredHeight / height));
-			if (!s.equals("")) f = tempF.deriveFont(newFSize);
+			if(!s.equals("")) f = tempF.deriveFont(newFSize);
 			g.setFont(f);
+			tempF = g.getFont();
+			currentWidth = g.getFontMetrics(tempF).getStringBounds(s, g).getBounds().width;
 			g.drawString(s, coord.x, coord.y);
 		}
 	}

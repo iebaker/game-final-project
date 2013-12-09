@@ -39,7 +39,6 @@ import game.entities.LightCrystal;
 import game.entities.Player;
 import game.entities.ShadowEnemy;
 import game.entities.StartCrystal;
-import game.entities.Tooltip;
 import game.entities.WaterEntity;
 import game.entities.WinEntity;
 import game.flora.trees.FanTree;

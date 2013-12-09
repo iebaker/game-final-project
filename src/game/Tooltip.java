@@ -1,17 +1,15 @@
-package game.entities;
-
-import engine.Viewport;
-import engine.entity.EnemyEntity;
-import engine.entity.Entity;
-import engine.ui.UIRoundRect;
-import engine.ui.UIText;
-import game.GameWorld;
+package game;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
 import cs195n.Vec2f;
+import engine.Viewport;
+import engine.entity.EnemyEntity;
+import engine.entity.Entity;
+import engine.ui.UIRoundRect;
+import engine.ui.UIText;
 
 public class Tooltip {
 	
@@ -31,18 +29,18 @@ public class Tooltip {
 	
 	public void setLocation(Vec2f newLocation) {
 		boolean hasChanged = false;
-		for (Entity e : world.getEntities()) {
-			if (e instanceof EnemyEntity && e.shape.collidesPoint(newLocation)) {
+		for(Entity e : world.getEntities()) {
+			if(e instanceof EnemyEntity && e.shape.collidesPoint(newLocation)) {
 				text.updateText(e.getName());
 				text.updatePosition(Viewport.gamePtToScreen(newLocation), new Vec2f(0, 25f));
 				float w = text.getWidth();
 				background.updatePosition(Viewport.gamePtToScreen(newLocation).minus(10, 25),
-						Viewport.gamePtToScreen(newLocation).plus(w + 0.5f * w + 10, 10));
+						Viewport.gamePtToScreen(newLocation).plus(w + 10, 10));
 				current = e;
 				hasChanged = true;
 			}
 		}
-		if (hasChanged) {
+		if(hasChanged) {
 			draw = true;
 			text.setVisible(true);
 		} else {
@@ -53,7 +51,7 @@ public class Tooltip {
 	}
 	
 	public void onDraw(Graphics2D g) {
-		if (draw && current != null) {
+		if(draw && current != null) {
 			g.setStroke(new BasicStroke(0f));
 			background.drawAndFillShape(g);
 			text.drawShape(g);
