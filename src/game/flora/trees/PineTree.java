@@ -1,7 +1,5 @@
 package game.flora.trees;
 
-import game.GameWorld;
-import game.flora.Branch;
 import game.flora.Rule;
 import game.flora.Transformation;
 import game.flora.Tree;
@@ -9,7 +7,7 @@ import game.flora.Tree;
 public class PineTree extends Tree {
 	@Override
 	public void init() {
-
+		
 		Transformation t1 = new Transformation(Transformation.FIFTH_PI, 0.5f, 0.2f);
 		Transformation t2 = new Transformation(-Transformation.FIFTH_PI, 0.5f, 0.4f);
 		Transformation t3 = new Transformation(Transformation.FIFTH_PI, 0.5f, 0.6f);

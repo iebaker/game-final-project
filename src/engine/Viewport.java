@@ -2,8 +2,6 @@ package engine;
 
 import game.GameWorld;
 
-import game.flora.trees.BinaryTree;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -184,15 +182,15 @@ public class Viewport {
 		Rectangle b = g.getClipBounds();
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
 		gameworld.resetOffset();
-		//gameworld.getLightingEngineForTesting().rayDebug(gameworld, g);
+		// gameworld.getLightingEngineForTesting().rayDebug(gameworld, g);
 		gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
-		//BinaryTree.treeTest(gameworld, g);
+		// BinaryTree.treeTest(gameworld, g);
 		game.onDraw(g);
 		g.clip(b);
 		
 		// Draw a box to show the viewport
 		g.setColor(c);
-		if (stk != null) {
+		if(stk != null) {
 			g.setStroke(stk);
 			g.draw(bounds);
 		}
@@ -243,13 +241,13 @@ public class Viewport {
 	 *            The zoom scalar from the mouse wheel
 	 */
 	public void zoomView(Vec2f p, float zm) {
-		if (zm < 0)
+		if(zm < 0)
 			zm = 0.95f;
 		else
 			zm = 1.05f;
 		
 		float newZm = Viewport.zoom * zm;
-		if (newZm > Viewport.minZoom && newZm < Viewport.maxZoom) {
+		if(newZm > Viewport.minZoom && newZm < Viewport.maxZoom) {
 			/*
 			 * Gets the current pointer location and converts it to screen space. Using that, it changes the gameOffset
 			 * and zoom factor
