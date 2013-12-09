@@ -30,8 +30,9 @@ public abstract class ShadowEnemy extends EnemyEntity {
 	@Override
 	public void onTick(float secs) {
 		super.onTick(secs);
-		if((((GameWorld) this.world).getStartCrystal() != null) && ((GameWorld) this.world).getStartCrystal().shape.getCenter().minus(this.shape.getCenter()).mag2() <= 80000) {
-			this.damage(10);
+		StartCrystal sc = ((GameWorld) this.world).getStartCrystal();
+		if((sc != null) && sc.shape.getCenter().minus(this.shape.getCenter()).mag2() <= 80000) {
+			//this.applyForce(sc.shape.getCenter().minus(this.shape.getCenter()).normalized().smult(-15000));
 		}
 	}
 	
