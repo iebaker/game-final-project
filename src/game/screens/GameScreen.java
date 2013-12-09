@@ -31,6 +31,7 @@ import engine.ui.UIRoundRect;
 import engine.ui.UIText;
 import game.GameWorld;
 import game.MuteHolder;
+import game.entities.Player;
 
 /**
  * A Screen subclass supporting playing the game - creates viewport with gameview.getGame() and starts new game
@@ -52,6 +53,8 @@ public class GameScreen extends Screen {
 	private final UIText			message;
 	private final UIRect			healthRect;
 	private final UIText			healthText;
+	private final UIRect			crystalRect;
+	private final UIText			crystalText;
 	private TextBox					textBox;
 	private volatile MusicPlayer	music;
 	
@@ -96,7 +99,7 @@ public class GameScreen extends Screen {
 		} catch (InvalidLevelException e) {
 			System.err.println("Invalid level file");
 		}
-		if (game != null) view.setGame(game);
+		if(game != null) view.setGame(game);
 		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, (game != null) ? game.getBGColor() : Color.black,
 				new BasicStroke(0f));
 		newGame = new UIButton("New Game", Vec2f.ZERO, Vec2f.ZERO, new Color(0, 195, 0), Color.white, new BasicStroke(
@@ -109,6 +112,9 @@ public class GameScreen extends Screen {
 		healthRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(20, 0, 0, 120), new BasicStroke(0f));
 		healthText = new UIText("Health: 100", Color.white, Vec2f.ZERO, 1);
 		
+		crystalRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(20, 0, 0, 120), new BasicStroke(0f));
+		crystalText = new UIText("Crystals: 0", Color.white, Vec2f.ZERO, 1);
+		
 		message = new UIText("Game starts in 3", Color.white, Vec2f.ZERO, 1);
 	}
 	
@@ -119,12 +125,14 @@ public class GameScreen extends Screen {
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
 		float secs = (float) (nanosSincePreviousTick / 1000000000.0);
-		if (game != null) {
-			healthText.updateText("HP: " + (int) game.getHealth() + "/100");
+		if(game != null) {
+			healthText.updateText("Light: " + (int) game.getHealth() + "/100");
+			Player p = (Player) game.getPlayer();
+			crystalText.updateText("Crystals: " + ((p == null) ? 0 : p.getCrystals()));
 			game.onTick(secs);
-			if (game.isOver()) {
+			if(game.isOver()) {
 				GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
-				if (temp != null) {
+				if(temp != null) {
 					game = temp;
 					textBox = game.getTextBox();
 				}
@@ -141,6 +149,8 @@ public class GameScreen extends Screen {
 		view.onDraw(game, g);
 		healthRect.drawAndFillShape(g);
 		healthText.drawShape(g);
+		crystalRect.drawAndFillShape(g);
+		crystalText.drawShape(g);
 		textBox.draw(g);
 	}
 	
@@ -166,6 +176,8 @@ public class GameScreen extends Screen {
 		message.resizeText(new Vec2f(w / 3, h / 2), h / 12);
 		healthRect.updatePosition(new Vec2f(2 * w / 3, h - h / 8), new Vec2f(w, h));
 		healthText.resizeText(new Vec2f(w - w / 3 + w / 60, h - h / 30), h / 14);
+		crystalRect.updatePosition(new Vec2f(2 * w / 3, 0), new Vec2f(w, h / 8));
+		crystalText.resizeText(new Vec2f(w - w / 3 + w / 60, h / 14), 2 * h / 30);
 		textBox.getRect().updatePosition(new Vec2f(10, h - h / 4), new Vec2f(w - 10, h - 10));
 		textBox.getText().resizeText(new Vec2f(20, h - h / 8), h / 16);
 	}
@@ -178,16 +190,16 @@ public class GameScreen extends Screen {
 	 */
 	@Override
 	protected void onKeyPressed(KeyEvent e) {
-		switch (e.getKeyCode()) {
+		switch(e.getKeyCode()) {
 		case (KeyEvent.VK_R):
 			newGame(); // R pressed (new game)
 			break;
 		case (KeyEvent.VK_ESCAPE): // ESC pressed (quit)
 		case (KeyEvent.VK_Q): // Q pressed (quit)
-			for (Entity ent : game.getEntities()) {
+			for(Entity ent : game.getEntities()) {
 				ent.stopSound();
 			}
-			for (Entity ent : game.getPassableEntities()) {
+			for(Entity ent : game.getPassableEntities()) {
 				ent.stopSound();
 			}
 			music.pause(true);
@@ -199,27 +211,27 @@ public class GameScreen extends Screen {
 		case (KeyEvent.VK_4): // 4 pressed, load game
 			// if(!textBox.getVisible()) {
 			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
-			if (temp != null) {
+			if(temp != null) {
 				game = temp;
 				textBox = game.getTextBox();
 			}
 			// }
 			break;
 		case (KeyEvent.VK_M):
-			if (!MuteHolder.muted) {
+			if(!MuteHolder.muted) {
 				music.pause(true);
-				for (Entity ent : game.getEntities()) {
+				for(Entity ent : game.getEntities()) {
 					ent.stopSound();
 				}
-				for (Entity ent : game.getPassableEntities()) {
+				for(Entity ent : game.getPassableEntities()) {
 					ent.stopSound();
 				}
 			} else {
 				music.pause(false);
-				for (Entity ent : game.getEntities()) {
+				for(Entity ent : game.getEntities()) {
 					ent.startSound();
 				}
-				for (Entity ent : game.getPassableEntities()) {
+				for(Entity ent : game.getPassableEntities()) {
 					ent.startSound();
 				}
 			}
@@ -247,7 +259,7 @@ public class GameScreen extends Screen {
 	@Override
 	protected void onMousePressed(MouseEvent e) {
 		mouseLocation = new Vec2f(e.getX(), e.getY());
-		if (mouseLocation != null) {
+		if(mouseLocation != null) {
 			game.onMouseClicked(e);
 		}
 	}
@@ -278,7 +290,7 @@ public class GameScreen extends Screen {
 		Vec2f pt = new Vec2f(p.x, p.y);
 		Vec2f sdim = view.getSDim();
 		Vec2f dim = view.getDim();
-		if (checkBounds(pt, sdim.x, dim.x, sdim.y, dim.y)) view.zoomView(pt, zm);
+		if(checkBounds(pt, sdim.x, dim.x, sdim.y, dim.y)) view.zoomView(pt, zm);
 	}
 	
 	@Override
