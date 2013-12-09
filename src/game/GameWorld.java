@@ -42,10 +42,9 @@ import game.entities.StartCrystal;
 import game.entities.Tooltip;
 import game.entities.WaterEntity;
 import game.entities.WinEntity;
-
+import game.flora.trees.FanTree;
 import game.flora.trees.MapleTree;
 import game.flora.trees.PineTree;
-import game.flora.trees.FanTree;
 
 /**
  * GameWorld for M
@@ -67,7 +66,7 @@ public class GameWorld extends World implements LightWorld {
 	public static final Color								DUSKY_VIOLET		= new Color(126, 126, 191);
 	public static final Color								DARK_LAVENDER		= new Color(45, 30, 50);
 	private static final float								TICK_LENGTH			= 0.005f;
-	public static final String								LEVEL_NAME			= "lib/TestWorld.nlf";
+	public static final String								LEVEL_NAME			= "lib/Level1.nlf";
 	private final HashMap<String, Class<? extends Entity>>	classes;
 	private boolean											cutsceneActive;
 	private float											gravity;
@@ -434,8 +433,7 @@ public class GameWorld extends World implements LightWorld {
 		
 		// Actually load the level
 		loadLevelFromFile(GameWorld.LEVEL_NAME, classes, this);
-		// if (lvl == 1) setMessage("Game starts in 3", 0.5f);
-		if(lvl == 1) setMessage("Game starts in 3", 0.5f);
+		if(lvl == 1) setMessage("Game starts in 3", 3.5f);
 		
 		moveEntitiesToPassable();
 		

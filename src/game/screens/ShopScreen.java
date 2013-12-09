@@ -13,18 +13,21 @@ import engine.ui.UIButton;
 import engine.ui.UIRect;
 import engine.ui.UIText;
 import game.GameWorld;
+import game.entities.Player;
 
 public class ShopScreen extends Screen {
 	
-	UIRect		bkgrd;
-	UIText		title;
-	UIButton	backButton;
-	UIButton	btn1;
-	UIButton	btn2;
-	UIButton	btn3;
-	UIButton	btn4;
-	UIButton	btn5;
-	UIButton	btn6;
+	private final UIRect	bkgrd;
+	private final UIText	title;
+	private final UIText	crystalText;
+	private final UIButton	backButton;
+	private final UIButton	btn1;
+	private final UIButton	btn2;
+	private final UIButton	btn3;
+	private final UIButton	btn4;
+	private final UIButton	btn5;
+	private final UIButton	btn6;
+	private Player			p;
 	
 	public ShopScreen(Application a) {
 		super(a);
@@ -44,11 +47,16 @@ public class ShopScreen extends Screen {
 		btn6 = new UIButton("???", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
 				new BasicStroke(0f));
 		title = new UIText("Upgrades", Color.white, Vec2f.ZERO, 1);
+		crystalText = new UIText("Crystals: 0", Color.white, Vec2f.ZERO, 1);
+	}
+	
+	protected void setPlayer(Player p) {
+		this.p = p;
 	}
 	
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
-		
+		crystalText.updateText("Crystals: " + ((p == null) ? 0 : p.getCrystals()));
 	}
 	
 	@Override
@@ -62,6 +70,7 @@ public class ShopScreen extends Screen {
 		btn4.drawShape(g);
 		btn5.drawShape(g);
 		btn6.drawShape(g);
+		crystalText.drawShape(g);
 	}
 	
 	@Override
@@ -87,6 +96,7 @@ public class ShopScreen extends Screen {
 		btn6.updatePosition(new Vec2f(btnX + 2 * btnWidth + 2 * pad, btnY), new Vec2f(btnX + 3 * btnWidth + 2 * pad,
 				btnY + btnHeight));
 		title.resizeText(new Vec2f(w / 10, h / 7), h / 7);
+		crystalText.resizeText(new Vec2f(w - w / 3 + w / 60, h / 14), 2 * h / 30);
 	}
 	
 	/**
