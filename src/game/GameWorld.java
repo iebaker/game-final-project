@@ -42,8 +42,10 @@ import game.entities.StartCrystal;
 import game.entities.Tooltip;
 import game.entities.WaterEntity;
 import game.entities.WinEntity;
+
 import game.flora.trees.MapleTree;
 import game.flora.trees.PineTree;
+import game.flora.trees.FanTree;
 
 /**
  * GameWorld for M
@@ -63,7 +65,7 @@ public class GameWorld extends World implements LightWorld {
 																						+ "/save.gme";
 	private static final long								serialVersionUID	= 6619354971290257104L;
 	private static final float								TICK_LENGTH			= 0.005f;
-	public static final String								LEVEL_NAME			= "lib/Level1.nlf";
+	public static final String								LEVEL_NAME			= "lib/TestWorld.nlf";
 	private final HashMap<String, Class<? extends Entity>>	classes;
 	private boolean											cutsceneActive;
 	private float											gravity;
@@ -120,6 +122,7 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("BackgroundLight", BackgroundLight.class);
 		classes.put("MapleTree", MapleTree.class);
 		classes.put("PineTree", PineTree.class);
+		classes.put("FanTree", FanTree.class);
 		classes.put("DuskBat", DuskBat.class);
 		
 		newGame();
