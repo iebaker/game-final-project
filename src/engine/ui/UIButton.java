@@ -21,6 +21,8 @@ public class UIButton extends Shape {
 	private Vec2f				endCoord;
 	private final UIRoundRect	rect;
 	private final UIText		uiText;
+	private final Color			disabledColor;
+	private boolean				enabled;
 	
 	/**
 	 * Creates a button with a message, start and end coordinate, background color, and stroke
@@ -36,13 +38,15 @@ public class UIButton extends Shape {
 	 * @param stk
 	 *            The stroke
 	 */
-	public UIButton(String msg, Vec2f coord, Vec2f endCoord, Color c, Color c2, Stroke stk) {
+	public UIButton(String msg, Vec2f coord, Vec2f endCoord, Color c, Color c2, Color dis, Stroke stk) {
 		this.coord = coord;
 		this.endCoord = endCoord;
 		this.c = c;
+		disabledColor = dis;
 		this.stk = stk;
 		rect = new UIRoundRect(coord, new Vec2f(0, 0), c, stk);
 		uiText = new UIText(msg, c2, new Vec2f(0, 0), 1);
+		enabled = true;
 	}
 	
 	/**
@@ -78,5 +82,16 @@ public class UIButton extends Shape {
 	 */
 	public boolean hitTarget(MouseEvent e) {
 		return (e.getX() > coord.x && e.getX() < endCoord.x && e.getY() > coord.y && e.getY() < endCoord.y);
+	}
+	
+	/**
+	 * Toggles state of button - enables or disables
+	 */
+	public void toggle() {
+		enabled = !enabled;
+		if(!enabled)
+			rect.changeColor(disabledColor);
+		else
+			rect.changeColor(c);
 	}
 }

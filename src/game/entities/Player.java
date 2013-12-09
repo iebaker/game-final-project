@@ -27,7 +27,8 @@ public class Player extends Entity {
 	private transient boolean	moveRight			= false;
 	private float				lightCountdown		= 1;
 	private final float			lightTime			= 1;
-	private int					crystals			= 0;
+	private int					crystals			= 5;
+	private boolean				highJumpUnlocked;
 	
 	public Player() {
 		super();
@@ -63,46 +64,46 @@ public class Player extends Entity {
 	 * Applies the goal velocity force until it reaches actual velocity
 	 */
 	public void onTick(float t) {
-		if (world.getPlayer() == null) world.setPlayer(this);
-		if (moveLeft && !moveRight) {
+		if(world.getPlayer() == null) world.setPlayer(this);
+		if(moveLeft && !moveRight) {
 			goalVelocity = new Vec2f(-800, 0);
-		} else if (moveRight && !moveLeft) {
+		} else if(moveRight && !moveLeft) {
 			goalVelocity = new Vec2f(800, 0);
 		} else {
 			goalVelocity = Vec2f.ZERO;
 		}
 		
-		if (!goalVelocity.equals(Vec2f.ZERO)) {
-			if (!goalVelocity.equals(getVelocity())) {
+		if(!goalVelocity.equals(Vec2f.ZERO)) {
+			if(!goalVelocity.equals(getVelocity())) {
 				applyImpulse((goalVelocity.minus(getVelocity())).smult(0.05f));
 			}
 		}
 		
-		if (lightCountdown > 0) {
+		if(lightCountdown > 0) {
 			lightCountdown -= t;
 		}
 		
-		if (lightCountdown <= 0) {
+		if(lightCountdown <= 0) {
 			lightCountdown = lightTime;
 			hp -= 1;
-			if (hp <= 0) {
+			if(hp <= 0) {
 				((GameWorld) world).die();
 			}
 		}
 		
-		if ((((GameWorld) world).getStartCrystal() != null)
+		if((((GameWorld) world).getStartCrystal() != null)
 				&& ((GameWorld) world).getStartCrystal().shape.getCenter().minus(shape.getCenter()).mag2() <= 80000) {
-			if (heal(10) == 10 && !MuteHolder.muted) {
+			if(heal(10) == 10 && !MuteHolder.muted) {
 				Sound heal = null;
-				if (SoundHolder.soundTable != null) heal = SoundHolder.soundTable.get("heal");
-				if (heal != null) heal.play();
+				if(SoundHolder.soundTable != null) heal = SoundHolder.soundTable.get("heal");
+				if(heal != null) heal.play();
 			}
 			world.save();
 		}
 		
-		if (!world.checkBounds(shape.getLocation()))
+		if(!world.checkBounds(shape.getLocation()))
 			world.setLose("You fell (or jumped) out of the world!");
-		else if (hp < 0) world.setLose("Your health dropped below zero...");
+		else if(hp < 0) world.setLose("Your health dropped below zero...");
 		super.onTick(t);
 	}
 	
@@ -112,7 +113,7 @@ public class Player extends Entity {
 	 * @return ability to jump currently
 	 */
 	public boolean canJump() {
-		if (!jumpUnlocked || contactDelay <= 0 || lastMTV.y >= 0) {
+		if(!jumpUnlocked || contactDelay <= 0 || lastMTV.y >= 0) {
 			return false;
 		}
 		return true;
@@ -124,7 +125,7 @@ public class Player extends Entity {
 	public void jump() {
 		// Clear the current Y-velocity to stop bounce-jumps
 		resetY();
-		applyImpulse(lastMTV.normalized().smult(world.gravity() * 30));
+		applyImpulse(lastMTV.normalized().smult(world.gravity() * ((highJumpUnlocked) ? 30 : 20)));
 		contactDelay = 0;
 	}
 	
@@ -142,6 +143,13 @@ public class Player extends Entity {
 	 */
 	public void unlockJump() {
 		jumpUnlocked = true;
+	}
+	
+	/**
+	 * Allows player to jump higher
+	 */
+	public void unlockHighJump() {
+		highJumpUnlocked = true;
 	}
 	
 	/**
@@ -165,7 +173,7 @@ public class Player extends Entity {
 	 * @param e
 	 */
 	public void onKeyPressed(KeyEvent e) {
-		switch (e.getKeyCode()) {
+		switch(e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 		case KeyEvent.VK_A:
 			moveLeft = true;
@@ -176,7 +184,7 @@ public class Player extends Entity {
 			break;
 		case (KeyEvent.VK_W): // W
 		case (KeyEvent.VK_SPACE): // Jump
-			if (canJump()) {
+			if(canJump()) {
 				jump();
 			}
 			break;
@@ -191,7 +199,7 @@ public class Player extends Entity {
 	 * @param e
 	 */
 	public void onKeyReleased(KeyEvent e) {
-		switch (e.getKeyCode()) {
+		switch(e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 		case KeyEvent.VK_A:
 			moveLeft = false;
@@ -211,7 +219,7 @@ public class Player extends Entity {
 	public void addCrystal() {
 		crystals++;
 		hp += 10;
-		if (hp > maxHP) {
+		if(hp > maxHP) {
 			hp = maxHP;
 		}
 	}
@@ -229,8 +237,12 @@ public class Player extends Entity {
 	 * 
 	 * @param spent
 	 */
-	public void spendCrystals(int spent) {
-		crystals -= spent;
+	public boolean spendCrystals(int spent) {
+		if(crystals >= spent) {
+			crystals -= spent;
+			return true;
+		}
+		return false;
 	}
 	
 	@Override

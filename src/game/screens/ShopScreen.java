@@ -17,46 +17,41 @@ import game.entities.Player;
 
 public class ShopScreen extends Screen {
 	
-	private final UIRect	bkgrd;
-	private final UIText	title;
-	private final UIText	crystalText;
-	private final UIButton	backButton;
-	private final UIButton	btn1;
-	private final UIButton	btn2;
-	private final UIButton	btn3;
-	private final UIButton	btn4;
-	private final UIButton	btn5;
-	private final UIButton	btn6;
-	private Player			p;
+	private final UIRect		bkgrd;
+	private final UIText		title;
+	private final UIText		crystalText;
+	private final UIButton		backButton;
+	private final ShopButton[]	buttons;
+	private GameWorld			world;
+	private Player				player;
 	
 	public ShopScreen(Application a) {
 		super(a);
 		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, Color.black, new BasicStroke(0f));
 		backButton = new UIButton("Return to Game", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET.darker(),
-				Color.white, new BasicStroke(0f));
-		btn1 = new UIButton("Jump", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
-				new BasicStroke(0f));
-		btn2 = new UIButton("Aura", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
-				new BasicStroke(0f));
-		btn3 = new UIButton("Light Loss", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
-				new BasicStroke(0f));
-		btn4 = new UIButton("Laser", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
-				new BasicStroke(0f));
-		btn5 = new UIButton("Damage", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
-				new BasicStroke(0f));
-		btn6 = new UIButton("???", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
-				new BasicStroke(0f));
+				Color.white, null, new BasicStroke(0f));
+		buttons = new ShopButton[6];
+		buttons[0] = new ShopButton("Jump", 10);
+		buttons[1] = new ShopButton("Aura", 30);
+		buttons[2] = new ShopButton("Light Loss", 50);
+		buttons[3] = new ShopButton("Laser", 100);
+		buttons[4] = new ShopButton("Damage", 30);
+		buttons[5] = new ShopButton("???", 999);
 		title = new UIText("Upgrades", Color.white, Vec2f.ZERO, 1);
 		crystalText = new UIText("Crystals: 0", Color.white, Vec2f.ZERO, 1);
 	}
 	
-	protected void setPlayer(Player p) {
-		this.p = p;
+	protected void setWorld(GameWorld world) {
+		this.world = world;
+		player = (Player) world.getPlayer();
+		for(ShopButton btn : buttons) {
+			if(player.getCrystals() < btn.requiredCrystals()) btn.toggle();
+		}
 	}
 	
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
-		crystalText.updateText("Crystals: " + ((p == null) ? 0 : p.getCrystals()));
+		crystalText.updateText("Crystals: " + (player.getCrystals()));
 	}
 	
 	@Override
@@ -64,12 +59,9 @@ public class ShopScreen extends Screen {
 		bkgrd.drawAndFillShape(g);
 		title.drawShape(g);
 		backButton.drawShape(g);
-		btn1.drawShape(g);
-		btn2.drawShape(g);
-		btn3.drawShape(g);
-		btn4.drawShape(g);
-		btn5.drawShape(g);
-		btn6.drawShape(g);
+		for(ShopButton btn : buttons) {
+			btn.drawShape(g);
+		}
 		crystalText.drawShape(g);
 	}
 	
@@ -84,17 +76,16 @@ public class ShopScreen extends Screen {
 		float btnX = w / 10;
 		float btnY = h / 4;
 		float pad = w / 50;
-		btn1.updatePosition(new Vec2f(btnX, btnY), new Vec2f(btnX + btnWidth, btnY + btnHeight));
-		btn2.updatePosition(new Vec2f(btnX + btnWidth + pad, btnY), new Vec2f(btnX + 2 * btnWidth + pad, btnY
-				+ btnHeight));
-		btn3.updatePosition(new Vec2f(btnX + 2 * btnWidth + 2 * pad, btnY), new Vec2f(btnX + 3 * btnWidth + 2 * pad,
-				btnY + btnHeight));
-		btnY += btnHeight + h / 10;
-		btn4.updatePosition(new Vec2f(btnX, btnY), new Vec2f(btnX + btnWidth, btnY + btnHeight));
-		btn5.updatePosition(new Vec2f(btnX + btnWidth + pad, btnY), new Vec2f(btnX + 2 * btnWidth + pad, btnY
-				+ btnHeight));
-		btn6.updatePosition(new Vec2f(btnX + 2 * btnWidth + 2 * pad, btnY), new Vec2f(btnX + 3 * btnWidth + 2 * pad,
-				btnY + btnHeight));
+		for(int i = 0; i < buttons.length; i++) {
+			float btnXStart = btnX;
+			float btnXEnd = btnX + btnWidth;
+			buttons[i].updatePosition(new Vec2f(btnXStart, btnY), new Vec2f(btnXEnd, btnY + btnHeight));
+			btnX += btnWidth + pad;
+			if(i == 2) {
+				btnY += btnHeight + h / 10;
+				btnX = w / 10;
+			}
+		}
 		title.resizeText(new Vec2f(w / 10, h / 7), h / 7);
 		crystalText.resizeText(new Vec2f(w - w / 3 + w / 60, h / 14), 2 * h / 30);
 	}
@@ -106,19 +97,14 @@ public class ShopScreen extends Screen {
 	protected void onMouseReleased(MouseEvent e) {
 		if(backButton.hitTarget(e)) {
 			a.popScreen();
-		} else if(btn1.hitTarget(e)) {
-			
-		} else if(btn2.hitTarget(e)) {
-			
-		} else if(btn3.hitTarget(e)) {
-			
-		} else if(btn4.hitTarget(e)) {
-			
-		} else if(btn5.hitTarget(e)) {
-			
-		} else if(btn6.hitTarget(e)) {
-			
+		}
+		for(int i = 0; i < buttons.length; i++) {
+			if(buttons[i].hitTarget(e)) {
+				if(i == 0 && !buttons[i].getPurchased() && player.spendCrystals(buttons[i].requiredCrystals())) {
+					player.unlockHighJump();
+					buttons[i].toggle();
+				}
+			}
 		}
 	}
-	
 }

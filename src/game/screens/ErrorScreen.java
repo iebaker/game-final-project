@@ -25,8 +25,8 @@ public class ErrorScreen extends Screen {
 	public ErrorScreen(Application a) {
 		super(a);
 		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, Color.black, new BasicStroke(0.0f));
-		back = new UIButton("Back to Menu", Vec2f.ZERO, Vec2f.ZERO, new Color(0, 195, 0), Color.white, new BasicStroke(
-				2.0f));
+		back = new UIButton("Back to Menu", Vec2f.ZERO, Vec2f.ZERO, new Color(0, 195, 0), Color.white, null,
+				new BasicStroke(2.0f));
 		title = new UIText("Error", Color.white, Vec2f.ZERO, 1);
 		body = new UIText("Couldn't find level file. Game could not be loaded.", Color.white, Vec2f.ZERO, 1);
 		body2 = new UIText("Press any key to go back.", Color.white, Vec2f.ZERO, 1);
@@ -65,7 +65,7 @@ public class ErrorScreen extends Screen {
 	 */
 	@Override
 	protected void onMouseReleased(MouseEvent e) {
-		if (back.hitTarget(e)) {
+		if(back.hitTarget(e)) {
 			a.popScreen();
 		}
 	}

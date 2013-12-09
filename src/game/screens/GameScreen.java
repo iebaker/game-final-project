@@ -105,8 +105,8 @@ public class GameScreen extends Screen {
 		if(game != null) view.setGame(game);
 		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, (game != null) ? game.getBGColor() : Color.black,
 				new BasicStroke(0f));
-		newGame = new UIButton("New Game", Vec2f.ZERO, Vec2f.ZERO, new Color(0, 195, 0), Color.white, new BasicStroke(
-				2.0f));
+		newGame = new UIButton("New Game", Vec2f.ZERO, Vec2f.ZERO, new Color(0, 195, 0), Color.white, null,
+				new BasicStroke(2.0f));
 		gameStatusText = new UIText("Game status here", Color.white, Vec2f.ZERO, 1);
 		gameOverText = new UIText("Game Over", Color.white, Vec2f.ZERO, 1);
 		transOverlay = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 0, 0, 130), new BasicStroke(0f));
@@ -239,7 +239,7 @@ public class GameScreen extends Screen {
 			break;
 		case (KeyEvent.VK_5): // 5, load upgrades
 			ShopScreen shop = new ShopScreen(a);
-			shop.setPlayer((Player) game.getPlayer());
+			shop.setWorld(game);
 			a.pushScreen(shop);
 			break;
 		case (KeyEvent.VK_M):

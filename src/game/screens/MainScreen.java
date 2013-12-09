@@ -38,7 +38,7 @@ public class MainScreen extends Screen {
 		super(a);
 		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, Color.black, new BasicStroke(0.0f));
 		playButton = new UIButton("New Game", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
-				new BasicStroke(0f));
+				null, new BasicStroke(0f));
 		title = new UIText(Umbra.gameName, Color.white, Vec2f.ZERO, 1);
 	}
 	
