@@ -1,12 +1,13 @@
 package game.flora;
 
-import java.util.Set;
-import java.util.HashSet;
-
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-public class Rule {
+public class Rule implements Serializable {
 
+	private static final long serialVersionUID = 5421954006757107393L;
 	private Set<Transformation> transformations;
 
 	public Rule() {

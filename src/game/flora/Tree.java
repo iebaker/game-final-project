@@ -75,7 +75,6 @@ public class Tree extends PassableEntity {
 	public void onTick(float seconds) {
 
 		checkLightLevels();
-		System.out.println(enoughLight);
 		if(!enoughLight) return;
 
 		if (percent >= 1) {

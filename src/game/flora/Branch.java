@@ -1,5 +1,7 @@
 package game.flora;
 
+import java.io.Serializable;
+
 import cs195n.Vec2f;
 
 /**
@@ -7,8 +9,9 @@ import cs195n.Vec2f;
  * A Branch can be modified by a Transformation to produce a new 
  * Branch.
  */
-public class Branch {
+public class Branch implements Serializable {
 
+	private static final long serialVersionUID = -7771979956042799994L;
 	private Vec2f startPoint;
 	private Vec2f endPoint;
 	private Vec2f repVector;

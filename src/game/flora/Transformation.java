@@ -1,7 +1,10 @@
 package game.flora;
 
-public class Transformation {
+import java.io.Serializable;
+
+public class Transformation implements Serializable {
 	
+	private static final long serialVersionUID = -8663637859650141079L;
 	private float angle;
 	private float scale;
 	private float trans;
