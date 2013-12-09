@@ -16,7 +16,7 @@ public class PineTree extends Tree {
 		Transformation t4 = new Transformation(-Transformation.FIFTH_PI, 0.5f, 0.8f);
 		Transformation t5 = new Transformation(0, 0.4f, 1f);
 
-		for(int i = 0; i < 4; ++i) {
+		for(int i = 0; i < 5; ++i) {
 			this.addRule(new Rule(t1, t2, t3, t4, t5));
 		}
 	}
