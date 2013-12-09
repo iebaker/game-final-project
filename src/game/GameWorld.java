@@ -43,7 +43,8 @@ import game.entities.Tooltip;
 import game.entities.WaterEntity;
 import game.entities.WinEntity;
 import game.flora.Tree;
-import game.flora.trees.BinaryTree;
+import game.flora.trees.MapleTree;
+import game.flora.trees.PineTree;
 
 /**
  * GameWorld for M
@@ -119,7 +120,8 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("StartCrystal", StartCrystal.class);
 		classes.put("BackgroundLight", BackgroundLight.class);
 		classes.put("Tree", Tree.class);
-		classes.put("BinaryTree", BinaryTree.class);
+		classes.put("MapleTree", MapleTree.class);
+		classes.put("PineTree", PineTree.class);
 		classes.put("DuskBat", DuskBat.class);
 		
 		newGame();

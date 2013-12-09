@@ -103,7 +103,7 @@ public class Tree extends PassableEntity {
 
 		for(LightSource ls : gameworld.getLightSources()) {
 			Vec2f loc = ls.getLocation();
-			if(myLoc.dist(loc) <= 20) enoughLight = true;
+			if(myLoc.dist(loc) <= 100) enoughLight = true;
 		}
 	}
 	
