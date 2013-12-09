@@ -46,7 +46,7 @@ public class BinaryTree extends Tree {
 
 		this.addRule(new Rule(t1, t2, t3, t4, t5));
 
-		for(int i = 0; i < depth; ++i) {
+		for(int i = 0; i < 4; ++i) {
 			this.addRule(new Rule(t6, t7));
 			this.addRule(new Rule(t8, t9));
 		}		

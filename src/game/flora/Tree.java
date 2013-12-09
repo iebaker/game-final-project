@@ -28,7 +28,7 @@ public class Tree extends PassableEntity {
 	private boolean					populated	= false;
 	private boolean 				enoughLight = false;
 	private float					percent		= 1.0f;
-	private final float				growthrate	= 0.2f;
+	private final float				growthrate	= 0.01f;
 	
 	public Tree() {
 		super();
@@ -75,8 +75,9 @@ public class Tree extends PassableEntity {
 	public void onTick(float seconds) {
 
 		checkLightLevels();
-		if(!enoughLight) return;
+		if (!enoughLight) return;
 
+		//System.out.println(branches);
 		if (percent >= 1) {
 			
 			if (!fringe.isEmpty()) grown.add(fringe);
@@ -102,7 +103,7 @@ public class Tree extends PassableEntity {
 
 		for(LightSource ls : gameworld.getLightSources()) {
 			Vec2f loc = ls.getLocation();
-			if(myLoc.dist(loc) <= 500) enoughLight = true;
+			if(myLoc.dist(loc) <= 20) enoughLight = true;
 		}
 	}
 	
