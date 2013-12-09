@@ -7,6 +7,7 @@ import engine.Artist;
 import engine.Viewport;
 import engine.entity.EnemyEntity;
 import game.GameWorld;
+import game.entities.spawners.EnemySpawner;
 
 /**
  * Superclass of all shadow-based enemies. Controls the shadow-drawing parts.
@@ -19,12 +20,14 @@ public abstract class ShadowEnemy extends EnemyEntity {
 
 	private float baseRadius;
 	private float[] fractions;	
+	private EnemySpawner source;
 	
-	public ShadowEnemy(float radius, float[] fractions) {
+	public ShadowEnemy(float radius, float[] fractions, EnemySpawner source) {
 		super();
 		baseRadius = radius;
 		this.fractions = fractions;
 		this.stopsLight = false;
+		this.source = source;
 	}
 	
 	@Override
@@ -55,5 +58,11 @@ public abstract class ShadowEnemy extends EnemyEntity {
 		float topLefty = Viewport.gamePtToScreen(this.shape.getLocation()).y;
 		a.ellipse(g, topLeftx - radius, topLefty - radius, (centerx - topLeftx + radius)*2, (centery - topLefty + radius)*2);
 		super.onDraw(g);
+	}
+	
+	@Override
+	public void die() {
+		source.enemyDead();
+		super.die();
 	}
 }

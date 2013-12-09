@@ -24,6 +24,7 @@ import engine.entity.Entity;
 import engine.entity.PassableEntity;
 import engine.sound.Sound;
 import engine.ui.TextBox;
+import game.entities.spawners.EnemySpawner;
 
 /**
  * Abstract class for a Game World
@@ -44,6 +45,7 @@ public abstract class World implements Serializable {
 	protected Vec2f							sDim				= new Vec2f(0, 0);
 	protected TextBox						textBox;
 	public transient Viewport				v;
+	private ArrayList<EnemySpawner> spawners = new ArrayList<EnemySpawner>();
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))

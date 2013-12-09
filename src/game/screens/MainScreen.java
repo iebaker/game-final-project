@@ -100,6 +100,5 @@ public class MainScreen extends Screen {
 			a.pushScreen(new GameScreen(a));
 		else
 			a.pushScreen(new ErrorScreen(a));
-		System.out.println(msg + ", transitioning to game screen");
 	}
 }

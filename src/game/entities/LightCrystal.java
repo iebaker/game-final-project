@@ -44,7 +44,9 @@ public class LightCrystal extends Entity {
 		if (!MuteHolder.muted) {
 			Sound pickup = null;
 			if (SoundHolder.soundTable != null) pickup = SoundHolder.soundTable.get("pickup");
-			if (pickup != null) pickup.duplicate().play();
+			if (pickup != null) {
+				pickup.duplicate().play();
+			}
 		}
 		world.removeEntity(this);
 	}

@@ -99,6 +99,7 @@ public class Player extends Entity {
 				if(heal != null) heal.play();
 			}
 			world.save();
+			((GameWorld) world).reloadEnemies();
 		}
 		
 		if(!world.checkBounds(shape.getLocation()))

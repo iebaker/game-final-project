@@ -32,15 +32,16 @@ import engine.lighting.LightingEngine;
 import engine.lighting.Vec2fPair;
 import engine.sound.Sound;
 import engine.ui.TextBox;
-import game.entities.ArmadilloOfDarkness;
-import game.entities.DarkFrog;
-import game.entities.DuskBat;
 import game.entities.LightCrystal;
 import game.entities.Player;
 import game.entities.ShadowEnemy;
 import game.entities.StartCrystal;
 import game.entities.WaterEntity;
 import game.entities.WinEntity;
+import game.entities.spawners.ArmadilloSpawner;
+import game.entities.spawners.BatSpawner;
+import game.entities.spawners.EnemySpawner;
+import game.entities.spawners.FrogSpawner;
 import game.flora.trees.FanTree;
 import game.flora.trees.MapleTree;
 import game.flora.trees.PineTree;
@@ -90,6 +91,7 @@ public class GameWorld extends World implements LightWorld {
 	private float											saveCooldown		= 0;
 	private boolean											gameOver			= false;
 	private transient Tooltip								tooltip;
+	private ArrayList<EnemySpawner> spawners = new ArrayList<EnemySpawner>();
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -115,15 +117,15 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("WinEntity", WinEntity.class);
 		classes.put("PassableEntity", PassableEntity.class);
 		classes.put("Water", WaterEntity.class);
-		classes.put("DarkFrog", DarkFrog.class);
+		classes.put("DarkFrog", FrogSpawner.class);
 		classes.put("LightCrystal", LightCrystal.class);
-		classes.put("ArmadilloOfDarkness", ArmadilloOfDarkness.class);
+		classes.put("ArmadilloOfDarkness", ArmadilloSpawner.class);
 		classes.put("StartCrystal", StartCrystal.class);
 		classes.put("BackgroundLight", BackgroundLight.class);
 		classes.put("MapleTree", MapleTree.class);
 		classes.put("PineTree", PineTree.class);
 		classes.put("FanTree", FanTree.class);
-		classes.put("DuskBat", DuskBat.class);
+		classes.put("DuskBat", BatSpawner.class);
 		
 		newGame();
 	}
@@ -171,7 +173,7 @@ public class GameWorld extends World implements LightWorld {
 				
 			}
 			for(PassableEntity e : passList) {
-				if(e.collideWithEntity(a)) {
+				if(e.canCollide() && e.collideWithEntity(a)) {
 					e.onCollide(new CollisionInfo(e, a));
 					a.afterCollision(e);
 					e.afterCollision(a);
@@ -562,6 +564,7 @@ public class GameWorld extends World implements LightWorld {
 		if(!transferredEntities) {
 			transferredEntities = true;
 			moveEntitiesToPassable();
+			moveEntitesToSpawners();
 		}
 		if(laserCooldown > 0) {
 			float secs2 = secs;
@@ -577,6 +580,15 @@ public class GameWorld extends World implements LightWorld {
 		}
 	}
 	
+	private void moveEntitesToSpawners() {
+		for (Entity e : entityStack) {
+			if (e instanceof EnemySpawner) {
+				removeEntity(e);
+				this.spawners.add((EnemySpawner) e);
+			}
+		}
+	}
+
 	@Override
 	/**
 	 * Sets a lose with a message
@@ -682,5 +694,11 @@ public class GameWorld extends World implements LightWorld {
 	
 	public Tooltip getTooltip() {
 		return tooltip;
+	}
+
+	public void reloadEnemies() {
+		for(EnemySpawner s : spawners) {
+			s.makeEnemy();
+		}
 	}
 }
