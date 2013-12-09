@@ -81,8 +81,9 @@ public class GameScreen extends Screen {
 			}
 		}));*/
 		music = new MusicPlayer("lib/equinox.wav");
-		if(!MuteHolder.muted) {
-			music.start();
+		music.start();
+		if(MuteHolder.muted) {
+			music.pause(true);
 		}
 		view = new Viewport(a);
 		UIRoundRect cutsceneRect = new UIRoundRect(Vec2f.ZERO, Vec2f.ZERO, new Color(255, 255, 255),
