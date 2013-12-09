@@ -121,6 +121,7 @@ public class GameScreen extends Screen {
 		fadeRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 0, 0, 0), new BasicStroke(0f));
 		
 		message = new UIText("Game starts in 3", Color.white, Vec2f.ZERO, 1);
+		this.fadeIn();
 	}
 	
 	/**
@@ -209,6 +210,7 @@ public class GameScreen extends Screen {
 	protected void onKeyPressed(KeyEvent e) {
 		switch(e.getKeyCode()) {
 		case (KeyEvent.VK_R):
+			this.fadeIn();
 			newGame(); // R pressed (new game)
 			break;
 		case (KeyEvent.VK_ESCAPE): // ESC pressed (quit)
