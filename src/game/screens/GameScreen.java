@@ -57,6 +57,8 @@ public class GameScreen extends Screen {
 	private final UIText			crystalText;
 	private TextBox					textBox;
 	private volatile MusicPlayer	music;
+	private float fadeCount = 0;
+	private UIRect fadeRect;
 	
 	/**
 	 * Constructor creates relevant items and places them based on ratios
@@ -115,6 +117,8 @@ public class GameScreen extends Screen {
 		crystalRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(20, 0, 0, 120), new BasicStroke(0f));
 		crystalText = new UIText("Crystals: 0", Color.white, Vec2f.ZERO, 1);
 		
+		fadeRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0,0,0,0), new BasicStroke(0f));
+		
 		message = new UIText("Game starts in 3", Color.white, Vec2f.ZERO, 1);
 	}
 	
@@ -125,6 +129,13 @@ public class GameScreen extends Screen {
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
 		float secs = (float) (nanosSincePreviousTick / 1000000000.0);
+		if(fadeCount > 0) {
+			fadeCount -= secs * 100;
+			if(fadeCount < 0) {
+				fadeCount = 0;
+			}
+			fadeRect.changeColor(new Color(0,0,0, (int) fadeCount));
+		}
 		if(game != null) {
 			healthText.updateText("Light: " + (int) game.getHealth() + "/100");
 			Player p = (Player) game.getPlayer();
@@ -132,6 +143,7 @@ public class GameScreen extends Screen {
 			game.onTick(secs);
 			if(game.isOver()) {
 				GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
+				this.die();
 				if(temp != null) {
 					game = temp;
 					textBox = game.getTextBox();
@@ -152,6 +164,9 @@ public class GameScreen extends Screen {
 		crystalRect.drawAndFillShape(g);
 		crystalText.drawShape(g);
 		textBox.draw(g);
+		if(fadeCount != 0) {
+			fadeRect.drawAndFillShape(g);
+		}
 	}
 	
 	/**
@@ -165,6 +180,7 @@ public class GameScreen extends Screen {
 		float w = newSize.x;
 		float h = newSize.y;
 		bkgrd.updatePosition(new Vec2f(0, 0), new Vec2f(w, h));
+		fadeRect.updatePosition(new Vec2f(0, 0), new Vec2f(w, h));
 		Vec2f portCoord = new Vec2f(0, 0);
 		Vec2f portEndCoord = new Vec2f(w, h);
 		view.resizeView(portCoord, portEndCoord);
@@ -212,6 +228,7 @@ public class GameScreen extends Screen {
 			// if(!textBox.getVisible()) {
 			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
 			if(temp != null) {
+				this.fadeIn();
 				game = temp;
 				textBox = game.getTextBox();
 			}
@@ -322,5 +339,14 @@ public class GameScreen extends Screen {
 	 */
 	private boolean checkBounds(Vec2f p, float x1, float x2, float y1, float y2) {
 		return (p.x > x1 && p.x <= x2 && p.y > y1 && p.y <= y2);
+	}
+	
+	private void fadeIn() {
+		fadeCount = 255;
+		fadeRect.changeColor(new Color(0,0,0,255));
+	}
+	
+	private void die() {
+		this.fadeIn();
 	}
 }
