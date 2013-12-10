@@ -6,6 +6,7 @@ import java.awt.geom.Ellipse2D;
 
 import cs195n.Vec2f;
 import engine.Shape;
+import engine.Vec2fPair;
 import engine.Viewport;
 
 /**
@@ -202,5 +203,10 @@ public class Circle extends Shape implements CollisionShape {
 	@Override
 	public void setColor(Color c) {
 		this.c = c;
+	}
+
+	@Override
+	public Vec2fPair getBoundingBox() {
+		return new Vec2fPair(center.minus(radius, radius), center.plus(radius, radius));
 	}
 }

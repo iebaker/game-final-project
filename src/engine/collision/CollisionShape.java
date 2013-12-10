@@ -3,6 +3,7 @@ package engine.collision;
 import java.awt.Graphics2D;
 
 import cs195n.Vec2f;
+import engine.Vec2fPair;
 import engine.Viewport;
 
 /**
@@ -137,5 +138,7 @@ public interface CollisionShape {
 	public java.awt.Color getColor();
 	
 	public void setColor(java.awt.Color c);
+	
+	public Vec2fPair getBoundingBox();
 	
 }

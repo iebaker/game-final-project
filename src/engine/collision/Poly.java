@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import cs195n.Vec2f;
 import engine.Shape;
+import engine.Vec2fPair;
 import engine.Viewport;
 
 /**
@@ -300,5 +301,20 @@ public class Poly extends Shape implements CollisionShape {
 	@Override
 	public void setColor(Color c) {
 		this.c = c;
+	}
+
+	@Override
+	public Vec2fPair getBoundingBox() {
+		float xmin = Float.POSITIVE_INFINITY;
+		float xmax = Float.NEGATIVE_INFINITY;
+		float ymin = Float.POSITIVE_INFINITY;
+		float ymax = Float.NEGATIVE_INFINITY;
+		for (Vec2f pt : points) {
+			if (pt.x > xmax) xmax = pt.x;
+			if (pt.x < xmin) xmin = pt.x;
+			if (pt.y > ymax) ymax = pt.y;
+			if (pt.y < ymin) ymin = pt.y;
+		}
+		return new Vec2fPair(new Vec2f(xmin, ymin), new Vec2f(xmax, ymax));
 	}
 }

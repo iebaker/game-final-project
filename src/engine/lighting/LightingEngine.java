@@ -11,6 +11,7 @@ import java.util.List;
 
 import cs195n.Vec2f;
 import engine.Artist;
+import engine.Vec2fPair;
 import engine.Viewport;
 import game.GameWorld;
 

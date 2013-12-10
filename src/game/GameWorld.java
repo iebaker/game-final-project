@@ -12,6 +12,7 @@ import java.util.List;
 
 import cs195n.Vec2f;
 import engine.Saver;
+import engine.Vec2fPair;
 import engine.Viewport;
 import engine.World;
 import engine.collision.AAB;
@@ -29,7 +30,6 @@ import engine.entity.StaticEntity;
 import engine.lighting.LightSource;
 import engine.lighting.LightWorld;
 import engine.lighting.LightingEngine;
-import engine.lighting.Vec2fPair;
 import engine.sound.Sound;
 import engine.ui.TextBox;
 import game.entities.Consumable;

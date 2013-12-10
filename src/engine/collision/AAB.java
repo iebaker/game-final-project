@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import cs195n.Vec2f;
 import engine.Shape;
+import engine.Vec2fPair;
 import engine.Viewport;
 
 /**
@@ -221,5 +222,10 @@ public class AAB extends Shape implements CollisionShape {
 	@Override
 	public void setColor(Color c) {
 		this.c = c;
+	}
+
+	@Override
+	public Vec2fPair getBoundingBox() {
+		return new Vec2fPair(min, max);
 	}
 }
