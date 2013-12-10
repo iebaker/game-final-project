@@ -11,7 +11,7 @@ import engine.sound.SoundHolder;
 import game.MuteHolder;
 import game.entities.spawners.Spawner;
 
-public class LightCrystal extends Entity {
+public class LightCrystal extends Entity implements Consumable {
 	
 	private static final long	serialVersionUID	= -324958466738745396L;
 	protected Spawner source;
@@ -43,6 +43,7 @@ public class LightCrystal extends Entity {
 		super.onDraw(g);
 	}
 	
+	@Override
 	public void destroy() {
 		if (!MuteHolder.muted) {
 			Sound pickup = null;

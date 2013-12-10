@@ -93,7 +93,7 @@ public class GameScreen extends Screen {
 		cutsceneText.setVisible(false);
 		textBox = new TextBox(cutsceneRect, cutsceneText);
 		try {
-			LevelData data = CS195NLevelReader.readLevel(new File("lib/Level1.nlf"));
+			LevelData data = CS195NLevelReader.readLevel(new File("lib/NewLevel.nlf"));
 			String[] dimensions = data.getProperties().get("dimensions").split("[,]");
 			game = new GameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])), textBox);
 			

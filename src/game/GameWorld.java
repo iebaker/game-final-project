@@ -32,8 +32,8 @@ import engine.lighting.LightingEngine;
 import engine.lighting.Vec2fPair;
 import engine.sound.Sound;
 import engine.ui.TextBox;
+import game.entities.Consumable;
 import game.entities.DarkenedCrystal;
-import game.entities.LightCrystal;
 import game.entities.Player;
 import game.entities.ShadowEnemy;
 import game.entities.StartCrystal;
@@ -155,16 +155,16 @@ public class GameWorld extends World implements LightWorld {
 					}
 				}
 				
-				if(a instanceof LightCrystal && b instanceof Player && a.collideWithEntity(b)) {
-					((LightCrystal) a).destroy();
+				if(a instanceof Consumable && b instanceof Player && a.collideWithEntity(b)) {
+					((Consumable) a).destroy();
 					if(a instanceof DarkenedCrystal) {
 						((Player) b).flatHeal(5);
 					}
 					else {
 						((Player) b).addCrystal();
 					}
-				} else if(b instanceof LightCrystal && a instanceof Player && b.collideWithEntity(a)) {
-					((LightCrystal) b).destroy();
+				} else if(b instanceof Consumable && a instanceof Player && b.collideWithEntity(a)) {
+					((Consumable) b).destroy();
 					if(b instanceof DarkenedCrystal) {
 						((Player) a).flatHeal(5);
 					}
@@ -682,7 +682,6 @@ public class GameWorld extends World implements LightWorld {
 	 * For when the player dies
 	 */
 	public void die() {
-		// TODO add nice transition here
 		gameOver = true;
 	}
 	

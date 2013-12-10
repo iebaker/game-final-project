@@ -9,7 +9,7 @@ import game.entities.LightCrystal;
 public class CrystalSpawner extends Entity implements Spawner {
 	
 	private static final long serialVersionUID = -2639861131160682303L;
-	protected LightCrystal toSpawn;
+	protected Entity toSpawn;
 	protected boolean active = false;
 	protected EntityData properties;
 	
