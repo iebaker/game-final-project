@@ -340,11 +340,11 @@ public abstract class Entity implements Serializable {
 	 * @param g
 	 */
 	public void onDraw(Graphics2D g) {
-		g.setColor(c);
-		
-		if (shape != null) {
+		if (world != null && shape != null) {
+			g.setColor(c);
 			toScreen();
 			shape.drawAndFillShape(g);
+			
 		}
 	}
 	

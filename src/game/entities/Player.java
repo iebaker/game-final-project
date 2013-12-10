@@ -101,7 +101,7 @@ public class Player extends Entity {
 			((GameWorld) world).reloadEnemies();
 		}
 		
-		if(!world.checkBounds(shape.getLocation()))
+		if(!world.checkGameBounds(shape.getLocation()))
 			world.setLose("You fell (or jumped) out of the world!");
 		else if(hp < 0) world.setLose("Your health dropped below zero...");
 		super.onTick(t);
