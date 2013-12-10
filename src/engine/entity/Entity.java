@@ -56,7 +56,7 @@ public abstract class Entity implements Serializable {
 	protected boolean					stopsLight			= true;
 	protected float						damageCooldown		= 0;
 	protected float						healCooldown		= 0;
-	protected boolean gravityImmune = false;
+	protected boolean					gravityImmune		= false;
 	
 	/**
 	 * Emptyoonstructor - sets default values
@@ -76,9 +76,13 @@ public abstract class Entity implements Serializable {
 			@Override
 			public void run(Map<String, String> args) {
 				// gets the sound file passed as an argument and plays it.
-				if (thisSound == null || !currentSounds.contains(thisSound)) {
-					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
-					if(args.containsKey("dist")) {
+				if ((thisSound == null || !currentSounds.contains(thisSound)) && SoundHolder.soundTable != null) {
+					Sound tmp = SoundHolder.soundTable.get(args.get("sound"));
+					if (tmp != null)
+						thisSound = tmp.duplicate();
+					else
+						return;
+					if (args.containsKey("dist")) {
 						thisSound.setDist(Float.parseFloat(args.get("dist")));
 					}
 					if (!MuteHolder.muted) {
@@ -361,7 +365,7 @@ public abstract class Entity implements Serializable {
 		}
 		
 		contactDelay -= t;
-		if(!gravityImmune) {
+		if (!gravityImmune) {
 			applyForce(new Vec2f(0, world.gravity() * mass)); // apply gravity
 		}
 		if (mass != 0) {

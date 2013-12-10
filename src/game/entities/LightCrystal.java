@@ -14,7 +14,7 @@ import game.entities.spawners.Spawner;
 public class LightCrystal extends Entity implements Consumable {
 	
 	private static final long	serialVersionUID	= -324958466738745396L;
-	protected Spawner source;
+	protected Spawner			source;
 	
 	public LightCrystal(Spawner source) {
 		stopsLight = false;
@@ -45,10 +45,10 @@ public class LightCrystal extends Entity implements Consumable {
 	
 	@Override
 	public void destroy() {
-		if (!MuteHolder.muted) {
+		if(!MuteHolder.muted) {
 			Sound pickup = null;
-			if (SoundHolder.soundTable != null) pickup = SoundHolder.soundTable.get("pickup");
-			if (pickup != null) {
+			if(SoundHolder.soundTable != null) pickup = SoundHolder.soundTable.get("pickup");
+			if(pickup != null) {
 				pickup.duplicate().play();
 			}
 		}
