@@ -141,6 +141,7 @@ public class GameWorld extends World implements LightWorld {
 	public void checkCollisions() {
 		for (int i = 0; i < entityStack.size(); i++) {
 			Entity a = entityStack.get(i);
+			//System.out.println(entity_tree.getPotentialCollisions(a).size());
 			for (Entity b : entity_tree.getPotentialCollisions(a)) {
 				if(a == b) continue;
 				//Entity b = entityStack.get(j);
@@ -209,7 +210,9 @@ public class GameWorld extends World implements LightWorld {
 					e.afterCollision(a);
 				}
 			}
+			entity_tree.remove(a);
 		}
+		
 	}
 	
 	@Override

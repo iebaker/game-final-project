@@ -16,10 +16,10 @@ import cs195n.LevelData;
 import cs195n.LevelData.ConnectionData;
 import cs195n.LevelData.EntityData;
 import cs195n.Vec2f;
+import engine.collision.QuadTree;
 import engine.connections.Connection;
 import engine.connections.Input;
 import engine.connections.Output;
-import engine.collision.QuadTree;
 import engine.entity.Entity;
 import engine.entity.PassableEntity;
 import engine.sound.Sound;
@@ -45,7 +45,7 @@ public abstract class World implements Serializable {
 	protected TextBox						textBox;
 	public transient Viewport				v;
 	protected boolean						stopped;
-	protected QuadTree						entity_tree;
+	protected transient QuadTree						entity_tree;
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))
@@ -264,6 +264,7 @@ public abstract class World implements Serializable {
 	 * @param nanosSinceLastTick
 	 */
 	public void onTick(float secs) {
+		entity_tree = new QuadTree(new Vec2f(0,0), dim);
 		if (!stopped) {
 			for (Entity e : removeList) {
 				if (entityStack.contains(e)) entityStack.remove(e);
@@ -281,13 +282,11 @@ public abstract class World implements Serializable {
 			}
 
 			//Bin everything in the quadtree
+			entity_tree.clear();
 			for(Entity e : entityStack) {
 				entity_tree.insert(e);
 			}
 
-			for(Entity e : passList) {
-				entity_tree.insert(e);
-			}
 		}
 	}
 	

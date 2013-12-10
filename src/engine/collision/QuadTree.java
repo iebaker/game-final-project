@@ -1,11 +1,11 @@
 package engine.collision;
 
-import engine.entity.Entity;
-import engine.Vec2fPair;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import cs195n.Vec2f;
+import engine.Vec2fPair;
+import engine.entity.Entity;
 
 public class QuadTree {
 
@@ -22,24 +22,28 @@ public class QuadTree {
 		my_depth = 0;
 		my_min_pt = min;
 		my_max_pt = max;
+		my_children = new QuadTree[4];
 	}
 
 	public QuadTree(int depth, Vec2f min, Vec2f max) {
 		my_depth = depth;
 		my_min_pt = min;
 		my_max_pt = max;
+		my_children = new QuadTree[4];
 	}
 
 	public void clear() {
 		my_entities = new ArrayList<Entity>();
+		is_leaf = true;
 
 		for(int i = 0; i < 4; ++i) {
-			my_children[i].clear();
+			if(!(my_children[i] == null)) my_children[i].clear();
 			my_children[i] = null;
 		}
 	}
 
 	public void insert(Entity e) {
+		//System.out.println("In insert!");
 		if(!is_leaf) {
 			for(Integer i : indicesOf(e)) {
 				my_children[i].insert(e);
@@ -65,11 +69,16 @@ public class QuadTree {
 		my_children[2] = new QuadTree(my_depth + 1, new Vec2f(my_min_pt.x, vMid), new Vec2f(hMid, my_max_pt.y));
 		my_children[3] = new QuadTree(my_depth + 1, new Vec2f(hMid, vMid), my_max_pt);
 
+		for(Entity e : my_entities) {
+			insert(e);
+		}
+		
 		my_entities = new ArrayList<Entity>();
 	}
 
 	public List<Integer> indicesOf(Entity e) {
 		List<Integer> indices = new ArrayList<Integer>();
+		if(e.shape == null) return new ArrayList<Integer>();
 		Vec2fPair points = e.shape.getBoundingBox();
 
 		Vec2f min = points.getP1();
@@ -104,6 +113,7 @@ public class QuadTree {
 	}
 
 	public List<Entity> getPotentialCollisions(Entity e) {
+		//System.out.println("In getpotentialcollisions!");
 		if(is_leaf) {
 			return my_entities;
 		} else {
@@ -121,5 +131,16 @@ public class QuadTree {
 
 	public List<Entity> getEntities() {
 		return my_entities;
+	}
+
+	public void remove(Entity a) {
+		if(is_leaf) {
+			my_entities.remove(a);
+			return;
+		}
+		
+		for(Integer i : indicesOf(a)) {
+			my_children[i].remove(a);
+		}
 	}
 }
