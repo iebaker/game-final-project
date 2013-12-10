@@ -22,7 +22,6 @@ public class ShopScreen extends Screen {
 	private final UIText		crystalText;
 	private final UIButton		backButton;
 	private final ShopButton[]	buttons;
-	private GameWorld			world;
 	private Player				player;
 	
 	public ShopScreen(Application a) {
@@ -42,10 +41,10 @@ public class ShopScreen extends Screen {
 	}
 	
 	protected void setWorld(GameWorld world) {
-		this.world = world;
+		// this.world = world;
 		player = (Player) world.getPlayer();
-		for(ShopButton btn : buttons) {
-			if(player.getCrystals() < btn.requiredCrystals()) btn.toggle();
+		for (ShopButton btn : buttons) {
+			if (player.getCrystals() < btn.requiredCrystals()) btn.toggle();
 		}
 	}
 	
@@ -59,7 +58,7 @@ public class ShopScreen extends Screen {
 		bkgrd.drawAndFillShape(g);
 		title.drawShape(g);
 		backButton.drawShape(g);
-		for(ShopButton btn : buttons) {
+		for (ShopButton btn : buttons) {
 			btn.drawShape(g);
 		}
 		crystalText.drawShape(g);
@@ -76,12 +75,12 @@ public class ShopScreen extends Screen {
 		float btnX = w / 10;
 		float btnY = h / 4;
 		float pad = w / 50;
-		for(int i = 0; i < buttons.length; i++) {
+		for (int i = 0; i < buttons.length; i++) {
 			float btnXStart = btnX;
 			float btnXEnd = btnX + btnWidth;
 			buttons[i].updatePosition(new Vec2f(btnXStart, btnY), new Vec2f(btnXEnd, btnY + btnHeight));
 			btnX += btnWidth + pad;
-			if(i == 2) {
+			if (i == 2) {
 				btnY += btnHeight + h / 10;
 				btnX = w / 10;
 			}
@@ -95,12 +94,12 @@ public class ShopScreen extends Screen {
 	 */
 	@Override
 	protected void onMouseReleased(MouseEvent e) {
-		if(backButton.hitTarget(e)) {
+		if (backButton.hitTarget(e)) {
 			a.popScreen();
 		}
-		for(int i = 0; i < buttons.length; i++) {
-			if(buttons[i].hitTarget(e)) {
-				if(i == 0 && !buttons[i].getPurchased() && player.spendCrystals(buttons[i].requiredCrystals())) {
+		for (int i = 0; i < buttons.length; i++) {
+			if (buttons[i].hitTarget(e)) {
+				if (i == 0 && !buttons[i].getPurchased() && player.spendCrystals(buttons[i].requiredCrystals())) {
 					player.unlockHighJump();
 					buttons[i].toggle();
 				}

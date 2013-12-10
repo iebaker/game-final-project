@@ -29,8 +29,8 @@ public class Tooltip {
 	
 	public void setLocation(Vec2f newLocation) {
 		boolean hasChanged = false;
-		for(Entity e : world.getEntities()) {
-			if(e instanceof EnemyEntity && e.shape.collidesPoint(newLocation)) {
+		for (Entity e : world.getEntities()) {
+			if (e instanceof EnemyEntity && e.shape.collidesPoint(newLocation)) {
 				text.updateText(e.getName());
 				text.updatePosition(Viewport.gamePtToScreen(newLocation), new Vec2f(0, 25f));
 				float w = text.getWidth();
@@ -40,7 +40,7 @@ public class Tooltip {
 				hasChanged = true;
 			}
 		}
-		if(hasChanged) {
+		if (hasChanged) {
 			draw = true;
 			text.setVisible(true);
 		} else {
@@ -51,7 +51,7 @@ public class Tooltip {
 	}
 	
 	public void onDraw(Graphics2D g) {
-		if(draw && current != null) {
+		if (draw && current != null) {
 			g.setStroke(new BasicStroke(0f));
 			background.drawAndFillShape(g);
 			text.drawShape(g);

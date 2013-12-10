@@ -2,7 +2,6 @@ package engine;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
@@ -83,8 +82,18 @@ public abstract class World implements Serializable {
 	 * @param vec
 	 * @return If vec is within game world
 	 */
-	public boolean checkBounds(Vec2f vec) {
+	public boolean checkGameBounds(Vec2f vec) {
 		return ((vec.x > sDim.x && vec.x < dim.x) && (vec.y > sDim.y && vec.y < dim.y));
+	}
+	
+	/**
+	 * Checks to see if a vector is within the bounds of the passed in vectors
+	 * 
+	 * @param vec
+	 * @return If vec is within given bounds
+	 */
+	public boolean checkBounds(Vec2f vec, Vec2f start, Vec2f end) {
+		return ((vec.x > start.x && vec.x < end.x) && (vec.y > start.y && vec.y < end.y));
 	}
 	
 	/**
@@ -236,8 +245,6 @@ public abstract class World implements Serializable {
 	 * @param g
 	 */
 	public void onDraw(Graphics2D g) {
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		if (getPlayer() != null) getPlayer().onDraw(g);
 		for (Entity e : passList) {
 			e.onDraw(g);

@@ -459,10 +459,6 @@ public class GameWorld extends World implements LightWorld {
 	 * @param g
 	 */
 	public void onDraw(Graphics2D g) {
-		// Draws the starting crystal on front of everything else
-		if (startCrystal != null) {
-			startCrystal.onDraw(g);
-		}
 		
 		// Draws the line for bullets
 		if (line != null && player != null && laserCooldown > 0) {
@@ -535,10 +531,10 @@ public class GameWorld extends World implements LightWorld {
 	public void onMouseClicked(MouseEvent e) {
 		Vec2f pt = Viewport.screenPtToGame(new Vec2f(e.getX(), e.getY()));
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			if (checkBounds(pt)) {
+			if (checkGameBounds(pt)) {
 				fireBullet(pt);
 			}
-			if (checkBounds(pt)) fireBullet(pt);
+			if (checkGameBounds(pt)) fireBullet(pt);
 		}
 	}
 	
