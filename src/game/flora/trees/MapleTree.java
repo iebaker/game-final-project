@@ -27,7 +27,7 @@ public class MapleTree extends Tree {
 		
 		addRule(new Rule(t1, t2, t3, t4, t5));
 		
-		for(int i = 0; i < 4; ++i) {
+		for(int i = 0; i < 3; ++i) {
 			addRule(new Rule(t6, t7));
 			addRule(new Rule(t8, t9));
 		}

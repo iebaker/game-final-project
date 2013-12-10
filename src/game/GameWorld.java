@@ -94,6 +94,8 @@ public class GameWorld extends World implements LightWorld {
 	private transient Tooltip								tooltip;
 	private final ArrayList<Spawner>						spawners			= new ArrayList<Spawner>();
 	private boolean											paused;
+	private boolean firstBlood = false;
+	//private boolean firstShop = false;
 	
 	/**
 	 * Constructor for a world that starts a new game
