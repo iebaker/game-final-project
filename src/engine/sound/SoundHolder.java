@@ -1,5 +1,6 @@
 package engine.sound;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Hashtable;
@@ -32,11 +33,11 @@ public class SoundHolder {
 		try {
 			XMLStreamReader reader = factory.createXMLStreamReader(toRead, new FileInputStream(toRead));
 			String currSoundID = null;
-			while (reader.hasNext()) {
+			while(reader.hasNext()) {
 				int event = reader.next();
-				switch (event) {
+				switch(event) {
 				case XMLStreamConstants.START_ELEMENT:
-					if ("sound".equals(reader.getLocalName())) {
+					if("sound".equals(reader.getLocalName())) {
 						currSoundID = reader.getAttributeValue(0);
 					}
 					break;
@@ -47,8 +48,10 @@ public class SoundHolder {
 				
 				case XMLStreamConstants.END_ELEMENT:
 					String name = reader.getLocalName();
-					if (name == "file") {
-						SoundHolder.soundTable.put(currSoundID, new Sound(tagContent));
+					if(name == "file") {
+						File snd = new File(tagContent);
+						if(snd.exists() && snd.canRead())
+							SoundHolder.soundTable.put(currSoundID, new Sound(tagContent));
 					}
 				}
 			}

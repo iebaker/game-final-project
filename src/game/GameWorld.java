@@ -93,7 +93,7 @@ public class GameWorld extends World implements LightWorld {
 	private float											saveCooldown		= 0;
 	private boolean											gameOver			= false;
 	private transient Tooltip								tooltip;
-	private ArrayList<Spawner> spawners = new ArrayList<Spawner>();
+	private final ArrayList<Spawner>						spawners			= new ArrayList<Spawner>();
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -159,16 +159,14 @@ public class GameWorld extends World implements LightWorld {
 					((Consumable) a).destroy();
 					if(a instanceof DarkenedCrystal) {
 						((Player) b).flatHeal(5);
-					}
-					else {
+					} else {
 						((Player) b).addCrystal();
 					}
 				} else if(b instanceof Consumable && a instanceof Player && b.collideWithEntity(a)) {
 					((Consumable) b).destroy();
 					if(b instanceof DarkenedCrystal) {
 						((Player) a).flatHeal(5);
-					}
-					else {
+					} else {
 						((Player) a).addCrystal();
 					}
 				}
@@ -286,7 +284,7 @@ public class GameWorld extends World implements LightWorld {
 		List<LightSource> ret = new ArrayList<LightSource>();
 		if(player != null) {
 			lightSource = new LightSource(player.shape.getCenter());
-			lightSource.setBrightness((player.getHP()+7) / 107);
+			lightSource.setBrightness((player.getHP() + 7) / 107);
 			ret.add(lightSource);
 		}
 		return ret;
@@ -593,14 +591,14 @@ public class GameWorld extends World implements LightWorld {
 	}
 	
 	private void moveEntitesToSpawners() {
-		for (Entity e : entityStack) {
-			if (e instanceof Spawner) {
+		for(Entity e : entityStack) {
+			if(e instanceof Spawner) {
 				removeEntity(e);
-				this.spawners.add((Spawner) e);
+				spawners.add((Spawner) e);
 			}
 		}
 	}
-
+	
 	@Override
 	/**
 	 * Sets a lose with a message
@@ -699,14 +697,13 @@ public class GameWorld extends World implements LightWorld {
 	
 	@Override
 	public void setWin() {
-		// TODO Auto-generated method stub
 		
 	}
 	
 	public Tooltip getTooltip() {
 		return tooltip;
 	}
-
+	
 	public void reloadEnemies() {
 		for(Spawner s : spawners) {
 			s.produce();
