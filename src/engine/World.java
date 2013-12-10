@@ -44,6 +44,7 @@ public abstract class World implements Serializable {
 	protected Vec2f							sDim				= new Vec2f(0, 0);
 	protected TextBox						textBox;
 	public transient Viewport				v;
+	protected boolean						stopped;
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))
@@ -253,19 +254,21 @@ public abstract class World implements Serializable {
 	 * @param nanosSinceLastTick
 	 */
 	public void onTick(float secs) {
-		for (Entity e : removeList) {
-			if (entityStack.contains(e)) entityStack.remove(e);
-		}
-		for (Entity e : addList) {
-			entityStack.add(e);
-		}
-		removeList = new ArrayList<Entity>();
-		addList = new ArrayList<Entity>();
-		for (Entity e : entityStack) {
-			e.onTick(secs);
-		}
-		for (Entity e : passList) {
-			e.onTick(secs);
+		if (!stopped) {
+			for (Entity e : removeList) {
+				if (entityStack.contains(e)) entityStack.remove(e);
+			}
+			for (Entity e : addList) {
+				entityStack.add(e);
+			}
+			removeList = new ArrayList<Entity>();
+			addList = new ArrayList<Entity>();
+			for (Entity e : entityStack) {
+				e.onTick(secs);
+			}
+			for (Entity e : passList) {
+				e.onTick(secs);
+			}
 		}
 	}
 	
@@ -309,5 +312,13 @@ public abstract class World implements Serializable {
 	public abstract void addSound(Sound s);
 	
 	public abstract void save();
+	
+	public void stopTicking() {
+		stopped = true;
+	}
+	
+	public void continueTicking() {
+		stopped = false;
+	}
 	
 }

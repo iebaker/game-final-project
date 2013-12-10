@@ -80,7 +80,6 @@ public class GameWorld extends World implements LightWorld {
 	private int												lineCt;
 	private boolean											lose;
 	private String											message;
-	private boolean											paused;
 	private Player											player;
 	private final String									soundFile			= "sounds.xml";
 	private boolean											transferredEntities	= false;
@@ -94,6 +93,7 @@ public class GameWorld extends World implements LightWorld {
 	private boolean											gameOver			= false;
 	private transient Tooltip								tooltip;
 	private final ArrayList<Spawner>						spawners			= new ArrayList<Spawner>();
+	private boolean											paused;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -136,54 +136,54 @@ public class GameWorld extends World implements LightWorld {
 	 * Checks collisions by way of double iteration through all elements - does special things for certain entities
 	 */
 	public void checkCollisions() {
-		for(int i = 0; i < entityStack.size(); i++) {
+		for (int i = 0; i < entityStack.size(); i++) {
 			Entity a = entityStack.get(i);
-			for(int j = i + 1; j < entityStack.size(); j++) {
+			for (int j = i + 1; j < entityStack.size(); j++) {
 				Entity b = entityStack.get(j);
 				
-				if(a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
-					if(((EnemyEntity) a).drains()) {
+				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
+					if (((EnemyEntity) a).drains()) {
 						a.heal(((Player) b).damage(((EnemyEntity) a).getDamage()));
 					} else {
 						((Player) b).damage(((EnemyEntity) a).getDamage());
 					}
-				} else if(b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
-					if(((EnemyEntity) b).drains()) {
+				} else if (b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
+					if (((EnemyEntity) b).drains()) {
 						b.heal(((Player) a).damage(((EnemyEntity) b).getDamage()));
 					} else {
 						((Player) a).damage(((EnemyEntity) b).getDamage());
 					}
 				}
 				
-				if(a instanceof Consumable && b instanceof Player && a.collideWithEntity(b)) {
+				if (a instanceof Consumable && b instanceof Player && a.collideWithEntity(b)) {
 					((Consumable) a).destroy();
-					if(a instanceof DarkenedCrystal) {
+					if (a instanceof DarkenedCrystal) {
 						((Player) b).flatHeal(5);
 					} else {
 						((Player) b).addCrystal();
 					}
-				} else if(b instanceof Consumable && a instanceof Player && b.collideWithEntity(a)) {
+				} else if (b instanceof Consumable && a instanceof Player && b.collideWithEntity(a)) {
 					((Consumable) b).destroy();
-					if(b instanceof DarkenedCrystal) {
+					if (b instanceof DarkenedCrystal) {
 						((Player) a).flatHeal(5);
 					} else {
 						((Player) a).addCrystal();
 					}
 				}
 				
-				else if(a.collideWithEntity(b)) {
+				else if (a.collideWithEntity(b)) {
 					CollisionInfo aCol = new CollisionInfo(a, b);
-					if(aCol.mtv != null && !aCol.mtv.isZero()) a.onCollide(aCol);
+					if (aCol.mtv != null && !aCol.mtv.isZero()) a.onCollide(aCol);
 					a.afterCollision(b);
 					b.afterCollision(a);
-				} else if(b.collideWithEntity(a)) {
+				} else if (b.collideWithEntity(a)) {
 					a.afterCollision(b);
 					b.afterCollision(a);
 				}
 				
 			}
-			for(PassableEntity e : passList) {
-				if(e.canCollide() && e.collideWithEntity(a)) {
+			for (PassableEntity e : passList) {
+				if (e.canCollide() && e.collideWithEntity(a)) {
 					e.onCollide(new CollisionInfo(e, a));
 					a.afterCollision(e);
 					e.afterCollision(a);
@@ -207,30 +207,30 @@ public class GameWorld extends World implements LightWorld {
 	 *            the destination of the ray
 	 */
 	private void fireBullet(Vec2f dest) {
-		if(player.laserUnlocked() && !paused && !cutsceneActive && player != null) {
+		if (player.laserUnlocked() && !paused && !cutsceneActive && player != null) {
 			Vec2f src = player.shape.getCenter();
 			Ray ray = new Ray(src, dest);
 			Entity affected = null;
 			Vec2f castTo = null;
-			for(Entity e : entityStack) {
-				if(!e.equals(player) && e.shape != null) {
+			for (Entity e : entityStack) {
+				if (!e.equals(player) && e.shape != null) {
 					Vec2f tmp = e.shape.cast(ray);
-					if(castTo == null
+					if (castTo == null
 							|| (castTo != null && tmp != null && tmp.minus(src).mag() < castTo.minus(src).mag())) {
 						affected = e;
 						castTo = tmp;
 					}
 				}
 			}
-			if(castTo != null) {
+			if (castTo != null) {
 				affected.applyImpulse(ray.getDirection().smult(5000f));
-				if(affected instanceof ShadowEnemy) {
+				if (affected instanceof ShadowEnemy) {
 					affected.damage(10);
 				}
 				// For breakable blocks
-				if(affected.isShootable()) {
+				if (affected.isShootable()) {
 					affected.setShotsNeeded(affected.getShotsNeeded() - 1);
-					if(affected.getShotsNeeded() < 1) removeEntity(affected);
+					if (affected.getShotsNeeded() < 1) removeEntity(affected);
 				}
 				line = castTo;
 			}
@@ -258,7 +258,7 @@ public class GameWorld extends World implements LightWorld {
 	 * @return
 	 */
 	public float getHealth() {
-		if(player == null)
+		if (player == null)
 			return 100;
 		else
 			return player.getHP();
@@ -282,7 +282,7 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	public List<LightSource> getLightSources() {
 		List<LightSource> ret = new ArrayList<LightSource>();
-		if(player != null) {
+		if (player != null) {
 			lightSource = new LightSource(player.shape.getCenter());
 			lightSource.setBrightness((player.getHP() + 7) / 107);
 			ret.add(lightSource);
@@ -309,11 +309,11 @@ public class GameWorld extends World implements LightWorld {
 	public List<Vec2fPair> getPointsAndPairs(Vec2f sourcePoint, List<Vec2f> points) {
 		List<Vec2fPair> pointPairs = new ArrayList<Vec2fPair>();
 		
-		for(Entity e : getEntities()) {
-			if(!e.stopsLight()) continue;
+		for (Entity e : getEntities()) {
+			if (!e.stopsLight()) continue;
 			CollisionShape shape = e.shape;
 			
-			if(shape instanceof AAB) {
+			if (shape instanceof AAB) {
 				AAB a = (AAB) shape;
 				
 				// Construct points of AAB in order
@@ -334,7 +334,7 @@ public class GameWorld extends World implements LightWorld {
 				pointPairs.add(new Vec2fPair(p3, p4));
 				pointPairs.add(new Vec2fPair(p4, p1));
 				
-			} else if(shape instanceof Circle) {
+			} else if (shape instanceof Circle) {
 				
 				Circle circle = (Circle) shape;
 				Vec2f circleToSource = circle.getCenter().minus(sourcePoint);
@@ -363,7 +363,7 @@ public class GameWorld extends World implements LightWorld {
 				// Add single point pair
 				pointPairs.add(new Vec2fPair(p1, p2));
 				
-			} else if(shape instanceof Poly) {
+			} else if (shape instanceof Poly) {
 				
 				// Make polygon out of shape
 				Poly p = (Poly) shape;
@@ -374,7 +374,7 @@ public class GameWorld extends World implements LightWorld {
 				
 				// Add proper point pairs
 				polyPoints.add(polyPoints.get(0));
-				for(int i = 0; i < polyPoints.size() - 1; ++i) {
+				for (int i = 0; i < polyPoints.size() - 1; ++i) {
 					pointPairs.add(new Vec2fPair(polyPoints.get(i), polyPoints.get(i + 1)));
 				}
 				
@@ -421,14 +421,14 @@ public class GameWorld extends World implements LightWorld {
 	 *            the restitution to give all entities
 	 */
 	public void newGame(int lvl) {
-		for(Sound s : allSounds) {
+		for (Sound s : allSounds) {
 			s.stop();
 			s.close();
 		}
 		allSounds.clear();
 		player = null;
 		level = new Level(lvl, 0f);
-		if(v != null) v.viewHasChanged(true);
+		if (v != null) v.viewHasChanged(true);
 		leftoverTime = 0;
 		line = null;
 		win = false;
@@ -444,7 +444,7 @@ public class GameWorld extends World implements LightWorld {
 		
 		// Actually load the level
 		loadLevelFromFile(GameWorld.LEVEL_NAME, classes, this);
-		if(lvl == 1) setMessage("Game starts in 3", 3.5f);
+		if (lvl == 1) setMessage("Game starts in 3", 3.5f);
 		
 		moveEntitiesToPassable();
 		
@@ -460,25 +460,25 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	public void onDraw(Graphics2D g) {
 		// Draws the starting crystal on front of everything else
-		if(startCrystal != null) {
+		if (startCrystal != null) {
 			startCrystal.onDraw(g);
 		}
 		
 		// Draws the line for bullets
-		if(line != null && player != null && laserCooldown > 0) {
+		if (line != null && player != null && laserCooldown > 0) {
 			g.setColor(new Color(0.7f, 0.7f, 1f, 0.6f));
 			g.setStroke(new BasicStroke(Viewport.gameFloatToScreen(10f)));
 			Vec2f p1 = Viewport.gamePtToScreen(player.shape.getCenter());
 			Vec2f p2 = Viewport.gamePtToScreen(line);
 			g.draw(new Line2D.Double(p1.x, p1.y, p2.x, p2.y));
-		} else if(laserCooldown <= 0) {
+		} else if (laserCooldown <= 0) {
 			lineCt++;
-		} else if(lineCt >= 20) {
+		} else if (lineCt >= 20) {
 			lineCt = 0;
 			line = null;
 		}
 		
-		for(BackgroundLight light : bgLights) {
+		for (BackgroundLight light : bgLights) {
 			light.onDraw(g);
 		}
 		
@@ -494,17 +494,17 @@ public class GameWorld extends World implements LightWorld {
 	public void onKeyPressed(KeyEvent e) {
 		lightEngine.onKeyPressed(e);
 		int keyCode = e.getKeyCode();
-		if(cutsceneActive) {
-			if(textBox.hasNextLine()) {
+		if (cutsceneActive) {
+			if (textBox.hasNextLine()) {
 				textBox.displayNext();
 			} else {
 				cutsceneActive = false;
 				textBox.setVisible(false);
 			}
 		}
-		switch(keyCode) {
+		switch (keyCode) {
 		case (KeyEvent.VK_P): // Pause
-			if(player != null && !lose && !win)
+			if (player != null && !lose && !win)
 				paused = !paused;
 			else
 				paused = false;
@@ -512,7 +512,7 @@ public class GameWorld extends World implements LightWorld {
 		default:
 			break;
 		}
-		if(player != null && !lose && !win) {
+		if (player != null && !lose && !win) {
 			player.onKeyPressed(e);
 		}
 	}
@@ -523,7 +523,7 @@ public class GameWorld extends World implements LightWorld {
 	 * @param e
 	 */
 	public void onKeyReleased(KeyEvent e) {
-		if(player != null && !lose && !win) player.onKeyReleased(e);
+		if (player != null && !lose && !win) player.onKeyReleased(e);
 	}
 	
 	/**
@@ -534,11 +534,11 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	public void onMouseClicked(MouseEvent e) {
 		Vec2f pt = Viewport.screenPtToGame(new Vec2f(e.getX(), e.getY()));
-		if(e.getButton() == MouseEvent.BUTTON1) {
-			if(checkBounds(pt)) {
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			if (checkBounds(pt)) {
 				fireBullet(pt);
 			}
-			if(checkBounds(pt)) fireBullet(pt);
+			if (checkBounds(pt)) fireBullet(pt);
 		}
 	}
 	
@@ -553,46 +553,48 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	@Override
 	public void onTick(float secs) {
-		// Calculates standard tick - how many + leftover time to counter for later
-		double timeSteps = (secs / GameWorld.TICK_LENGTH) + leftoverTime;
-		long steps = (long) timeSteps;
-		leftoverTime = timeSteps - steps;
-		for(int i = 0; i < steps; i++) {
-			
-			// Shows paused message
-			if(paused)
-				message = "Game paused";
-			
-			// Ticks through each entity and checks collisions
-			else if(!cutsceneActive) {
-				message = "";
-				super.onTick(GameWorld.TICK_LENGTH);
-				checkCollisions();
-				level.onTick(GameWorld.TICK_LENGTH);
+		if (!stopped) {
+			// Calculates standard tick - how many + leftover time to counter for later
+			double timeSteps = (secs / GameWorld.TICK_LENGTH) + leftoverTime;
+			long steps = (long) timeSteps;
+			leftoverTime = timeSteps - steps;
+			for (int i = 0; i < steps; i++) {
+				
+				// Shows paused message
+				if (paused)
+					message = "Game paused";
+				
+				// Ticks through each entity and checks collisions
+				else if (!cutsceneActive) {
+					message = "";
+					super.onTick(GameWorld.TICK_LENGTH);
+					checkCollisions();
+					level.onTick(GameWorld.TICK_LENGTH);
+				}
 			}
-		}
-		if(!transferredEntities) {
-			transferredEntities = true;
-			moveEntitiesToPassable();
-			moveEntitesToSpawners();
-		}
-		if(laserCooldown > 0) {
-			float secs2 = secs;
-			if(secs2 > laserCooldown) {
-				secs2 = laserCooldown;
+			if (!transferredEntities) {
+				transferredEntities = true;
+				moveEntitiesToPassable();
+				moveEntitesToSpawners();
 			}
-			laserCooldown -= secs2;
-			player.flatDamage(secs2 * 20);
-		}
-		
-		if(saveCooldown > 0) {
-			saveCooldown -= secs;
+			if (laserCooldown > 0) {
+				float secs2 = secs;
+				if (secs2 > laserCooldown) {
+					secs2 = laserCooldown;
+				}
+				laserCooldown -= secs2;
+				player.flatDamage(secs2 * 20);
+			}
+			
+			if (saveCooldown > 0) {
+				saveCooldown -= secs;
+			}
 		}
 	}
 	
 	private void moveEntitesToSpawners() {
-		for(Entity e : entityStack) {
-			if(e instanceof Spawner) {
+		for (Entity e : entityStack) {
+			if (e instanceof Spawner) {
 				removeEntity(e);
 				spawners.add((Spawner) e);
 			}
@@ -618,7 +620,7 @@ public class GameWorld extends World implements LightWorld {
 	@Override
 	public void setPlayer(Entity p) {
 		player = (Player) p;
-		if(hp > 0) player.heal(hp);
+		if (hp > 0) player.heal(hp);
 	}
 	
 	public void unlockJump() {
@@ -628,16 +630,16 @@ public class GameWorld extends World implements LightWorld {
 	@Override
 	public void resetOffset() {
 		// Resets viewport to be the correct offset based on player location
-		if(v != null && player != null)
+		if (v != null && player != null)
 			v.setOffset(player.shape.getLocation().minus(Viewport.screenPtToGameForOffset(v.getDim().sdiv(2))));
 	}
 	
 	@Override
 	public void reload() {
-		for(Entity e : getEntities()) {
+		for (Entity e : getEntities()) {
 			e.reloadTransientData();
 		}
-		for(Entity e : getPassableEntities()) {
+		for (Entity e : getPassableEntities()) {
 			e.reloadTransientData();
 		}
 		tooltip = new Tooltip(this);
@@ -651,13 +653,13 @@ public class GameWorld extends World implements LightWorld {
 	}
 	
 	public void mute() {
-		for(Sound s : allSounds) {
+		for (Sound s : allSounds) {
 			s.pause(true);
 		}
 	}
 	
 	public void unmute() {
-		for(Sound s : allSounds) {
+		for (Sound s : allSounds) {
 			s.pause(false);
 		}
 	}
@@ -685,7 +687,7 @@ public class GameWorld extends World implements LightWorld {
 	
 	@Override
 	public void save() {
-		if(saveCooldown <= 0) {
+		if (saveCooldown <= 0) {
 			Saver.saveGame(GameWorld.saveFile, this);
 			saveCooldown = 5;
 		}
@@ -705,7 +707,7 @@ public class GameWorld extends World implements LightWorld {
 	}
 	
 	public void reloadEnemies() {
-		for(Spawner s : spawners) {
+		for (Spawner s : spawners) {
 			s.produce();
 		}
 	}

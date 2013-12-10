@@ -11,30 +11,48 @@ import engine.entity.Entity;
 
 public class Saver {
 	
+	private static class SaveGame implements Runnable {
+		
+		private final String	fileName;
+		private final World		w;
+		
+		public SaveGame(String fileName, World w) {
+			this.fileName = fileName;
+			this.w = w;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				FileOutputStream fileOut = new FileOutputStream(new File(fileName));
+				ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				out.writeObject(w);
+				out.close();
+				fileOut.close();
+			} catch (IOException i) {
+				System.err.println("Game couldn't be saved - see stack trace");
+				i.printStackTrace();
+			}
+		}
+	}
+	
 	/**
 	 * Serializes game world to save the game to the passed in string
 	 * 
 	 * @param fileName
 	 *            the file to save to
 	 */
-	public static void saveGame(String fileName, World game) {
-		try {
-			FileOutputStream fileOut = new FileOutputStream(new File(fileName));
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(game);
-			out.close();
-			fileOut.close();
-		} catch (IOException i) {
-			System.err.println("Game couldn't be saved - see stack trace");
-			i.printStackTrace();
-		}
+	public static void saveGame(String fileName, World w) {
+		(new Thread(new SaveGame(fileName, w))).start();
 	}
 	
 	/**
-	 * Loads game world from file and makes the game that
+	 * Loads game world from fileName
 	 * 
 	 * @param fileName
-	 *            the file to load game from
+	 * @param v
+	 * @param w
+	 * @return
 	 */
 	public static World loadGame(String fileName, Viewport v, World w) {
 		World tempGame = null;

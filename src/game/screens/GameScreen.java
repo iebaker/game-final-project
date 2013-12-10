@@ -82,7 +82,7 @@ public class GameScreen extends Screen {
 		}));*/
 		music = new MusicPlayer("lib/equinox.wav");
 		music.start();
-		if(MuteHolder.muted) {
+		if (MuteHolder.muted) {
 			music.pause(true);
 		}
 		view = new Viewport(a);
@@ -102,7 +102,7 @@ public class GameScreen extends Screen {
 		} catch (InvalidLevelException e) {
 			System.err.println("Invalid level file");
 		}
-		if(game != null) view.setGame(game);
+		if (game != null) view.setGame(game);
 		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, (game != null) ? game.getBGColor() : Color.black,
 				new BasicStroke(0f));
 		newGame = new UIButton("New Game", Vec2f.ZERO, Vec2f.ZERO, new Color(0, 195, 0), Color.white, null,
@@ -131,22 +131,22 @@ public class GameScreen extends Screen {
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
 		float secs = (float) (nanosSincePreviousTick / 1000000000.0);
-		if(fadeCount > 0) {
+		if (fadeCount > 0) {
 			fadeCount -= secs * 100;
-			if(fadeCount < 0) {
+			if (fadeCount < 0) {
 				fadeCount = 0;
 			}
 			fadeRect.setColor(new Color(0, 0, 0, (int) fadeCount));
 		}
-		if(game != null) {
+		if (game != null) {
 			healthText.updateText("Light: " + (int) game.getHealth() + "/100");
 			Player p = (Player) game.getPlayer();
 			crystalText.updateText("Crystals: " + ((p == null) ? 0 : p.getCrystals()));
 			game.onTick(secs);
-			if(game.isOver()) {
+			if (game.isOver()) {
 				GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
 				die();
-				if(temp != null) {
+				if (temp != null) {
 					game = temp;
 					textBox = game.getTextBox();
 				}
@@ -166,7 +166,7 @@ public class GameScreen extends Screen {
 		crystalRect.drawAndFillShape(g);
 		crystalText.drawShape(g);
 		textBox.draw(g);
-		if(fadeCount != 0) {
+		if (fadeCount != 0) {
 			fadeRect.drawAndFillShape(g);
 		}
 	}
@@ -208,17 +208,17 @@ public class GameScreen extends Screen {
 	 */
 	@Override
 	protected void onKeyPressed(KeyEvent e) {
-		switch(e.getKeyCode()) {
+		switch (e.getKeyCode()) {
 		case (KeyEvent.VK_R):
 			fadeIn();
 			newGame(); // R pressed (new game)
 			break;
 		case (KeyEvent.VK_ESCAPE): // ESC pressed (quit)
 		case (KeyEvent.VK_Q): // Q pressed (quit)
-			for(Entity ent : game.getEntities()) {
+			for (Entity ent : game.getEntities()) {
 				ent.stopSound();
 			}
-			for(Entity ent : game.getPassableEntities()) {
+			for (Entity ent : game.getPassableEntities()) {
 				ent.stopSound();
 			}
 			music.pause(true);
@@ -230,7 +230,7 @@ public class GameScreen extends Screen {
 		case (KeyEvent.VK_4): // 4 pressed, load game
 			// if(!textBox.getVisible()) {
 			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
-			if(temp != null) {
+			if (temp != null) {
 				fadeIn();
 				game = temp;
 				textBox = game.getTextBox();
@@ -243,20 +243,20 @@ public class GameScreen extends Screen {
 			a.pushScreen(shop);
 			break;
 		case (KeyEvent.VK_M):
-			if(!MuteHolder.muted) {
+			if (!MuteHolder.muted) {
 				music.pause(true);
-				for(Entity ent : game.getEntities()) {
+				for (Entity ent : game.getEntities()) {
 					ent.stopSound();
 				}
-				for(Entity ent : game.getPassableEntities()) {
+				for (Entity ent : game.getPassableEntities()) {
 					ent.stopSound();
 				}
 			} else {
 				music.pause(false);
-				for(Entity ent : game.getEntities()) {
+				for (Entity ent : game.getEntities()) {
 					ent.startSound();
 				}
-				for(Entity ent : game.getPassableEntities()) {
+				for (Entity ent : game.getPassableEntities()) {
 					ent.startSound();
 				}
 			}
@@ -284,7 +284,7 @@ public class GameScreen extends Screen {
 	@Override
 	protected void onMousePressed(MouseEvent e) {
 		mouseLocation = new Vec2f(e.getX(), e.getY());
-		if(mouseLocation != null) {
+		if (mouseLocation != null) {
 			game.onMouseClicked(e);
 		}
 	}
@@ -315,7 +315,7 @@ public class GameScreen extends Screen {
 		Vec2f pt = new Vec2f(p.x, p.y);
 		Vec2f sdim = view.getSDim();
 		Vec2f dim = view.getDim();
-		if(checkBounds(pt, sdim.x, dim.x, sdim.y, dim.y)) view.zoomView(pt, zm);
+		if (checkBounds(pt, sdim.x, dim.x, sdim.y, dim.y)) view.zoomView(pt, zm);
 	}
 	
 	@Override
