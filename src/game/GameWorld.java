@@ -141,8 +141,9 @@ public class GameWorld extends World implements LightWorld {
 	public void checkCollisions() {
 		for (int i = 0; i < entityStack.size(); i++) {
 			Entity a = entityStack.get(i);
-			for (int j = i + 1; j < entityStack.size(); j++) {
-				Entity b = entityStack.get(j);
+			for (Entity b : entity_tree.getPotentialCollisions(a)) {
+				if(a == b) continue;
+				//Entity b = entityStack.get(j);
 				
 				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
 					if (((EnemyEntity) a).drains()) {
