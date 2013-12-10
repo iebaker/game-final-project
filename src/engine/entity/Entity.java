@@ -78,6 +78,9 @@ public abstract class Entity implements Serializable {
 				// gets the sound file passed as an argument and plays it.
 				if (thisSound == null || !currentSounds.contains(thisSound)) {
 					thisSound = SoundHolder.soundTable.get(args.get("sound")).duplicate();
+					if(args.containsKey("dist")) {
+						thisSound.setDist(Float.parseFloat(args.get("dist")));
+					}
 					if (!MuteHolder.muted) {
 						thisSound.loop();
 					}
@@ -381,7 +384,7 @@ public abstract class Entity implements Serializable {
 				Sound s = currentSounds.get(i);
 				// calculate how far the source of the sound is from the player
 				Float dist = world.getPlayer().shape.getCenter().minus(shape.getCenter()).mag();
-				if (dist < 2500) {
+				if (dist < s.getDist()) {
 					s.setVolume(1 - Math.sqrt(.00033 * dist));
 				} else {
 					s.setVolume(0);

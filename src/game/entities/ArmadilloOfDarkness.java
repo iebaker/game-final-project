@@ -1,6 +1,8 @@
 package game.entities;
 
+import engine.World;
 import game.entities.spawners.Spawner;
+import cs195n.LevelData.EntityData;
 import cs195n.Vec2f;
 
 /**
@@ -37,9 +39,13 @@ public class ArmadilloOfDarkness extends ShadowEnemy {
 					applyImpulse((goalVelocity.minus(getVelocity())).smult(0.05f));
 				}
 			}
-			
 			super.onTick(t);
 		}
+	}
+	
+	@Override
+	public void setProperties(EntityData ed, World w) {
+		super.setProperties(ed, w);
 	}
 	
 	@Override

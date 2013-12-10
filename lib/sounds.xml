@@ -15,4 +15,7 @@
 	<sound id="heal">
 		<file>lib/heal.wav</file>
 	</sound>
+	<sound id="growl">
+		<file>lib/growl.wav</file>
+	</sound>
 </sounds>

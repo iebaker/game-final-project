@@ -2,6 +2,7 @@ package game.entities;
 
 import java.awt.Color;
 import java.awt.RadialGradientPaint;
+import java.util.Map;
 
 import engine.Artist;
 import engine.Viewport;
@@ -47,7 +48,7 @@ public abstract class ShadowEnemy extends EnemyEntity {
 		float centerx = Viewport.gamePtToScreen(this.shape.getCenter()).x;
 		float centery = Viewport.gamePtToScreen(this.shape.getCenter()).y;
 		
-		float radius = Viewport.gameFloatToScreen(this.shape.getCenter().x - this.shape.getLocation().x + baseRadius * this.hp / this.maxHP);
+		float radius = Viewport.gameFloatToScreen(this.shape.getCenter().x - this.shape.getLocation().x + baseRadius * (this.hp + 7) / (this.maxHP + 7));
 		Color[] colors = new Color[] { new Color(0f, 0f, 0f, 1f), new Color(0f, 0f, 0f, 0f) };
 		
 		RadialGradientPaint rgp = new RadialGradientPaint(centerx, centery, radius, fractions, colors);
@@ -64,5 +65,9 @@ public abstract class ShadowEnemy extends EnemyEntity {
 	public void die() {
 		source.spawnConsumed();
 		super.die();
+	}
+
+	public void runInput(String in, Map<String, String> args) {
+		this.inputs.get(in).run(args);
 	}
 }

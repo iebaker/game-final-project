@@ -286,7 +286,7 @@ public class GameWorld extends World implements LightWorld {
 		List<LightSource> ret = new ArrayList<LightSource>();
 		if(player != null) {
 			lightSource = new LightSource(player.shape.getCenter());
-			lightSource.setBrightness(player.getHP() / 100);
+			lightSource.setBrightness((player.getHP()+7) / 107);
 			ret.add(lightSource);
 		}
 		return ret;

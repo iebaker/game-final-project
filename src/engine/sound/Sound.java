@@ -33,6 +33,7 @@ public class Sound implements Runnable {
 	private long						pausePosition		= 0L;
 	private FloatControl		gainControl;								// for volume
 	private boolean						paused				= false;
+	private float dist = 2500;
 	
 	/**
 	 * Load Sound from file in current directory
@@ -285,5 +286,13 @@ public class Sound implements Runnable {
 	
 	public void close() {
 		clip.close();
+	}
+
+	public float getDist() {
+		return dist;
+	}
+
+	public void setDist(float dist) {
+		this.dist = dist;
 	}
 }
