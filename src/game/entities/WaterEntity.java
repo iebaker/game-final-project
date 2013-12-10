@@ -15,6 +15,6 @@ public class WaterEntity extends PassableEntity {
 	@Override
 	public void onCollide(CollisionInfo col) {
 		Entity o2 = col.other;
-		o2.applyForce((new Vec2f(0, world.gravity())).smult(-0.8f * 25));
+		o2.applyForce((new Vec2f(0, world.gravity())).smult(-0.8f * 30));
 	}
 }

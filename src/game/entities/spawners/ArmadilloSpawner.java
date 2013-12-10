@@ -7,7 +7,7 @@ public class ArmadilloSpawner extends EnemySpawner {
 	private static final long serialVersionUID = 138511048743627949L;
 
 	@Override
-	public void makeEnemy() {
+	public void produce() {
 		if(!active) {
 			toSpawn = new ArmadilloOfDarkness(this);
 			toSpawn.setProperties(properties, world);

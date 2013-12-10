@@ -1,24 +1,21 @@
 package game.entities;
 
+import engine.Artist;
+import engine.Viewport;
+import engine.World;
+import game.entities.spawners.Spawner;
+
 import java.awt.Color;
 import java.awt.RadialGradientPaint;
 
-import engine.Artist;
-import engine.Viewport;
-import engine.entity.Entity;
-import engine.sound.Sound;
-import engine.sound.SoundHolder;
-import game.MuteHolder;
-import game.entities.spawners.Spawner;
+import cs195n.LevelData.EntityData;
 
-public class LightCrystal extends Entity {
-	
-	private static final long	serialVersionUID	= -324958466738745396L;
-	protected Spawner source;
-	
-	public LightCrystal(Spawner source) {
-		stopsLight = false;
-		this.source = source;
+public class DarkenedCrystal extends LightCrystal {
+
+	private static final long serialVersionUID = -7516116297460743602L;
+
+	public DarkenedCrystal(Spawner source) {
+		super(source);
 	}
 	
 	@Override
@@ -43,16 +40,16 @@ public class LightCrystal extends Entity {
 		super.onDraw(g);
 	}
 	
-	public void destroy() {
-		if (!MuteHolder.muted) {
-			Sound pickup = null;
-			if (SoundHolder.soundTable != null) pickup = SoundHolder.soundTable.get("pickup");
-			if (pickup != null) {
-				pickup.duplicate().play();
-			}
-		}
-		world.removeEntity(this);
-		source.spawnConsumed();
+	@Override
+	public void setProperties(EntityData ed, World w) {
+		super.setProperties(ed, w);
+		this.c = c.darker().darker();
 	}
 	
+	@Override
+	public void destroy() {
+		world.removeEntity(this);
+		this.source.spawnConsumed();
+	}
+
 }

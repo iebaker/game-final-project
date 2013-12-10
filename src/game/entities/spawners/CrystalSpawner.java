@@ -3,16 +3,17 @@ package game.entities.spawners;
 import cs195n.LevelData.EntityData;
 import engine.World;
 import engine.entity.Entity;
-import game.entities.ShadowEnemy;
+import game.entities.DarkenedCrystal;
+import game.entities.LightCrystal;
 
-public abstract class EnemySpawner extends Entity implements Spawner {
-
+public class CrystalSpawner extends Entity implements Spawner {
+	
 	private static final long serialVersionUID = -2639861131160682303L;
-	protected ShadowEnemy toSpawn;
+	protected LightCrystal toSpawn;
 	protected boolean active = false;
 	protected EntityData properties;
 	
-	public EnemySpawner() {
+	public CrystalSpawner() {
 		super();
 		this.isStatic = true;
 		this.stopsLight = false;
@@ -22,15 +23,26 @@ public abstract class EnemySpawner extends Entity implements Spawner {
 	public void setProperties(EntityData ed, World w) {
 		properties = ed;
 		world = w;
-		produce();
+		toSpawn = new LightCrystal(this);
+		toSpawn.setProperties(properties, world);
+		world.addEntity(toSpawn);
+		active = true;
 	}
 	
+	@Override
 	public void spawnConsumed() {
 		toSpawn = null;
 		active = false;
 	}
 		
 	@Override
-	public abstract void produce();
+	public void produce() {
+		if(!active) {
+			toSpawn = new DarkenedCrystal(this);
+			toSpawn.setProperties(properties, world);
+			world.addEntity(toSpawn);
+			active = true;
+		}
+	}
 
 }

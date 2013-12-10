@@ -136,7 +136,7 @@ public class GameScreen extends Screen {
 			if(fadeCount < 0) {
 				fadeCount = 0;
 			}
-			fadeRect.changeColor(new Color(0, 0, 0, (int) fadeCount));
+			fadeRect.setColor(new Color(0, 0, 0, (int) fadeCount));
 		}
 		if(game != null) {
 			healthText.updateText("Light: " + (int) game.getHealth() + "/100");
@@ -351,7 +351,7 @@ public class GameScreen extends Screen {
 	
 	private void fadeIn() {
 		fadeCount = 255;
-		fadeRect.changeColor(new Color(0, 0, 0, 255));
+		fadeRect.setColor(new Color(0, 0, 0, 255));
 	}
 	
 	private void die() {

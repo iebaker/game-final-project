@@ -32,7 +32,7 @@ public abstract class Shape implements Serializable {
 	 * 
 	 * @param c
 	 */
-	public void changeColor(Color c) {
+	public void setColor(Color c) {
 		this.c = c;
 	}
 }

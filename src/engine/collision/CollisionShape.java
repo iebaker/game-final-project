@@ -129,5 +129,13 @@ public interface CollisionShape {
 	 * @return the location of the center of the shape
 	 */
 	public Vec2f getCenter();
+
+	/**
+	 * Public getter for shape's color
+	 * @return the shape's color
+	 */
+	public java.awt.Color getColor();
+	
+	public void setColor(java.awt.Color c);
 	
 }

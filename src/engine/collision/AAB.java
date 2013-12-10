@@ -212,4 +212,14 @@ public class AAB extends Shape implements CollisionShape {
 		float y = (center.y < min.y) ? min.y : ((center.y > max.y) ? max.y : center.y);
 		return new Vec2f(x, y);
 	}
+
+	@Override
+	public Color getColor() {
+		return this.c;
+	}
+
+	@Override
+	public void setColor(Color c) {
+		this.c = c;
+	}
 }

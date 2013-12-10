@@ -1,6 +1,6 @@
 package game.entities;
 
-import game.entities.spawners.EnemySpawner;
+import game.entities.spawners.Spawner;
 
 /**
  * The most basic enemy. Just a ball of darkness that steals light from the player
@@ -13,7 +13,7 @@ public class DarkFrog extends ShadowEnemy {
 	private static final long	serialVersionUID	= -8427819650544703193L;
 	private float jumpCount = 5;
 	
-	public DarkFrog(EnemySpawner source) {
+	public DarkFrog(Spawner source) {
 		super(100, new float[] { 0.2f, 1f }, source);
 		drains = true;
 	}

@@ -90,7 +90,6 @@ public class Player extends Entity {
 				((GameWorld) world).die();
 			}
 		}
-		
 		if((((GameWorld) world).getStartCrystal() != null)
 				&& ((GameWorld) world).getStartCrystal().shape.getCenter().minus(shape.getCenter()).mag2() <= 80000) {
 			if(heal(10) == 10 && !MuteHolder.muted) {
@@ -219,7 +218,7 @@ public class Player extends Entity {
 	 */
 	public void addCrystal() {
 		crystals++;
-		hp += 10;
+		hp += 5;
 		if(hp > maxHP) {
 			hp = maxHP;
 		}

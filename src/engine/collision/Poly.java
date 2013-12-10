@@ -291,4 +291,14 @@ public class Poly extends Shape implements CollisionShape {
 		return s + ">";
 		
 	}
+
+	@Override
+	public Color getColor() {
+		return this.c;
+	}
+
+	@Override
+	public void setColor(Color c) {
+		this.c = c;
+	}
 }

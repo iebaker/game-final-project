@@ -90,8 +90,8 @@ public class UIButton extends Shape {
 	public void toggle() {
 		enabled = !enabled;
 		if(!enabled)
-			rect.changeColor(disabledColor);
+			rect.setColor(disabledColor);
 		else
-			rect.changeColor(c);
+			rect.setColor(c);
 	}
 }

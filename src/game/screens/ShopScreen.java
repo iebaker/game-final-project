@@ -31,7 +31,7 @@ public class ShopScreen extends Screen {
 		backButton = new UIButton("Return to Game", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET.darker(),
 				Color.white, null, new BasicStroke(0f));
 		buttons = new ShopButton[6];
-		buttons[0] = new ShopButton("Jump", 10);
+		buttons[0] = new ShopButton("Jump", 5);
 		buttons[1] = new ShopButton("Aura", 30);
 		buttons[2] = new ShopButton("Light Loss", 50);
 		buttons[3] = new ShopButton("Laser", 100);

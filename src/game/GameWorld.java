@@ -32,6 +32,7 @@ import engine.lighting.LightingEngine;
 import engine.lighting.Vec2fPair;
 import engine.sound.Sound;
 import engine.ui.TextBox;
+import game.entities.DarkenedCrystal;
 import game.entities.LightCrystal;
 import game.entities.Player;
 import game.entities.ShadowEnemy;
@@ -40,8 +41,9 @@ import game.entities.WaterEntity;
 import game.entities.WinEntity;
 import game.entities.spawners.ArmadilloSpawner;
 import game.entities.spawners.BatSpawner;
-import game.entities.spawners.EnemySpawner;
+import game.entities.spawners.CrystalSpawner;
 import game.entities.spawners.FrogSpawner;
+import game.entities.spawners.Spawner;
 import game.flora.trees.FanTree;
 import game.flora.trees.MapleTree;
 import game.flora.trees.PineTree;
@@ -66,7 +68,7 @@ public class GameWorld extends World implements LightWorld {
 	public static final Color								DUSKY_VIOLET		= new Color(126, 126, 191);
 	public static final Color								DARK_LAVENDER		= new Color(45, 30, 50);
 	private static final float								TICK_LENGTH			= 0.005f;
-	public static final String								LEVEL_NAME			= "lib/Level1.nlf";
+	public static final String								LEVEL_NAME			= "lib/NewLevel.nlf";
 	private final HashMap<String, Class<? extends Entity>>	classes;
 	private boolean											cutsceneActive;
 	private float											gravity;
@@ -91,7 +93,7 @@ public class GameWorld extends World implements LightWorld {
 	private float											saveCooldown		= 0;
 	private boolean											gameOver			= false;
 	private transient Tooltip								tooltip;
-	private ArrayList<EnemySpawner> spawners = new ArrayList<EnemySpawner>();
+	private ArrayList<Spawner> spawners = new ArrayList<Spawner>();
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -118,7 +120,7 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("PassableEntity", PassableEntity.class);
 		classes.put("Water", WaterEntity.class);
 		classes.put("DarkFrog", FrogSpawner.class);
-		classes.put("LightCrystal", LightCrystal.class);
+		classes.put("LightCrystal", CrystalSpawner.class);
 		classes.put("ArmadilloOfDarkness", ArmadilloSpawner.class);
 		classes.put("StartCrystal", StartCrystal.class);
 		classes.put("BackgroundLight", BackgroundLight.class);
@@ -155,10 +157,20 @@ public class GameWorld extends World implements LightWorld {
 				
 				if(a instanceof LightCrystal && b instanceof Player && a.collideWithEntity(b)) {
 					((LightCrystal) a).destroy();
-					((Player) b).addCrystal();
+					if(a instanceof DarkenedCrystal) {
+						((Player) b).flatHeal(5);
+					}
+					else {
+						((Player) b).addCrystal();
+					}
 				} else if(b instanceof LightCrystal && a instanceof Player && b.collideWithEntity(a)) {
 					((LightCrystal) b).destroy();
-					((Player) a).addCrystal();
+					if(b instanceof DarkenedCrystal) {
+						((Player) a).flatHeal(5);
+					}
+					else {
+						((Player) a).addCrystal();
+					}
 				}
 				
 				else if(a.collideWithEntity(b)) {
@@ -582,9 +594,9 @@ public class GameWorld extends World implements LightWorld {
 	
 	private void moveEntitesToSpawners() {
 		for (Entity e : entityStack) {
-			if (e instanceof EnemySpawner) {
+			if (e instanceof Spawner) {
 				removeEntity(e);
-				this.spawners.add((EnemySpawner) e);
+				this.spawners.add((Spawner) e);
 			}
 		}
 	}
@@ -697,8 +709,8 @@ public class GameWorld extends World implements LightWorld {
 	}
 
 	public void reloadEnemies() {
-		for(EnemySpawner s : spawners) {
-			s.makeEnemy();
+		for(Spawner s : spawners) {
+			s.produce();
 		}
 	}
 }

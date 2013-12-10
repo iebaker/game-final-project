@@ -1,6 +1,6 @@
 package game.entities;
 
-import game.entities.spawners.EnemySpawner;
+import game.entities.spawners.Spawner;
 import cs195n.Vec2f;
 
 /**
@@ -15,7 +15,7 @@ public class ArmadilloOfDarkness extends ShadowEnemy {
 	private static final long	serialVersionUID	= 562708050413509584L;
 	private Vec2f				goalVelocity		= new Vec2f(0, 0);
 	
-	public ArmadilloOfDarkness(EnemySpawner source) {
+	public ArmadilloOfDarkness(Spawner source) {
 		super(50, new float[] { 0.2f, 1f }, source);
 	}
 	

@@ -1,6 +1,6 @@
 package game.entities;
 
-import game.entities.spawners.EnemySpawner;
+import game.entities.spawners.Spawner;
 import cs195n.Vec2f;
 
 
@@ -10,7 +10,7 @@ public class DuskBat extends ShadowEnemy {
 	private float				goalXVelocity		= 0;
 	private float goalYVelocity = 0;
 
-	public DuskBat(EnemySpawner source) {
+	public DuskBat(Spawner source) {
 		super(25, new float[] {0.2f, 1f}, source);
 		gravityImmune = true;
 	}

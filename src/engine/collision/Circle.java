@@ -193,4 +193,14 @@ public class Circle extends Shape implements CollisionShape {
 		return "Circle<center:" + center + ", radius:" + radius + " OR min:" + center.minus(radius, radius) + " max: "
 				+ center.plus(radius, radius) + ">";
 	}
+
+	@Override
+	public Color getColor() {
+		return this.c;
+	}
+
+	@Override
+	public void setColor(Color c) {
+		this.c = c;
+	}
 }

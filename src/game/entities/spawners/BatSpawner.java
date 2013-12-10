@@ -7,7 +7,7 @@ public class BatSpawner extends EnemySpawner {
 	private static final long serialVersionUID = 2168718817034464840L;
 
 	@Override
-	public void makeEnemy() {
+	public void produce() {
 		if(!active) {
 			toSpawn = new DuskBat(this);
 			toSpawn.setProperties(properties, world);
