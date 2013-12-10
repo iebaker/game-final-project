@@ -19,6 +19,7 @@ import cs195n.Vec2f;
 import engine.connections.Connection;
 import engine.connections.Input;
 import engine.connections.Output;
+import engine.collision.QuadTree;
 import engine.entity.Entity;
 import engine.entity.PassableEntity;
 import engine.sound.Sound;
@@ -44,6 +45,7 @@ public abstract class World implements Serializable {
 	protected TextBox						textBox;
 	public transient Viewport				v;
 	protected boolean						stopped;
+	protected QuadTree						entity_tree;
 	
 	/**
 	 * Constructor, taking an end dimension (start dimension is always (0,0))
@@ -52,6 +54,7 @@ public abstract class World implements Serializable {
 	 */
 	public World(Vec2f dim, TextBox tb, Map<String, Entity> defaults) {
 		this.dim = dim;
+		entity_tree = new QuadTree(new Vec2f(0,0), dim);
 		entityMap.put("textBox", tb);
 		for (Map.Entry<String, Entity> item : defaults.entrySet()) {
 			entityMap.put(item.getKey(), item.getValue());
@@ -275,6 +278,15 @@ public abstract class World implements Serializable {
 			}
 			for (Entity e : passList) {
 				e.onTick(secs);
+			}
+
+			//Bin everything in the quadtree
+			for(Entity e : entityStack) {
+				entity_tree.insert(e);
+			}
+
+			for(Entity e : passList) {
+				entity_tree.insert(e);
 			}
 		}
 	}
