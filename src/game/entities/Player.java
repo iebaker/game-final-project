@@ -29,6 +29,7 @@ public class Player extends Entity {
 	private final float			lightTime			= 1;
 	private int					crystals			= 5;
 	private boolean				highJumpUnlocked;
+	private GameWorld gw;
 	
 	public Player() {
 		super();
@@ -64,6 +65,9 @@ public class Player extends Entity {
 	 * Applies the goal velocity force until it reaches actual velocity
 	 */
 	public void onTick(float t) {
+		if(gw == null) {
+			gw = ((GameWorld) world);
+		}
 		if(world.getPlayer() == null) world.setPlayer(this);
 		if(moveLeft && !moveRight) {
 			goalVelocity = new Vec2f(-800, 0);
@@ -87,18 +91,21 @@ public class Player extends Entity {
 			lightCountdown = lightTime;
 			hp -= 1;
 			if(hp <= 0) {
-				((GameWorld) world).die();
+				gw.die();
 			}
 		}
-		if((((GameWorld) world).getStartCrystal() != null)
-				&& ((GameWorld) world).getStartCrystal().shape.getCenter().minus(shape.getCenter()).mag2() <= 80000) {
+		if((gw.getStartCrystal() != null)
+				&& gw.getStartCrystal().shape.getCenter().minus(shape.getCenter()).mag2() <= 80000) {
 			if(heal(10) == 10 && !MuteHolder.muted) {
 				Sound heal = null;
 				if(SoundHolder.soundTable != null) heal = SoundHolder.soundTable.get("heal");
 				if(heal != null) heal.play();
 			}
 			world.save();
-			((GameWorld) world).reloadEnemies();
+			gw.reloadEnemies();
+			if(!gw.hasShopped() && crystals >= 5) {
+				gw.explainShopping();
+			}
 		}
 		
 		if(!world.checkGameBounds(shape.getLocation()))
@@ -247,7 +254,7 @@ public class Player extends Entity {
 	
 	@Override
 	public void die() {
-		((GameWorld) world).die();
+		gw.die();
 	}
 	
 	@Override

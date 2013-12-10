@@ -9,6 +9,7 @@ import cs195n.Vec2f;
 import cs195n.Vec2i;
 import engine.Application;
 import engine.Screen;
+import engine.ui.TextBox;
 import engine.ui.UIButton;
 import engine.ui.UIRect;
 import engine.ui.UIText;
@@ -23,6 +24,7 @@ public class ShopScreen extends Screen {
 	private final UIButton		backButton;
 	private final ShopButton[]	buttons;
 	private Player				player;
+	private TextBox textBox;
 	
 	public ShopScreen(Application a) {
 		super(a);
@@ -62,6 +64,9 @@ public class ShopScreen extends Screen {
 			btn.drawShape(g);
 		}
 		crystalText.drawShape(g);
+		if(textBox != null) {
+			textBox.onDraw(g);
+		}
 	}
 	
 	@Override

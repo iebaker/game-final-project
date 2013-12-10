@@ -9,6 +9,7 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cs195n.Vec2f;
 import engine.Saver;
@@ -95,7 +96,7 @@ public class GameWorld extends World implements LightWorld {
 	private final ArrayList<Spawner>						spawners			= new ArrayList<Spawner>();
 	private boolean											paused;
 	private boolean firstBlood = false;
-	//private boolean firstShop = false;
+	private boolean firstShop = false;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -149,11 +150,27 @@ public class GameWorld extends World implements LightWorld {
 					} else {
 						((Player) b).damage(((EnemyEntity) a).getDamage());
 					}
+					if(!firstBlood) {
+						Map<String, String> textMap = new HashMap<String, String>();
+						textMap.put("text1", "With a snarl, the enemy is upon you, feeding on your light.");
+						textMap.put("text2", "You manage to break free, but you should probably run away.");
+						textMap.put("text3", "If only you had some way to defend yourself...");
+						this.textBox.displayText(textMap);
+						firstBlood = true;
+					}
 				} else if (b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
 					if (((EnemyEntity) b).drains()) {
 						b.heal(((Player) a).damage(((EnemyEntity) b).getDamage()));
 					} else {
 						((Player) a).damage(((EnemyEntity) b).getDamage());
+					}
+					if(!firstBlood) {
+						Map<String, String> textMap = new HashMap<String, String>();
+						textMap.put("text1", "With a snarl, the enemy is upon you, feeding on your light.");
+						textMap.put("text2", "You manage to break free, but you should probably run away.");
+						textMap.put("text3", "If only you had some way to defend yourself...");
+						this.textBox.displayText(textMap);
+						firstBlood = true;
 					}
 				}
 				
@@ -687,7 +704,7 @@ public class GameWorld extends World implements LightWorld {
 	public void save() {
 		if (saveCooldown <= 0) {
 			Saver.saveGame(GameWorld.saveFile, this);
-			saveCooldown = 5;
+			saveCooldown = 10;
 		}
 	}
 	
@@ -708,5 +725,17 @@ public class GameWorld extends World implements LightWorld {
 		for (Spawner s : spawners) {
 			s.produce();
 		}
+	}
+	
+	public boolean hasShopped() {
+		return firstShop;
+	}
+	
+	public void explainShopping() {
+		Map<String, String> toDisplay = new HashMap<String, String>();
+		toDisplay.put("text1", "Welcome to the shop! You can purchase upgrades here using crystals.");
+		toDisplay.put("text2", "Why don't you use your starting five to buy something now?");
+		textBox.displayText(toDisplay);
+		firstShop = true;
 	}
 }

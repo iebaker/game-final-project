@@ -1,11 +1,11 @@
 package engine.ui;
 
+import java.awt.Graphics2D;
 import java.util.Map;
 
 import engine.World;
 import engine.connections.Input;
 import engine.entity.Entity;
-import java.awt.Graphics2D;
 
 /**
  * Class representing a text box that appears during cutscenes
@@ -125,5 +125,9 @@ public class TextBox extends Entity {
 	public void draw(Graphics2D g) {
 		rect.drawAndFillShape(g);
 		text.drawShape(g);
+	}
+	
+	public void displayText(Map<String, String> args) {
+		this.inputs.get("displayText").run(args);
 	}
 }
