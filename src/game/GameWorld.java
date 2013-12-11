@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import cs195n.Vec2f;
+import engine.Application;
 import engine.Saver;
 import engine.Vec2fPair;
 import engine.Viewport;
-import engine.Application;
 import engine.World;
 import engine.collision.AAB;
 import engine.collision.Circle;
@@ -70,7 +70,7 @@ public class GameWorld extends World implements LightWorld {
 	public static final Color								DUSKY_VIOLET		= new Color(126, 126, 191);
 	public static final Color								DARK_LAVENDER		= new Color(45, 30, 50);
 	private static final float								TICK_LENGTH			= 0.005f;
-	public static final String								LEVEL_NAME			= "lib/Level1.nlf";
+	public static final String								LEVEL_NAME			= "lib/NewLevel.nlf";
 	private final HashMap<String, Class<? extends Entity>>	classes;
 	private boolean											cutsceneActive;
 	private float											gravity;
