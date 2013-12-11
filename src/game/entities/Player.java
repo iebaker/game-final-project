@@ -123,6 +123,9 @@ public class Player extends Entity {
 	 * @return ability to jump currently
 	 */
 	public boolean canJump() {
+		System.out.println(jumpUnlocked);
+		System.out.println(contactDelay);
+		System.out.println(lastMTV);
 		if(!jumpUnlocked || contactDelay <= 0 || lastMTV == null || lastMTV.y >= 0) {
 			return false;
 		}

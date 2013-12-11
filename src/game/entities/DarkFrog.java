@@ -14,7 +14,7 @@ public class DarkFrog extends ShadowEnemy {
 	private float jumpCount = 5;
 	
 	public DarkFrog(Spawner source) {
-		super(100, new float[] { 0.2f, 1f }, source);
+		super(60, new float[] { 0.2f, 1f }, source);
 		drains = true;
 	}
 	
@@ -30,6 +30,7 @@ public class DarkFrog extends ShadowEnemy {
 				jumpCount = 5;
 			}
 		}
+		lastMTV = null;
 		super.onTick(t);
 	}
 	

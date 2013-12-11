@@ -22,15 +22,15 @@ public class DuskBat extends ShadowEnemy {
 			if (absDist <= 300000) {
 				float xDist = ((Player) world.getPlayer()).getCenterPosition().x - shape.getCenter().x;
 				if (xDist > 0) {
-					goalXVelocity = 400;
+					goalXVelocity = 300;
 				} else {
-					goalXVelocity = -400;
+					goalXVelocity = -300;
 				}
 				float yDist = ((Player) world.getPlayer()).getCenterPosition().y - shape.getCenter().y;
 				if (yDist > 0) {
-					goalYVelocity = 400;
+					goalYVelocity = 300;
 				} else {
-					goalYVelocity = -400;
+					goalYVelocity = -300;
 				}
 			}
 			

@@ -356,7 +356,6 @@ public abstract class Entity implements Serializable {
 	 *            Nanoseconds since last tick
 	 */
 	public void onTick(float t) {
-		lastMTV = null;
 		if (damageCooldown > 0) {
 			damageCooldown -= t;
 		}
