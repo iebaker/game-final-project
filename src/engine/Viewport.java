@@ -184,7 +184,6 @@ public class Viewport {
 		// Set clip, draw, and unclip
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
 		game.resetOffset();
-		// gameworld.getLightingEngineForTesting().rayDebug(gameworld, g);
 		gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
 		game.onDraw(g);
 		
@@ -195,6 +194,8 @@ public class Viewport {
 			g.draw(bounds);
 		}
 	}
+
+
 	
 	/**
 	 * Changes port coord and boolean for resize view

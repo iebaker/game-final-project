@@ -15,6 +15,7 @@ import cs195n.Vec2f;
 import engine.Saver;
 import engine.Vec2fPair;
 import engine.Viewport;
+import engine.Application;
 import engine.World;
 import engine.collision.AAB;
 import engine.collision.Circle;
@@ -69,7 +70,7 @@ public class GameWorld extends World implements LightWorld {
 	public static final Color								DUSKY_VIOLET		= new Color(126, 126, 191);
 	public static final Color								DARK_LAVENDER		= new Color(45, 30, 50);
 	private static final float								TICK_LENGTH			= 0.005f;
-	public static final String								LEVEL_NAME			= "lib/NewLevel.nlf";
+	public static final String								LEVEL_NAME			= "lib/Level1.nlf";
 	private final HashMap<String, Class<? extends Entity>>	classes;
 	private boolean											cutsceneActive;
 	private float											gravity;
@@ -404,7 +405,38 @@ public class GameWorld extends World implements LightWorld {
 			}
 		}
 		
+		// for(int i = 0; i < pointPairs.size(); ++i) {
+		// 	Vec2fPair pair = pointPairs.get(i);
+		// 	if(!onScreen(pair.getP1()) && !onScreen(pair.getP2())) {
+		// 		pointPairs.remove(i);
+		// 	}
+		// }
+
+		// Vec2f size = Application.getCurrentSize();
+
+		// Vec2f p1 = Viewport.screenPtToGame(new Vec2f(0,0));
+		// Vec2f p2 = Viewport.screenPtToGame(new Vec2f(0, size.y));
+		// Vec2f p3 = Viewport.screenPtToGame(new Vec2f(size.x, size.y));
+		// Vec2f p4 = Viewport.screenPtToGame(new Vec2f(size.x, 0));
+
+		// points.add(p1);
+		// points.add(p2);
+		// points.add(p3);
+		// points.add(p4);
+
+		// pointPairs.add(new Vec2fPair(p1, p2));
+		// pointPairs.add(new Vec2fPair(p2, p3));
+		// pointPairs.add(new Vec2fPair(p3, p4));
+		// pointPairs.add(new Vec2fPair(p4, p1));
+
 		return pointPairs;
+	}
+
+	public boolean onScreen(Vec2f p) {
+		Vec2f size = Application.getCurrentSize();
+		Vec2f convPt = Viewport.gamePtToScreen(p);
+
+		return convPt.x >= 0 && convPt.x <= size.x && convPt.y >= 0 && convPt.y <= size.y;
 	}
 	
 	@Override

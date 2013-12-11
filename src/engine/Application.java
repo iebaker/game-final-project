@@ -10,6 +10,7 @@ import java.util.List;
 
 import cs195n.SwingFrontEnd;
 import cs195n.Vec2i;
+import cs195n.Vec2f;
 
 /**
  * High level class to control game engine flow and usage
@@ -20,7 +21,7 @@ import cs195n.Vec2i;
 public class Application extends SwingFrontEnd {
 	
 	private final List<Screen>	screenStack	= new ArrayList<Screen>();
-	private Vec2i				currentScreenSize;
+	private static Vec2i		currentScreenSize;
 	
 	/**
 	 * Supports creation of an Application with a title for the top of the window and a "starts in fullscreen" variable
@@ -50,6 +51,10 @@ public class Application extends SwingFrontEnd {
 	public void popScreen() {
 		screenStack.remove(screenStack.size() - 1);
 		if (getCurrentScreenSize() != null) screenStack.get(screenStack.size() - 1).onResize(getCurrentScreenSize());
+	}
+
+	public static Vec2f getCurrentSize() {
+		return new Vec2f(currentScreenSize);
 	}
 	
 	/**

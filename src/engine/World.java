@@ -281,12 +281,12 @@ public abstract class World implements Serializable {
 				e.onTick(secs);
 			}
 
-			//Bin everything in the quadtree
+			// Bin everything in the quadtree
+
 			entity_tree.clear();
 			for(Entity e : entityStack) {
 				entity_tree.insert(e);
 			}
-
 		}
 	}
 	

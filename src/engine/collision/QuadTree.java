@@ -9,8 +9,8 @@ import engine.entity.Entity;
 
 public class QuadTree {
 
-	private int CAPACITY = 10;
-	private int DEPTH = 5;
+	private int CAPACITY = 8;
+	private int DEPTH = 15;
 	private int my_depth;
 	private List<Entity> my_entities = new ArrayList<Entity>();
 	private Vec2f my_min_pt;

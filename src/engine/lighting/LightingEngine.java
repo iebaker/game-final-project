@@ -459,6 +459,7 @@ public class LightingEngine {
 	 *            A Graphics2D object to be used for drawing
 	 */
 	public void coneDebug(LightWorld world, Graphics2D g) {
+		//long initial = System.nanoTime();
 		Segment.clear();
 		Artist a = new Artist();
 		if (world.getLightSources().isEmpty()) return;
@@ -466,6 +467,7 @@ public class LightingEngine {
 		
 		setup(source, world);
 		sweep(source);
+
 		
 		a.setStroke(false);
 		float centerx = Viewport.gamePtToScreen(source.getLocation()).x;
@@ -478,9 +480,11 @@ public class LightingEngine {
 			RadialGradientPaint rgp = new RadialGradientPaint(centerx, centery, radius, fractions, colors);
 			
 			a.setFillPaint(rgp);
-		} else
+		} else {
 			a.setFillPaint(Color.black);
+		}
 		a.path(g, pointConvert(source.getPoly()));
+		//System.out.println(System.nanoTime() - initial);
 	}
 	
 	/**
