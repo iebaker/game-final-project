@@ -3,7 +3,7 @@
 	<property name="build.dir" value="bin" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="jar.dir" value="." />
-	<property name="main.class" value="game/M" />
+	<property name="main.class" value="game/Umbra" />
 	<property name="lib.dir" value="lib" />
 
 	<path id="classpath">

@@ -181,8 +181,8 @@ public class Viewport {
 		float h = portEndCoord.y - Viewport.portCoord.y;
 		Rectangle2D bounds = new Rectangle2D.Float(x, y, w, h);
 		game.resetOffset();
-		gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
+		gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
 		game.onDraw(g);
 		g.setClip(null);
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
