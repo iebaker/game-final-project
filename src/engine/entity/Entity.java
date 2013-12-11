@@ -383,6 +383,7 @@ public abstract class Entity implements Serializable {
 			outputs.get("onTick").run();
 		}
 		
+		if (currentSounds == null) currentSounds = new ArrayList<Sound>();
 		if (!currentSounds.isEmpty() && world.getPlayer() != null) {
 			for (int i = currentSounds.size() - 1; i >= 0; i--) {
 				Sound s = currentSounds.get(i);
