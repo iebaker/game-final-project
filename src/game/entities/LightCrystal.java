@@ -52,7 +52,7 @@ public class LightCrystal extends Entity implements Consumable {
 			Sound pickup = null;
 			if(SoundHolder.soundTable != null) pickup = SoundHolder.soundTable.get("pickup");
 			if(pickup != null) {
-				pickup.duplicate().play();
+				pickup.play();
 			}
 		}
 		world.removeEntity(this);
