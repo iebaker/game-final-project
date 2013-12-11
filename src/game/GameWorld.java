@@ -142,6 +142,7 @@ public class GameWorld extends World implements LightWorld {
 	public void checkCollisions() {
 		for (int i = 0; i < entityStack.size(); i++) {
 			Entity a = entityStack.get(i);
+			if(a instanceof StaticEntity) continue;
 			//System.out.println(entity_tree.getPotentialCollisions(a).size());
 			for (Entity b : entity_tree.getPotentialCollisions(a)) {
 				if(a == b) continue;

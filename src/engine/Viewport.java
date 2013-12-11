@@ -184,7 +184,7 @@ public class Viewport {
 		// Set clip, draw, and unclip
 		g.clipRect((int) x, (int) y, (int) w, (int) h);
 		game.resetOffset();
-		gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
+		//gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
 		game.onDraw(g);
 		
 		// Draw a box to show the viewport
