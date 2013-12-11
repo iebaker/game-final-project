@@ -102,6 +102,8 @@ public class GameWorld extends World implements LightWorld {
 	private boolean firstLight = false;
 	private boolean jumpPurchased = false;
 	private boolean shouldEnterShop = false;
+	private boolean encounteredDarkCrystal = false;
+	private boolean encounteredCrystal = false;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -185,16 +187,20 @@ public class GameWorld extends World implements LightWorld {
 				if (a instanceof Consumable && b instanceof Player && a.collideWithEntity(b)) {
 					((Consumable) a).destroy();
 					if (a instanceof DarkenedCrystal) {
+						if(!encounteredDarkCrystal) encounterDarkCrystal();
 						((Player) b).flatHeal(5);
 					} else {
 						((Player) b).addCrystal();
+						if(!encounteredCrystal) encounterCrystal();
 					}
 				} else if (b instanceof Consumable && a instanceof Player && b.collideWithEntity(a)) {
 					((Consumable) b).destroy();
 					if (b instanceof DarkenedCrystal) {
+						if(!encounteredDarkCrystal) encounterDarkCrystal();
 						((Player) a).flatHeal(5);
 					} else {
 						((Player) a).addCrystal();
+						if(!encounteredCrystal) encounterCrystal();
 					}
 				}
 				
@@ -220,7 +226,7 @@ public class GameWorld extends World implements LightWorld {
 		}
 		
 	}
-	
+
 	@Override
 	/**
 	 * Enters cutscene mode
@@ -620,7 +626,12 @@ public class GameWorld extends World implements LightWorld {
 			toDisplay.put("text5", "...");
 			toDisplay.put("text6", "...   ...");
 			toDisplay.put("text7", "...   ...   ...");
-			toDisplay.put("text8", "Use the arrow keys to move.");
+			toDisplay.put("text8", "But wait! What is this I see ahead of me?");
+			toDisplay.put("text9", "Could it be? Is it...");
+			toDisplay.put("text10", "finally...");
+			toDisplay.put("text11", "...light?");
+			toDisplay.put("text12", "...");
+			toDisplay.put("text13", "Use the arrow keys to move.");
 			textBox.displayText(toDisplay);
 			introPlayed = true;
 		}
@@ -789,8 +800,8 @@ public class GameWorld extends World implements LightWorld {
 	
 	public void explainShopping() {
 		Map<String, String> toDisplay = new HashMap<String, String>();
-		toDisplay.put("text1", "Welcome to the shop! You can purchase upgrades here using crystals.");
-		toDisplay.put("text2", "Why don't you use your starting five to buy something now?");
+		toDisplay.put("text1", "Welcome to the shop! You can spend your crystals here.");
+		toDisplay.put("text2", "You should increase your jump height right now!");
 		textBox.displayText(toDisplay);
 		firstShop = true;
 	}
@@ -818,7 +829,39 @@ public class GameWorld extends World implements LightWorld {
 	}
 
 	public boolean shouldEnterShop() {
-		return shouldEnterShop;
+		return shouldEnterShop && !cutsceneActive;
+	}
+	
+	public void enterShop() {
+		shouldEnterShop = true;
+	}
+	
+	public void shopEntered() {
+		shouldEnterShop = false;
+	}
+	
+	public void encounterDarkCrystal() {
+		encounteredDarkCrystal = true;
+		Map<String, String> toDisplay = new HashMap<String, String>();
+		toDisplay.put("text1", "This crystal is dim, so you can't spend it in the shop.");
+		toDisplay.put("text2", "It still gives you light, though!");
+		textBox.displayText(toDisplay);
+	}
+	
+	public boolean hasEncounteredDarkCrystal() {
+		return encounteredDarkCrystal;
+	}
+	
+	public void encounterCrystal() {
+		encounteredCrystal = true;
+		Map<String, String> toDisplay = new HashMap<String, String>();
+		toDisplay.put("text1", "You feel a rush as the crystal's light is added to your own.");
+		toDisplay.put("text2", "These seem like they might come in handy at some point.");
+		textBox.displayText(toDisplay);
+	}
+	
+	public boolean hasEncounteredCrystal() {
+		return encounteredCrystal;
 	}
 
 }

@@ -182,6 +182,7 @@ public class Viewport {
 		Rectangle2D bounds = new Rectangle2D.Float(x, y, w, h);
 		game.resetOffset();
 		gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
+		g.clipRect((int) x, (int) y, (int) w, (int) h);
 		game.onDraw(g);
 		g.setClip(null);
 		g.clipRect((int) x, (int) y, (int) w, (int) h);

@@ -30,6 +30,7 @@ public class Player extends Entity {
 	private int					crystals			= 0;
 	private boolean				highJumpUnlocked = false;
 	private GameWorld gw;
+	private boolean inLight = false;
 	
 	public Player() {
 		super();
@@ -109,7 +110,10 @@ public class Player extends Entity {
 			if(!gw.hasShopped() && crystals >= 5) {
 				gw.explainShopping();
 			}
+			if(!inLight && gw.hasShopped()) gw.enterShop();
+			inLight = true;
 		}
+		else inLight = false;
 		
 		if(!world.checkGameBounds(shape.getLocation()))
 			world.setLose("You fell (or jumped) out of the world!");
@@ -123,9 +127,6 @@ public class Player extends Entity {
 	 * @return ability to jump currently
 	 */
 	public boolean canJump() {
-		System.out.println(jumpUnlocked);
-		System.out.println(contactDelay);
-		System.out.println(lastMTV);
 		if(!jumpUnlocked || contactDelay <= 0 || lastMTV == null || lastMTV.y >= 0) {
 			return false;
 		}

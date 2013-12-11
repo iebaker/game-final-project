@@ -19,7 +19,6 @@ public class WorldTrigger extends Entity {
 
 			@Override
 			public void run(Map<String, String> args) {
-				System.out.println("triggered");
 				WorldTrigger.this.w.unlockJump();
 			}
 		});

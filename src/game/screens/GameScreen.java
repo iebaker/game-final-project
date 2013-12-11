@@ -130,6 +130,12 @@ public class GameScreen extends Screen {
 	 */
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
+		if(game.shouldEnterShop()) {
+			ShopScreen shop = new ShopScreen(a);
+			shop.setWorld(game);
+			a.pushScreen(shop);
+			game.shopEntered();
+		}
 		float secs = (float) (nanosSincePreviousTick / 1000000000.0);
 		if (fadeCount > 0) {
 			fadeCount -= secs * 100;
@@ -236,11 +242,6 @@ public class GameScreen extends Screen {
 				textBox = game.getTextBox();
 			}
 			// }
-			break;
-		case (KeyEvent.VK_5): // 5, load upgrades
-			ShopScreen shop = new ShopScreen(a);
-			shop.setWorld(game);
-			a.pushScreen(shop);
 			break;
 		case (KeyEvent.VK_M):
 			if (!MuteHolder.muted) {

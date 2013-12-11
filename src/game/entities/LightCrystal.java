@@ -26,7 +26,6 @@ public class LightCrystal extends Entity implements Consumable {
 	
 	@Override
 	public void onDraw(java.awt.Graphics2D g) {
-		if(!counted) { System.out.println(crystals); counted = true; }
 		Artist a = new Artist();
 		a.setStroke(false);
 		
