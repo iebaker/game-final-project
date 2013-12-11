@@ -15,12 +15,12 @@ import engine.entity.Entity;
 public class TextBox extends Entity {
 
 	private static final long serialVersionUID = 8391136443225937238L;
-	//private boolean active = false;
 	private UIRoundRect rect;
 	private UIText text;
 	private Map<String, String> currArgs;
 	private int argCount = 1;
 	private boolean visible = false;
+	private float delay = 0;
 
 	/**
 	 * Constructor. Creates the Input that allows the TextBox to be used
@@ -40,8 +40,16 @@ public class TextBox extends Entity {
 				text.updateText(args.get("text1"));
 				argCount = 2;
 				TextBox.super.world.enterCutscene();
+				delay = 1;
 			}
 		});
+	}
+	
+	@Override
+	public void onTick(float time) {
+		if(delay > 0) {
+			delay -= time;
+		}
 	}
 	
 	/**
@@ -96,8 +104,11 @@ public class TextBox extends Entity {
 	 * displays the next line of text
 	 */
 	public void displayNext() {
-		text.updateText(currArgs.get("text" + argCount));
-		argCount++;
+		if(delay <= 0) {
+			text.updateText(currArgs.get("text" + argCount));
+			argCount++;
+			delay = 0.25f;
+		}
 	}
 	
 	/**

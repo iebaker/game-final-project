@@ -131,6 +131,7 @@ public class Artist {
 				path.lineTo(point.x, point.y);
 		}
 		path.closePath();
+		g.clip(path);
 		shape(g, path);
 	}
 	

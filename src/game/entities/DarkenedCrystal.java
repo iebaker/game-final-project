@@ -46,7 +46,7 @@ public class DarkenedCrystal extends Entity implements Consumable {
 	@Override
 	public void setProperties(EntityData ed, World w) {
 		super.setProperties(ed, w);
-		this.c = c.darker();
+		this.c = new Color(180,180,220);
 	}
 	
 	@Override

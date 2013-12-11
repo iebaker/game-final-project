@@ -15,14 +15,18 @@ public class LightCrystal extends Entity implements Consumable {
 	
 	private static final long	serialVersionUID	= -324958466738745396L;
 	protected Spawner			source;
+	public static int crystals = 0;
+	public static boolean counted = false;
 	
 	public LightCrystal(Spawner source) {
 		stopsLight = false;
 		this.source = source;
+		crystals++;
 	}
 	
 	@Override
 	public void onDraw(java.awt.Graphics2D g) {
+		if(!counted) { System.out.println(crystals); counted = true; }
 		Artist a = new Artist();
 		a.setStroke(false);
 		

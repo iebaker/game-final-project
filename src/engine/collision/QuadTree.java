@@ -1,6 +1,8 @@
 package engine.collision;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import cs195n.Vec2f;
@@ -112,12 +114,12 @@ public class QuadTree {
 		return overlapX && overlapY;
 	}
 
-	public List<Entity> getPotentialCollisions(Entity e) {
+	public Collection<Entity> getPotentialCollisions(Entity e) {
 		//System.out.println("In getpotentialcollisions!");
 		if(is_leaf) {
 			return my_entities;
 		} else {
-			List<Entity> ret_val = new ArrayList<Entity>();
+			Collection<Entity> ret_val = new HashSet<Entity>();
 			for(Integer i : indicesOf(e)) {
 				ret_val.addAll(my_children[i].getPotentialCollisions(e));
 			}

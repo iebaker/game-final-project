@@ -180,12 +180,11 @@ public class Viewport {
 		float w = portEndCoord.x - Viewport.portCoord.x;
 		float h = portEndCoord.y - Viewport.portCoord.y;
 		Rectangle2D bounds = new Rectangle2D.Float(x, y, w, h);
-		
-		// Set clip, draw, and unclip
-		g.clipRect((int) x, (int) y, (int) w, (int) h);
 		game.resetOffset();
-		//gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
+		gameworld.getLightingEngineForTesting().coneDebug(gameworld, g);
 		game.onDraw(g);
+		g.setClip(null);
+		g.clipRect((int) x, (int) y, (int) w, (int) h);
 		
 		// Draw a box to show the viewport
 		g.setColor(c);

@@ -33,10 +33,10 @@ public class ShopScreen extends Screen {
 				Color.white, null, new BasicStroke(0f));
 		buttons = new ShopButton[6];
 		buttons[0] = new ShopButton("Jump", 5);
-		buttons[1] = new ShopButton("Aura", 30);
-		buttons[2] = new ShopButton("Light Loss", 50);
-		buttons[3] = new ShopButton("Laser", 100);
-		buttons[4] = new ShopButton("Damage", 30);
+		buttons[1] = new ShopButton("Aura", 10);
+		buttons[2] = new ShopButton("Light Loss", 10);
+		buttons[3] = new ShopButton("Laser", 30);
+		buttons[4] = new ShopButton("Armor", 20);
 		buttons[5] = new ShopButton("???", 999);
 		title = new UIText("Upgrades", Color.white, Vec2f.ZERO, 1);
 		crystalText = new UIText("Crystals: 0", Color.white, Vec2f.ZERO, 1);

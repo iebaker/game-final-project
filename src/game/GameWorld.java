@@ -98,6 +98,8 @@ public class GameWorld extends World implements LightWorld {
 	private boolean											paused;
 	private boolean firstBlood = false;
 	private boolean firstShop = false;
+	private boolean introPlayed = false;
+	private boolean firstLight = false;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -142,7 +144,7 @@ public class GameWorld extends World implements LightWorld {
 	public void checkCollisions() {
 		for (int i = 0; i < entityStack.size(); i++) {
 			Entity a = entityStack.get(i);
-			if(a instanceof StaticEntity) continue;
+			if(a instanceof StaticEntity || a instanceof Consumable) continue;
 			//System.out.println(entity_tree.getPotentialCollisions(a).size());
 			for (Entity b : entity_tree.getPotentialCollisions(a)) {
 				if(a == b) continue;
@@ -232,7 +234,7 @@ public class GameWorld extends World implements LightWorld {
 	 *            the destination of the ray
 	 */
 	private void fireBullet(Vec2f dest) {
-		if (player.laserUnlocked() && !paused && !cutsceneActive && player != null) {
+		if (!cutsceneActive && player != null && player.laserUnlocked() && !paused) {
 			Vec2f src = player.shape.getCenter();
 			Ray ray = new Ray(src, dest);
 			Entity affected = null;
@@ -535,6 +537,7 @@ public class GameWorld extends World implements LightWorld {
 		}
 		
 		super.onDraw(g); // draws all entities
+		
 		tooltip.onDraw(g);
 	}
 	
@@ -605,6 +608,20 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	@Override
 	public void onTick(float secs) {
+		textBox.onTick(secs);
+		if(!introPlayed) {
+			Map<String, String> toDisplay = new HashMap<String, String>();
+			toDisplay.put("text1", "I remember when the world used to be full of light.");
+			toDisplay.put("text2", "I had a home. A family. A whole community.");
+			toDisplay.put("text3", "But then suddenly, without warning, everything fell apart.");
+			toDisplay.put("text4", "Now, only darkness surrounds me.");
+			toDisplay.put("text5", "...");
+			toDisplay.put("text6", "...   ...");
+			toDisplay.put("text7", "...   ...   ...");
+			toDisplay.put("text8", "Use the arrow keys to move.");
+			textBox.displayText(toDisplay);
+			introPlayed = true;
+		}
 		if (!stopped) {
 			// Calculates standard tick - how many + leftover time to counter for later
 			double timeSteps = (secs / GameWorld.TICK_LENGTH) + leftoverTime;
@@ -624,7 +641,7 @@ public class GameWorld extends World implements LightWorld {
 					level.onTick(GameWorld.TICK_LENGTH);
 				}
 			}
-			if (!transferredEntities) {
+			if (!transferredEntities && !cutsceneActive) {
 				transferredEntities = true;
 				moveEntitiesToPassable();
 				moveEntitesToSpawners();
@@ -774,5 +791,19 @@ public class GameWorld extends World implements LightWorld {
 		toDisplay.put("text2", "Why don't you use your starting five to buy something now?");
 		textBox.displayText(toDisplay);
 		firstShop = true;
+	}
+	
+	public boolean explainedLight() {
+		return this.firstLight;
+	}
+	
+	public void explainLight() {
+		Map<String, String> toDisplay = new HashMap<String, String>();
+		toDisplay.put("text1", "You submit yourself to the light.");
+		toDisplay.put("text2", "Congratulations! You have gained the abillity to jump.");
+		toDisplay.put("text3", "Press space to try it out.");
+		textBox.displayText(toDisplay);
+		player.unlockJump();
+		firstLight = true;
 	}
 }

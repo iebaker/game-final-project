@@ -21,14 +21,14 @@ public class Player extends Entity {
 	
 	private static final long	serialVersionUID	= 1654501146675497149L;
 	public Vec2f				goalVelocity;
-	private boolean				jumpUnlocked		= true;
-	private boolean				laserUnlocked		= true;
+	private boolean				jumpUnlocked		= false;
+	private boolean				laserUnlocked		= false;
 	private transient boolean	moveLeft			= false;
 	private transient boolean	moveRight			= false;
 	private float				lightCountdown		= 1;
 	private final float			lightTime			= 1;
-	private int					crystals			= 5;
-	private boolean				highJumpUnlocked;
+	private int					crystals			= 0;
+	private boolean				highJumpUnlocked = false;
 	private GameWorld gw;
 	
 	public Player() {
@@ -103,6 +103,9 @@ public class Player extends Entity {
 			}
 			world.save();
 			gw.reloadEnemies();
+			if(!gw.explainedLight()) {
+				gw.explainLight();
+			}
 			if(!gw.hasShopped() && crystals >= 5) {
 				gw.explainShopping();
 			}
@@ -120,7 +123,7 @@ public class Player extends Entity {
 	 * @return ability to jump currently
 	 */
 	public boolean canJump() {
-		if(!jumpUnlocked || contactDelay <= 0 || lastMTV.y >= 0) {
+		if(!jumpUnlocked || contactDelay <= 0 || lastMTV == null || lastMTV.y >= 0) {
 			return false;
 		}
 		return true;
