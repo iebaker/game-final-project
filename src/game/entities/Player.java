@@ -31,6 +31,7 @@ public class Player extends Entity {
 	private boolean				highJumpUnlocked = false;
 	private GameWorld gw;
 	private boolean inLight = false;
+	private int totalCrystals = 0;
 	
 	public Player() {
 		super();
@@ -112,6 +113,7 @@ public class Player extends Entity {
 			}
 			if(!inLight && gw.hasShopped()) gw.enterShop();
 			inLight = true;
+			//if(totalCrystals == 1) gw.win();
 		}
 		else inLight = false;
 		
@@ -232,6 +234,7 @@ public class Player extends Entity {
 	 */
 	public void addCrystal() {
 		crystals++;
+		totalCrystals++;
 		hp += 5;
 		if(hp > maxHP) {
 			hp = maxHP;
@@ -244,6 +247,10 @@ public class Player extends Entity {
 	 */
 	public int getCrystals() {
 		return crystals;
+	}
+	
+	public int getTotalCrystals() {
+		return totalCrystals;
 	}
 	
 	/**

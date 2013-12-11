@@ -1,5 +1,5 @@
 package game;
 
 public class MuteHolder {
-	public static boolean	muted	= true;
+	public static boolean	muted	= false;
 }

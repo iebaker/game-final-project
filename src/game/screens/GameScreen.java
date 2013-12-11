@@ -58,7 +58,9 @@ public class GameScreen extends Screen {
 	private TextBox					textBox;
 	private volatile MusicPlayer	music;
 	private float					fadeCount	= 0;
+	private float					endFadeCount	= 0;
 	private final UIRect			fadeRect;
+	private final UIRect			endFadeRect;
 	
 	/**
 	 * Constructor creates relevant items and places them based on ratios
@@ -119,6 +121,7 @@ public class GameScreen extends Screen {
 		crystalText = new UIText("Crystals: 0", Color.white, Vec2f.ZERO, 1);
 		
 		fadeRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 0, 0, 0), new BasicStroke(0f));
+		endFadeRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 0, 0, 0), new BasicStroke(0f));
 		
 		message = new UIText("Game starts in 3", Color.white, Vec2f.ZERO, 1);
 		fadeIn();
@@ -130,31 +133,43 @@ public class GameScreen extends Screen {
 	 */
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
-		if(game.shouldEnterShop()) {
-			ShopScreen shop = new ShopScreen(a);
-			shop.setWorld(game);
-			a.pushScreen(shop);
-			game.shopEntered();
-		}
 		float secs = (float) (nanosSincePreviousTick / 1000000000.0);
-		if (fadeCount > 0) {
-			fadeCount -= secs * 100;
-			if (fadeCount < 0) {
-				fadeCount = 0;
-			}
-			fadeRect.setColor(new Color(0, 0, 0, (int) fadeCount));
+//		if (endFadeCount > 0) {
+//			endFadeCount -= secs * 100;
+//			if (endFadeCount < 0) {
+//				endFadeCount = 0;
+//			}
+//			fadeRect.setColor(new Color(255, 255, 255, (int) 255 - endFadeCount));
+//		}
+		if(game.win) {
+			//this.endFade();
 		}
-		if (game != null) {
-			healthText.updateText("Light: " + (int) game.getHealth() + "/100");
-			Player p = (Player) game.getPlayer();
-			crystalText.updateText("Crystals: " + ((p == null) ? 0 : p.getCrystals()));
-			game.onTick(secs);
-			if (game.isOver()) {
-				GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
-				die();
-				if (temp != null) {
-					game = temp;
-					textBox = game.getTextBox();
+		else {
+			if(game.shouldEnterShop()) {
+				ShopScreen shop = new ShopScreen(a);
+				shop.setWorld(game);
+				a.pushScreen(shop);
+				game.shopEntered();
+			}
+			if (fadeCount > 0) {
+				fadeCount -= secs * 100;
+				if (fadeCount < 0) {
+					fadeCount = 0;
+				}
+				fadeRect.setColor(new Color(0, 0, 0, (int) fadeCount));
+			}
+			if (game != null) {
+				healthText.updateText("Light: " + (int) game.getHealth() + "/100");
+				Player p = (Player) game.getPlayer();
+				crystalText.updateText("Crystals: " + ((p == null) ? 0 : p.getCrystals()));
+				game.onTick(secs);
+				if (game.isOver()) {
+					GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
+					die();
+					if (temp != null) {
+						game = temp;
+						textBox = game.getTextBox();
+					}
 				}
 			}
 		}
@@ -175,6 +190,9 @@ public class GameScreen extends Screen {
 		if (fadeCount != 0) {
 			fadeRect.drawAndFillShape(g);
 		}
+		if (endFadeCount != 0) {
+			endFadeRect.drawAndFillShape(g);
+		}
 	}
 	
 	/**
@@ -189,6 +207,7 @@ public class GameScreen extends Screen {
 		float h = newSize.y;
 		bkgrd.updatePosition(new Vec2f(0, 0), new Vec2f(w, h));
 		fadeRect.updatePosition(new Vec2f(0, 0), new Vec2f(w, h));
+		endFadeRect.updatePosition(new Vec2f(0, 0), new Vec2f(w, h));
 		Vec2f portCoord = new Vec2f(0, 0);
 		Vec2f portEndCoord = new Vec2f(w, h);
 		view.resizeView(portCoord, portEndCoord);
@@ -353,6 +372,11 @@ public class GameScreen extends Screen {
 	private void fadeIn() {
 		fadeCount = 255;
 		fadeRect.setColor(new Color(0, 0, 0, 255));
+	}
+	
+	private void endFade() {
+		endFadeCount = 255;
+		endFadeRect.setColor(new Color(0, 0, 0, 255));
 	}
 	
 	private void die() {

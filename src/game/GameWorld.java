@@ -87,7 +87,6 @@ public class GameWorld extends World implements LightWorld {
 	private boolean											transferredEntities	= false;
 	private transient LightSource							lightSource;
 	public transient LightingEngine							lightEngine			= new LightingEngine();
-	private boolean											win;
 	private transient ArrayList<Sound>						allSounds			= new ArrayList<Sound>();
 	private StartCrystal									startCrystal;
 	private ArrayList<BackgroundLight>						bgLights			= new ArrayList<BackgroundLight>();
@@ -104,6 +103,7 @@ public class GameWorld extends World implements LightWorld {
 	private boolean shouldEnterShop = false;
 	private boolean encounteredDarkCrystal = false;
 	private boolean encounteredCrystal = false;
+	public boolean win = false;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -862,6 +862,10 @@ public class GameWorld extends World implements LightWorld {
 	
 	public boolean hasEncounteredCrystal() {
 		return encounteredCrystal;
+	}
+	
+	public void win() {
+		win = true;
 	}
 
 }
