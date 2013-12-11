@@ -100,6 +100,8 @@ public class GameWorld extends World implements LightWorld {
 	private boolean firstShop = false;
 	private boolean introPlayed = false;
 	private boolean firstLight = false;
+	private boolean jumpPurchased = false;
+	private boolean shouldEnterShop = false;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -309,7 +311,7 @@ public class GameWorld extends World implements LightWorld {
 	 */
 	public List<LightSource> getLightSources() {
 		List<LightSource> ret = new ArrayList<LightSource>();
-		if (player != null) {
+		if (player != null && firstLight) {
 			lightSource = new LightSource(player.shape.getCenter());
 			lightSource.setBrightness((player.getHP() + 7) / 107);
 			ret.add(lightSource);
@@ -806,4 +808,17 @@ public class GameWorld extends World implements LightWorld {
 		player.unlockJump();
 		firstLight = true;
 	}
+
+	public boolean jumpPurchased() {
+		return jumpPurchased;
+	}
+
+	public void purchaseJump() {
+		this.jumpPurchased = true;
+	}
+
+	public boolean shouldEnterShop() {
+		return shouldEnterShop;
+	}
+
 }
