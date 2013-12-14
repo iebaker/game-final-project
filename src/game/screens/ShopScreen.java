@@ -24,7 +24,7 @@ public class ShopScreen extends Screen {
 	private final UIButton		backButton;
 	private final ShopButton[]	buttons;
 	private Player				player;
-	private TextBox textBox;
+	private TextBox				textBox;
 	
 	public ShopScreen(Application a) {
 		super(a);
@@ -46,7 +46,7 @@ public class ShopScreen extends Screen {
 		// this.world = world;
 		player = (Player) world.getPlayer();
 		for (ShopButton btn : buttons) {
-			if (player.getCrystals() < btn.requiredCrystals()) btn.toggle();
+			if (player.getCrystals() < btn.requiredCrystals()) btn.disable(false);
 		}
 	}
 	
@@ -64,7 +64,7 @@ public class ShopScreen extends Screen {
 			btn.drawShape(g);
 		}
 		crystalText.drawShape(g);
-		if(textBox != null) {
+		if (textBox != null) {
 			textBox.onDraw(g);
 		}
 	}
@@ -106,7 +106,7 @@ public class ShopScreen extends Screen {
 			if (buttons[i].hitTarget(e)) {
 				if (i == 0 && !buttons[i].getPurchased() && player.spendCrystals(buttons[i].requiredCrystals())) {
 					player.unlockHighJump();
-					buttons[i].toggle();
+					buttons[i].disable(true);
 				}
 			}
 		}

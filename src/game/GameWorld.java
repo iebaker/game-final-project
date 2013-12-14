@@ -64,7 +64,7 @@ public class GameWorld extends World implements LightWorld {
 		GameWorld.defaults.put("world", GameWorld.wt);
 	}
 	
-	public static final String								saveFile			= System.getProperty("user.home")
+	public static final String								SAVEFILE			= System.getProperty("user.home")
 																						+ "/save.gme";
 	private static final long								serialVersionUID	= 6619354971290257104L;
 	public static final Color								DUSKY_VIOLET		= new Color(126, 126, 191);
@@ -770,7 +770,7 @@ public class GameWorld extends World implements LightWorld {
 	@Override
 	public void save() {
 		if (saveCooldown <= 0) {
-			Saver.saveGame(GameWorld.saveFile, this);
+			Saver.saveGame(GameWorld.SAVEFILE, this);
 			saveCooldown = 10;
 		}
 	}

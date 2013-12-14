@@ -28,10 +28,10 @@ public class Player extends Entity {
 	private float				lightCountdown		= 1;
 	private final float			lightTime			= 1;
 	private int					crystals			= 0;
-	private boolean				highJumpUnlocked = false;
-	private GameWorld gw;
-	private boolean inLight = false;
-	private int totalCrystals = 0;
+	private boolean				highJumpUnlocked	= false;
+	private GameWorld			gw;
+	private boolean				inLight				= false;
+	private int					totalCrystals		= 0;
 	
 	public Player() {
 		super();
@@ -67,59 +67,59 @@ public class Player extends Entity {
 	 * Applies the goal velocity force until it reaches actual velocity
 	 */
 	public void onTick(float t) {
-		if(gw == null) {
+		if (gw == null) {
 			gw = ((GameWorld) world);
 		}
-		if(world.getPlayer() == null) world.setPlayer(this);
-		if(moveLeft && !moveRight) {
+		if (world.getPlayer() == null) world.setPlayer(this);
+		if (moveLeft && !moveRight) {
 			goalVelocity = new Vec2f(-800, 0);
-		} else if(moveRight && !moveLeft) {
+		} else if (moveRight && !moveLeft) {
 			goalVelocity = new Vec2f(800, 0);
 		} else {
 			goalVelocity = Vec2f.ZERO;
 		}
 		
-		if(!goalVelocity.equals(Vec2f.ZERO)) {
-			if(!goalVelocity.equals(getVelocity())) {
+		if (!goalVelocity.equals(Vec2f.ZERO)) {
+			if (!goalVelocity.equals(getVelocity())) {
 				applyImpulse((goalVelocity.minus(getVelocity())).smult(0.05f));
 			}
 		}
 		
-		if(lightCountdown > 0) {
+		if (lightCountdown > 0) {
 			lightCountdown -= t;
 		}
 		
-		if(lightCountdown <= 0) {
+		if (lightCountdown <= 0) {
 			lightCountdown = lightTime;
 			hp -= 1;
-			if(hp <= 0) {
+			if (hp <= 0) {
 				gw.die();
 			}
 		}
-		if((gw.getStartCrystal() != null)
+		if ((gw.getStartCrystal() != null)
 				&& gw.getStartCrystal().shape.getCenter().minus(shape.getCenter()).mag2() <= 80000) {
-			if(heal(10) == 10 && !MuteHolder.muted) {
+			if (heal(10) == 10 && !MuteHolder.muted) {
 				Sound heal = null;
-				if(SoundHolder.soundTable != null) heal = SoundHolder.soundTable.get("heal");
-				if(heal != null) heal.play();
+				if (SoundHolder.soundTable != null) heal = SoundHolder.soundTable.get("heal");
+				if (heal != null) heal.play();
 			}
 			world.save();
 			gw.reloadEnemies();
-			if(!gw.explainedLight()) {
+			if (!gw.explainedLight()) {
 				gw.explainLight();
 			}
-			if(!gw.hasShopped() && crystals >= 5) {
+			if (!gw.hasShopped() && crystals >= 5) {
 				gw.explainShopping();
 			}
-			if(!inLight && gw.hasShopped()) gw.enterShop();
+			if (!inLight && gw.hasShopped()) gw.enterShop();
 			inLight = true;
-			//if(totalCrystals == 1) gw.win();
-		}
-		else inLight = false;
+			// if(totalCrystals == 1) gw.win();
+		} else
+			inLight = false;
 		
-		if(!world.checkGameBounds(shape.getLocation()))
+		if (!world.checkGameBounds(shape.getLocation()))
 			world.setLose("You fell (or jumped) out of the world!");
-		else if(hp < 0) world.setLose("Your health dropped below zero...");
+		else if (hp < 0) world.setLose("Your health dropped below zero...");
 		super.onTick(t);
 	}
 	
@@ -129,7 +129,7 @@ public class Player extends Entity {
 	 * @return ability to jump currently
 	 */
 	public boolean canJump() {
-		if(!jumpUnlocked || contactDelay <= 0 || lastMTV == null || lastMTV.y >= 0) {
+		if (!jumpUnlocked || contactDelay <= 0 || lastMTV == null || lastMTV.y >= 0) {
 			return false;
 		}
 		return true;
@@ -144,6 +144,10 @@ public class Player extends Entity {
 		applyImpulse(lastMTV.normalized().smult(world.gravity() * ((highJumpUnlocked) ? 30 : 20)));
 		contactDelay = 0;
 	}
+	
+	/*public boolean canSwim() {
+		if ()
+	}*/
 	
 	/**
 	 * Gets the center of the player's position. Useful for sound distance calculations
@@ -189,7 +193,7 @@ public class Player extends Entity {
 	 * @param e
 	 */
 	public void onKeyPressed(KeyEvent e) {
-		switch(e.getKeyCode()) {
+		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 		case KeyEvent.VK_A:
 			moveLeft = true;
@@ -198,12 +202,20 @@ public class Player extends Entity {
 		case KeyEvent.VK_D:
 			moveRight = true;
 			break;
-		case (KeyEvent.VK_W): // W
+		case (KeyEvent.VK_W):
 		case (KeyEvent.VK_SPACE): // Jump
-			if(canJump()) {
+			if (canJump()) {
 				jump();
-			}
+			} /*else if (canSwim()) {
+				swim(true);
+				}*/
 			break;
+		/*case (KeyEvent.VK_DOWN):
+		case (KeyEvent.VK_S): // Swim if possible
+			if (canSwim()) {
+				swim(false);
+			}
+			break;*/
 		default:
 			break;
 		}
@@ -215,7 +227,7 @@ public class Player extends Entity {
 	 * @param e
 	 */
 	public void onKeyReleased(KeyEvent e) {
-		switch(e.getKeyCode()) {
+		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 		case KeyEvent.VK_A:
 			moveLeft = false;
@@ -236,7 +248,7 @@ public class Player extends Entity {
 		crystals++;
 		totalCrystals++;
 		hp += 5;
-		if(hp > maxHP) {
+		if (hp > maxHP) {
 			hp = maxHP;
 		}
 	}
@@ -259,7 +271,7 @@ public class Player extends Entity {
 	 * @param spent
 	 */
 	public boolean spendCrystals(int spent) {
-		if(crystals >= spent) {
+		if (crystals >= spent) {
 			crystals -= spent;
 			return true;
 		}

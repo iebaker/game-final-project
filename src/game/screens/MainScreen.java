@@ -10,6 +10,7 @@ import java.io.File;
 import cs195n.Vec2f;
 import cs195n.Vec2i;
 import engine.Application;
+import engine.Saver;
 import engine.Screen;
 import engine.ui.UIButton;
 import engine.ui.UIRect;
@@ -25,9 +26,10 @@ import game.Umbra;
  */
 public class MainScreen extends Screen {
 	
-	UIRect		bkgrd;
-	UIText		title;
-	UIButton	playButton;
+	private final UIRect	bkgrd;
+	private final UIText	title;
+	private final UIButton	playButton;
+	private final UIButton	contButton;
 	
 	/**
 	 * Constructor creates relevant items and places them based on ratios
@@ -39,15 +41,20 @@ public class MainScreen extends Screen {
 		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, Color.black, new BasicStroke(0.0f));
 		playButton = new UIButton("New Game", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
 				null, new BasicStroke(0f));
+		contButton = new UIButton("Continue Game", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET,
+				GameWorld.DARK_LAVENDER, GameWorld.DUSKY_VIOLET.darker().darker(), new BasicStroke(0f));
+		contButton.disable(false);
 		title = new UIText(Umbra.gameName, Color.white, Vec2f.ZERO, 1);
 	}
 	
 	/**
-	 * Nothing happens
+	 * Check for save
 	 */
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
-		
+		if (Saver.checkForSave(GameWorld.SAVEFILE)) {
+			if (contButton.isDisabled()) contButton.enable();
+		} else if (!contButton.isDisabled()) contButton.disable(false);
 	}
 	
 	/**
@@ -58,6 +65,7 @@ public class MainScreen extends Screen {
 		bkgrd.drawAndFillShape(g);
 		title.drawShape(g);
 		playButton.drawShape(g);
+		contButton.drawShape(g);
 	}
 	
 	@Override
@@ -68,8 +76,9 @@ public class MainScreen extends Screen {
 		float w = newSize.x;
 		float h = newSize.y;
 		bkgrd.updatePosition(new Vec2f(0, 0), new Vec2f(w, h));
-		playButton.updatePosition(new Vec2f(w / 10, 42 * (h / 80)), new Vec2f(4 * w / 7, 49 * (h / 70)));
-		title.resizeText(new Vec2f(w / 10, 2 * h / 5), 2 * h / 7);
+		playButton.updatePosition(new Vec2f(w / 10, 34 * (h / 80)), new Vec2f(4 * w / 7, 46 * (h / 80)));
+		contButton.updatePosition(new Vec2f(w / 10, 52 * (h / 80)), new Vec2f(4 * w / 7, 64 * (h / 80)));
+		title.resizeText(new Vec2f(w / 10, 16 * h / 50), 2 * h / 7);
 	}
 	
 	/**
@@ -77,7 +86,7 @@ public class MainScreen extends Screen {
 	 */
 	@Override
 	protected void onKeyReleased(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_ENTER) switchToGame("Enter key pressed");
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) switchToGame("Enter key pressed", contButton.isDisabled());
 	}
 	
 	/**
@@ -85,8 +94,10 @@ public class MainScreen extends Screen {
 	 */
 	@Override
 	protected void onMouseReleased(MouseEvent e) {
-		if(playButton.hitTarget(e)) {
-			switchToGame("Button clicked");
+		if (playButton.hitTarget(e)) {
+			switchToGame("New Button clicked", true);
+		} else if (!contButton.isDisabled() && contButton.hitTarget(e)) {
+			switchToGame("Continue Button clicked", false);
 		}
 	}
 	
@@ -95,9 +106,9 @@ public class MainScreen extends Screen {
 	 * 
 	 * @param msg
 	 */
-	private void switchToGame(String msg) {
-		if(new File(GameWorld.LEVEL_NAME).exists())
-			a.pushScreen(new GameScreen(a));
+	private void switchToGame(String msg, boolean newGame) {
+		if (new File(GameWorld.LEVEL_NAME).exists())
+			a.pushScreen(new GameScreen(a, newGame));
 		else
 			a.pushScreen(new ErrorScreen(a));
 	}

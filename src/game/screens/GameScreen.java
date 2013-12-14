@@ -58,16 +58,15 @@ public class GameScreen extends Screen {
 	private TextBox					textBox;
 	private volatile MusicPlayer	music;
 	private float					fadeCount	= 0;
-	private float					endFadeCount	= 0;
 	private final UIRect			fadeRect;
-	private final UIRect			endFadeRect;
 	
 	/**
 	 * Constructor creates relevant items and places them based on ratios
 	 * 
 	 * @param a
+	 * @param makeNewGame
 	 */
-	public GameScreen(Application a) {
+	public GameScreen(Application a, boolean makeNewGame) {
 		super(a);
 		/*Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
@@ -95,7 +94,7 @@ public class GameScreen extends Screen {
 		cutsceneText.setVisible(false);
 		textBox = new TextBox(cutsceneRect, cutsceneText);
 		try {
-			LevelData data = CS195NLevelReader.readLevel(new File("lib/NewLevel.nlf"));
+			LevelData data = CS195NLevelReader.readLevel(new File(GameWorld.LEVEL_NAME));
 			String[] dimensions = data.getProperties().get("dimensions").split("[,]");
 			game = new GameWorld(new Vec2f(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])), textBox);
 			
@@ -105,6 +104,14 @@ public class GameScreen extends Screen {
 			System.err.println("Invalid level file");
 		}
 		if (game != null) view.setGame(game);
+		if (!makeNewGame) {
+			System.out.println("reloading");
+			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.SAVEFILE, view, game);
+			temp.reload();
+			cutsceneText.setVisible(true);
+			if (temp != null) game = temp;
+		}
+		fadeRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 0, 0, 0), new BasicStroke(0f));
 		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, (game != null) ? game.getBGColor() : Color.black,
 				new BasicStroke(0f));
 		newGame = new UIButton("New Game", Vec2f.ZERO, Vec2f.ZERO, new Color(0, 195, 0), Color.white, null,
@@ -120,9 +127,6 @@ public class GameScreen extends Screen {
 		crystalRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(20, 0, 0, 120), new BasicStroke(0f));
 		crystalText = new UIText("Crystals: 0", Color.white, Vec2f.ZERO, 1);
 		
-		fadeRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 0, 0, 0), new BasicStroke(0f));
-		endFadeRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 0, 0, 0), new BasicStroke(0f));
-		
 		message = new UIText("Game starts in 3", Color.white, Vec2f.ZERO, 1);
 		fadeIn();
 	}
@@ -134,18 +138,15 @@ public class GameScreen extends Screen {
 	@Override
 	protected void onTick(long nanosSincePreviousTick) {
 		float secs = (float) (nanosSincePreviousTick / 1000000000.0);
-//		if (endFadeCount > 0) {
-//			endFadeCount -= secs * 100;
-//			if (endFadeCount < 0) {
-//				endFadeCount = 0;
-//			}
-//			fadeRect.setColor(new Color(255, 255, 255, (int) 255 - endFadeCount));
-//		}
-		if(game.win) {
-			//this.endFade();
-		}
-		else {
-			if(game.shouldEnterShop()) {
+		// if (endFadeCount > 0) {
+		// endFadeCount -= secs * 100;
+		// if (endFadeCount < 0) {
+		// endFadeCount = 0;
+		// }
+		// fadeRect.setColor(new Color(255, 255, 255, (int) 255 - endFadeCount));
+		// }
+		if (game != null) {
+			if (game.shouldEnterShop()) {
 				ShopScreen shop = new ShopScreen(a);
 				shop.setWorld(game);
 				a.pushScreen(shop);
@@ -164,7 +165,7 @@ public class GameScreen extends Screen {
 				crystalText.updateText("Crystals: " + ((p == null) ? 0 : p.getCrystals()));
 				game.onTick(secs);
 				if (game.isOver()) {
-					GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
+					GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.SAVEFILE, view, game);
 					die();
 					if (temp != null) {
 						game = temp;
@@ -181,7 +182,7 @@ public class GameScreen extends Screen {
 	@Override
 	protected void onDraw(Graphics2D g) {
 		bkgrd.drawAndFillShape(g);
-		view.onDraw(game, g);
+		if (game != null) view.onDraw(game, g);
 		healthRect.drawAndFillShape(g);
 		healthText.drawShape(g);
 		crystalRect.drawAndFillShape(g);
@@ -189,9 +190,6 @@ public class GameScreen extends Screen {
 		textBox.draw(g);
 		if (fadeCount != 0) {
 			fadeRect.drawAndFillShape(g);
-		}
-		if (endFadeCount != 0) {
-			endFadeRect.drawAndFillShape(g);
 		}
 	}
 	
@@ -207,7 +205,6 @@ public class GameScreen extends Screen {
 		float h = newSize.y;
 		bkgrd.updatePosition(new Vec2f(0, 0), new Vec2f(w, h));
 		fadeRect.updatePosition(new Vec2f(0, 0), new Vec2f(w, h));
-		endFadeRect.updatePosition(new Vec2f(0, 0), new Vec2f(w, h));
 		Vec2f portCoord = new Vec2f(0, 0);
 		Vec2f portEndCoord = new Vec2f(w, h);
 		view.resizeView(portCoord, portEndCoord);
@@ -250,11 +247,11 @@ public class GameScreen extends Screen {
 			a.popScreen();
 			break;
 		case (KeyEvent.VK_3): // 3 pressed, save game
-			Saver.saveGame(GameWorld.saveFile, game);
+			Saver.saveGame(GameWorld.SAVEFILE, game);
 			break;
 		case (KeyEvent.VK_4): // 4 pressed, load game
 			// if(!textBox.getVisible()) {
-			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.saveFile, view, game);
+			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.SAVEFILE, view, game);
 			if (temp != null) {
 				fadeIn();
 				game = temp;
@@ -372,11 +369,6 @@ public class GameScreen extends Screen {
 	private void fadeIn() {
 		fadeCount = 255;
 		fadeRect.setColor(new Color(0, 0, 0, 255));
-	}
-	
-	private void endFade() {
-		endFadeCount = 255;
-		endFadeRect.setColor(new Color(0, 0, 0, 255));
 	}
 	
 	private void die() {
