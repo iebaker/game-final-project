@@ -105,11 +105,12 @@ public class GameScreen extends Screen {
 		}
 		if (game != null) view.setGame(game);
 		if (!makeNewGame) {
-			System.out.println("reloading");
 			GameWorld temp = (GameWorld) Saver.loadGame(GameWorld.SAVEFILE, view, game);
-			temp.reload();
-			cutsceneText.setVisible(true);
-			if (temp != null) game = temp;
+			if (temp != null) {
+				game = temp;
+				textBox = game.getTextBox();
+			}
+			game.reload();
 		}
 		fadeRect = new UIRect(Vec2f.ZERO, Vec2f.ZERO, new Color(0, 0, 0, 0), new BasicStroke(0f));
 		bkgrd = new UIRect(Vec2f.ZERO, Vec2f.ZERO, (game != null) ? game.getBGColor() : Color.black,

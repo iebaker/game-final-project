@@ -21,9 +21,9 @@ public class UIButton extends Shape {
 	private Vec2f				endCoord;
 	private final UIRoundRect	rect;
 	private final UIText		uiText;
-	private final Color			disabledColor;
+	protected Color				disabledColor;
 	private boolean				enabled;
-	private boolean				permanent;
+	protected boolean			permanent;
 	
 	/**
 	 * Creates a button with a message, start and end coordinate, background color, and stroke

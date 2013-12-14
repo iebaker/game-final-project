@@ -49,6 +49,8 @@ import game.entities.spawners.Spawner;
 import game.flora.trees.FanTree;
 import game.flora.trees.MapleTree;
 import game.flora.trees.PineTree;
+import game.screens.ShopButton;
+import game.screens.ShopScreen;
 
 /**
  * GameWorld for M
@@ -58,19 +60,19 @@ import game.flora.trees.PineTree;
 public class GameWorld extends World implements LightWorld {
 	
 	private static HashMap<String, Entity>					defaults;
-	private static WorldTrigger								wt					= new WorldTrigger();
+	private static WorldTrigger								wt						= new WorldTrigger();
 	static {
 		GameWorld.defaults = new HashMap<String, Entity>();
 		GameWorld.defaults.put("world", GameWorld.wt);
 	}
 	
-	public static final String								SAVEFILE			= System.getProperty("user.home")
-																						+ "/save.gme";
-	private static final long								serialVersionUID	= 6619354971290257104L;
-	public static final Color								DUSKY_VIOLET		= new Color(126, 126, 191);
-	public static final Color								DARK_LAVENDER		= new Color(45, 30, 50);
-	private static final float								TICK_LENGTH			= 0.005f;
-	public static final String								LEVEL_NAME			= "lib/NewLevel.nlf";
+	public static final String								SAVEFILE				= System.getProperty("user.home")
+																							+ "/save.gme";
+	private static final long								serialVersionUID		= 6619354971290257104L;
+	public static final Color								DUSKY_VIOLET			= new Color(126, 126, 191);
+	public static final Color								DARK_LAVENDER			= new Color(45, 30, 50);
+	private static final float								TICK_LENGTH				= 0.005f;
+	public static final String								LEVEL_NAME				= "lib/NewLevel.nlf";
 	private final HashMap<String, Class<? extends Entity>>	classes;
 	private boolean											cutsceneActive;
 	private float											gravity;
@@ -78,32 +80,32 @@ public class GameWorld extends World implements LightWorld {
 	private double											leftoverTime;
 	public Level											level;
 	private Vec2f											line;
-	private float											laserCooldown		= 0;
+	private float											laserCooldown			= 0;
 	private int												lineCt;
 	private boolean											lose;
 	private String											message;
 	private Player											player;
-	private final String									soundFile			= "sounds.xml";
-	private boolean											transferredEntities	= false;
+	private final String									soundFile				= "sounds.xml";
+	private boolean											transferredEntities		= false;
 	private transient LightSource							lightSource;
-	public transient LightingEngine							lightEngine			= new LightingEngine();
-	private transient ArrayList<Sound>						allSounds			= new ArrayList<Sound>();
+	public transient LightingEngine							lightEngine				= new LightingEngine();
+	private transient ArrayList<Sound>						allSounds				= new ArrayList<Sound>();
 	private StartCrystal									startCrystal;
-	private ArrayList<BackgroundLight>						bgLights			= new ArrayList<BackgroundLight>();
-	private float											saveCooldown		= 0;
-	private boolean											gameOver			= false;
+	private ArrayList<BackgroundLight>						bgLights				= new ArrayList<BackgroundLight>();
+	private float											saveCooldown			= 0;
+	private boolean											gameOver				= false;
 	private transient Tooltip								tooltip;
-	private final ArrayList<Spawner>						spawners			= new ArrayList<Spawner>();
+	private final ArrayList<Spawner>						spawners				= new ArrayList<Spawner>();
 	private boolean											paused;
-	private boolean firstBlood = false;
-	private boolean firstShop = false;
-	private boolean introPlayed = false;
-	private boolean firstLight = false;
-	private boolean jumpPurchased = false;
-	private boolean shouldEnterShop = false;
-	private boolean encounteredDarkCrystal = false;
-	private boolean encounteredCrystal = false;
-	public boolean win = false;
+	private boolean											firstBlood				= false;
+	private boolean											firstShop				= false;
+	private boolean											introPlayed				= false;
+	private boolean											firstLight				= false;
+	private boolean											jumpPurchased			= false;
+	private boolean											shouldEnterShop			= false;
+	private boolean											encounteredDarkCrystal	= false;
+	private boolean											encounteredCrystal		= false;
+	public boolean											win						= false;
 	
 	/**
 	 * Constructor for a world that starts a new game
@@ -139,6 +141,15 @@ public class GameWorld extends World implements LightWorld {
 		classes.put("FanTree", FanTree.class);
 		classes.put("DuskBat", BatSpawner.class);
 		
+		// Shop buttons for later
+		ShopScreen.buttons = new ShopButton[6];
+		ShopScreen.buttons[0] = new ShopButton("Jump", 5);
+		ShopScreen.buttons[1] = new ShopButton("Aura", 10);
+		ShopScreen.buttons[2] = new ShopButton("Light Loss", 10);
+		ShopScreen.buttons[3] = new ShopButton("Laser", 30);
+		ShopScreen.buttons[4] = new ShopButton("Armor", 20);
+		ShopScreen.buttons[5] = new ShopButton("???", 999);
+		
 		newGame();
 	}
 	
@@ -148,11 +159,11 @@ public class GameWorld extends World implements LightWorld {
 	public void checkCollisions() {
 		for (int i = 0; i < entityStack.size(); i++) {
 			Entity a = entityStack.get(i);
-			if(a instanceof StaticEntity || a instanceof Consumable) continue;
-			//System.out.println(entity_tree.getPotentialCollisions(a).size());
+			if (a instanceof StaticEntity || a instanceof Consumable) continue;
+			// System.out.println(entity_tree.getPotentialCollisions(a).size());
 			for (Entity b : entity_tree.getPotentialCollisions(a)) {
-				if(a == b) continue;
-				//Entity b = entityStack.get(j);
+				if (a == b) continue;
+				// Entity b = entityStack.get(j);
 				
 				if (a instanceof EnemyEntity && b instanceof Player && a.collideWithEntity(b)) {
 					if (((EnemyEntity) a).drains()) {
@@ -160,12 +171,12 @@ public class GameWorld extends World implements LightWorld {
 					} else {
 						((Player) b).damage(((EnemyEntity) a).getDamage());
 					}
-					if(!firstBlood) {
+					if (!firstBlood) {
 						Map<String, String> textMap = new HashMap<String, String>();
 						textMap.put("text1", "With a snarl, the enemy is upon you, feeding on your light.");
 						textMap.put("text2", "You manage to break free, but you should probably run away.");
 						textMap.put("text3", "If only you had some way to defend yourself...");
-						this.textBox.displayText(textMap);
+						textBox.displayText(textMap);
 						firstBlood = true;
 					}
 				} else if (b instanceof EnemyEntity && a instanceof Player && b.collideWithEntity(a)) {
@@ -174,12 +185,12 @@ public class GameWorld extends World implements LightWorld {
 					} else {
 						((Player) a).damage(((EnemyEntity) b).getDamage());
 					}
-					if(!firstBlood) {
+					if (!firstBlood) {
 						Map<String, String> textMap = new HashMap<String, String>();
 						textMap.put("text1", "With a snarl, the enemy is upon you, feeding on your light.");
 						textMap.put("text2", "You manage to break free, but you should probably run away.");
 						textMap.put("text3", "If only you had some way to defend yourself...");
-						this.textBox.displayText(textMap);
+						textBox.displayText(textMap);
 						firstBlood = true;
 					}
 				}
@@ -187,20 +198,20 @@ public class GameWorld extends World implements LightWorld {
 				if (a instanceof Consumable && b instanceof Player && a.collideWithEntity(b)) {
 					((Consumable) a).destroy();
 					if (a instanceof DarkenedCrystal) {
-						if(!encounteredDarkCrystal) encounterDarkCrystal();
+						if (!encounteredDarkCrystal) encounterDarkCrystal();
 						((Player) b).flatHeal(5);
 					} else {
 						((Player) b).addCrystal();
-						if(!encounteredCrystal) encounterCrystal();
+						if (!encounteredCrystal) encounterCrystal();
 					}
 				} else if (b instanceof Consumable && a instanceof Player && b.collideWithEntity(a)) {
 					((Consumable) b).destroy();
 					if (b instanceof DarkenedCrystal) {
-						if(!encounteredDarkCrystal) encounterDarkCrystal();
+						if (!encounteredDarkCrystal) encounterDarkCrystal();
 						((Player) a).flatHeal(5);
 					} else {
 						((Player) a).addCrystal();
-						if(!encounteredCrystal) encounterCrystal();
+						if (!encounteredCrystal) encounterCrystal();
 					}
 				}
 				
@@ -226,7 +237,7 @@ public class GameWorld extends World implements LightWorld {
 		}
 		
 	}
-
+	
 	@Override
 	/**
 	 * Enters cutscene mode
@@ -417,36 +428,36 @@ public class GameWorld extends World implements LightWorld {
 		}
 		
 		// for(int i = 0; i < pointPairs.size(); ++i) {
-		// 	Vec2fPair pair = pointPairs.get(i);
-		// 	if(!onScreen(pair.getP1()) && !onScreen(pair.getP2())) {
-		// 		pointPairs.remove(i);
-		// 	}
+		// Vec2fPair pair = pointPairs.get(i);
+		// if(!onScreen(pair.getP1()) && !onScreen(pair.getP2())) {
+		// pointPairs.remove(i);
 		// }
-
+		// }
+		
 		// Vec2f size = Application.getCurrentSize();
-
+		
 		// Vec2f p1 = Viewport.screenPtToGame(new Vec2f(0,0));
 		// Vec2f p2 = Viewport.screenPtToGame(new Vec2f(0, size.y));
 		// Vec2f p3 = Viewport.screenPtToGame(new Vec2f(size.x, size.y));
 		// Vec2f p4 = Viewport.screenPtToGame(new Vec2f(size.x, 0));
-
+		
 		// points.add(p1);
 		// points.add(p2);
 		// points.add(p3);
 		// points.add(p4);
-
+		
 		// pointPairs.add(new Vec2fPair(p1, p2));
 		// pointPairs.add(new Vec2fPair(p2, p3));
 		// pointPairs.add(new Vec2fPair(p3, p4));
 		// pointPairs.add(new Vec2fPair(p4, p1));
-
+		
 		return pointPairs;
 	}
-
+	
 	public boolean onScreen(Vec2f p) {
 		Vec2f size = Application.getCurrentSize();
 		Vec2f convPt = Viewport.gamePtToScreen(p);
-
+		
 		return convPt.x >= 0 && convPt.x <= size.x && convPt.y >= 0 && convPt.y <= size.y;
 	}
 	
@@ -617,7 +628,7 @@ public class GameWorld extends World implements LightWorld {
 	@Override
 	public void onTick(float secs) {
 		textBox.onTick(secs);
-		if(!introPlayed) {
+		if (!introPlayed) {
 			Map<String, String> toDisplay = new HashMap<String, String>();
 			toDisplay.put("text1", "I remember when the world used to be full of light.");
 			toDisplay.put("text2", "I had a home. A family. A whole community.");
@@ -807,7 +818,7 @@ public class GameWorld extends World implements LightWorld {
 	}
 	
 	public boolean explainedLight() {
-		return this.firstLight;
+		return firstLight;
 	}
 	
 	public void explainLight() {
@@ -819,15 +830,15 @@ public class GameWorld extends World implements LightWorld {
 		player.unlockJump();
 		firstLight = true;
 	}
-
+	
 	public boolean jumpPurchased() {
 		return jumpPurchased;
 	}
-
+	
 	public void purchaseJump() {
-		this.jumpPurchased = true;
+		jumpPurchased = true;
 	}
-
+	
 	public boolean shouldEnterShop() {
 		return shouldEnterShop && !cutsceneActive;
 	}
@@ -867,5 +878,5 @@ public class GameWorld extends World implements LightWorld {
 	public void win() {
 		win = true;
 	}
-
+	
 }

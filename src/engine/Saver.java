@@ -30,8 +30,7 @@ public class Saver {
 				out.close();
 				fileOut.close();
 			} catch (IOException i) {
-				System.err.println("Game couldn't be saved - see stack trace");
-				i.printStackTrace();
+				System.err.println("Game couldn't be saved");
 			}
 		}
 	}
