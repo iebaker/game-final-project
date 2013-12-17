@@ -1,0 +1,130 @@
+<initsprites>
+<group name='terrain' src='terrain-2.png'>
+	<sprite name='deep_water'>
+		<frame index='0' region='0,0,16,16' />
+	</sprite>
+	<sprite name='shallow_water'>
+		<frame index='0' region='16,0,16,16' />
+	</sprite>
+	<sprite name='sand'>
+		<frame index='0' region='32,0,16,16' />
+	</sprite>
+	<sprite name='dirt'>
+		<frame index='0' region='32,16,16,16' />
+	</sprite>
+	<sprite name='grass'>
+		<frame index='0' region='16,16,16,16' />
+	</sprite>
+</group>
+
+<group name='entities' src='spritesheet.png'>
+	<sprite name='stick wall'>
+		<frame index='0' region='0,0,16,16' />
+	</sprite>
+	<sprite name='stone wall'>
+		<frame index='0' region='16,0,16,16' />
+	</sprite>
+	<sprite name='sticks'>
+		<frame index='0' region='32,0,16,16' />
+	</sprite>	
+	<sprite name='stones'>
+		<frame index='0' region='48,0,16,16' />
+	</sprite>
+	<sprite name='ammo'>
+		<frame index='0' region='64,0,16,16' />
+	</sprite>
+	<sprite name='stick bullet'>
+		<frame index='0' region='80,0,16,16' />
+	</sprite>
+	<sprite name='stone bullet'>
+		<frame index='0' region='96,0,16,16' />
+	</sprite>
+	<sprite name='stick builder east'>
+		<frame index='0' region='0,16,16,16' />
+		<frame index='1' region='16,16,16,16' />
+		<frame index='2' region='32,16,16,16' />
+		<frame index='3' region='48,16,16,16' />
+	</sprite>	
+	<sprite name='stick builder north'>
+		<frame index='0' region='0,32,16,16' />
+		<frame index='1' region='16,32,16,16' />
+		<frame index='2' region='32,32,16,16' />
+		<frame index='3' region='48,32,16,16' />
+	</sprite>
+	<sprite name='stick builder west'>
+		<frame index='0' region='0,48,16,16' />
+		<frame index='1' region='16,48,16,16' />
+		<frame index='2' region='32,48,16,16' />
+		<frame index='3' region='48,48,16,16' />
+	</sprite>
+	<sprite name='stick builder south'>
+		<frame index='0' region='0,64,16,16' />
+		<frame index='1' region='16,64,16,16' />
+		<frame index='2' region='32,64,16,16' />
+		<frame index='3' region='48,64,16,16' />
+	</sprite>
+	<sprite name='stick soldier'>
+		<frame index='0' region='0,80,16,16' />
+		<frame index='1' region='16,80,16,16' />
+		<frame index='2' region='32,80,16,16' />
+		<frame index='3' region='48,80,16,16' />
+	</sprite>
+	<sprite name='stone builder east'>
+		<frame index='0' region='64,16,16,16' />
+		<frame index='1' region='80,16,16,16' />
+		<frame index='2' region='96,16,16,16' />
+		<frame index='3' region='112,16,16,16' />
+	</sprite>
+	<sprite name='stone builder north'>
+		<frame index='0' region='64,32,16,16' />
+		<frame index='1' region='80,32,16,16' />
+		<frame index='2' region='96,32,16,16' />
+		<frame index='3' region='112,32,16,16' />
+	</sprite>
+	<sprite name='stone builder west'>
+		<frame index='0' region='64,48,16,16' />
+		<frame index='1' region='80,48,16,16' />
+		<frame index='2' region='96,48,16,16' />
+		<frame index='3' region='112,48,16,16' />
+	</sprite>	
+	<sprite name='stone builder south'>
+		<frame index='0' region='64,64,16,16' />
+		<frame index='1' region='80,64,16,16' />
+		<frame index='2' region='96,64,16,16' />
+		<frame index='3' region='112,64,16,16' />	
+	</sprite>	
+	<sprite name='stone soldier'>
+		<frame index='0' region='64,80,16,16' />
+		<frame index='1' region='80,80,16,16' />
+		<frame index='2' region='96,80,16,16' />
+		<frame index='3' region='112,80,16,16' />
+	</sprite>
+</group>
+
+<group name='robots' src='robotsprites.png'>
+	<sprite name='nice_1'>
+		<frame index='0' region='0,0,16,16' />
+	</sprite>
+	<sprite name='nice_2'>
+		<frame index='0' region='0,16,16,16' />
+	</sprite>
+	<sprite name='nice_3'>
+		<frame index='0' region='0,32,16,16' />
+	</sprite>
+	<sprite name='mean_1'>
+		<frame index='0' region='0,48,16,16' />
+	</sprite>
+	<sprite name='nice_minion'>
+		<frame index='0' region='16,0,16,16' />
+		<frame index='1' region='32,0,16,16' />
+		<frame index='2' region='48,0,16,16' />
+		<frame index='3' region='64,0,16,16' />
+	</sprite>
+	<sprite name='evil_minion'>
+		<frame index='0' region='16,16,16,16' />
+		<frame index='1' region='32,16,16,16' />
+		<frame index='2' region='48,16,16,16' />
+		<frame index='3' region='64,16,16,16' />
+	</sprite>
+</group>
+</initsprites>

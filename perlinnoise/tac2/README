@@ -1,0 +1,101 @@
+// The following is relevant to my retry submission for Tac1:
+
+I've been messing with the A* pathfinding for forever now and the strange bug persists.  What I've been able to determine so far is that:  It most often involves a one to three grid square detour which occurs most frequently at the very end (but sometimes up to a few grid squares before) of the path.  I really don't know how to approach this one -- I've rewritten it several times now with a few different heuristics (I've tried Manhattan distance, Euclidean distance, and Max(X-dist, Y-dist) and each time it has the same performance flaw.  I've made sure I clean up the graph decorations at the end of a pathfinding iteration in case old A_STAR_PREVIOUS decorations were messing with it, but that is (almost) for sure not the case.  I also tried splitting up the heuristic and distance calculations into two separate decorations in case they were somehow interfering with each other (???).  I've also determined It is not caused by entity persistence in grid squares while being drawn elsewhere.  I've tried to make sure everywhere that position updates affect both the Entity's Place field (which is a reference to a Vertex in the GridGraph itself) as well as its poisition in the Entity[][] array. it is implemented in Graph.aStarPath().  GridGraph has aversion as well which returns a list of Place objects as opposed to Vertex objects, but no logic is performed in that one.
+
+So that's where that one stands.
+
+Fixed the unit teleporting to a starting tile when given a new pathfinding instruction.
+
+Was unable to reproduce the arrayoutofbounds exception mentioned under Global Requirements (and trust me I spam clicked for a long time).  I made some changes to how clicking is responded to in the process of transitioning from Tac1 to Tac2 so it's possible this may have been fixed accidentally.
+
+Also sorry about not showing where to see the implementation of things (and I apologize for the incomplete commenting of code at this point -- I've been doing a lot of edits recently and haven't had time to doll it up nicely for handin.  I kinda just want to complete Tac1 at this point and move on to Tou so that I can hopefully finish it before Wednesday!)
+
+Here they are:
+
+1. Tile passability is implemented now in the aStarPath implementation, where edges leading to deep ocean tiles are given infinite weight (or... maximal floating point value weight).  In addition, in the TacCreature class, the stricture is enforced that a TacCreature may not walk onto a deep water square by having getPossibleMoveLocations() not return deep water squares.
+
+2. Impassable tiles are drawn dark blue.  This is done in TacUniverse.onDraw()
+
+3. Human placed units are displayed as multicolored face sprites.  Also in TacUniverse.onDraw()
+
+4. Panning and zooming are implemented in Viewport
+
+5. Selected entities sit on a tile which is highlighted blue.  This is done in TacUniverse.onDraw()
+
+6. The player can command the human controlled entity (TacLeader1) by clicking first on the entity they want to move and then right clicking elsewhere on the map.  Implemented in TacUniverse.onMouseClicked()
+
+7. A* pathfinding is implemented in Graph.aStarPath().  See above.
+
+8. Units moving smoothly between tiles is accomplished by Entities having a step() method which effectively allows entities to exist in discrete time steps.  Universe triggers the step() method of each entity at a fixed interval and then animates the sprites between step()s.  
+
+
+// The following is the original readme:
+
++-+-+-+ +-+-+-+ +-+-+-+-+-+-+
+|T|A|C| |O|N|E| |R|E|A|D|M|E|
++-+-+-+ +-+-+-+ +-+-+-+-+-+-+
+
+First: how to run.
+
+The file tac is an executable encapsulating the "ant run" command.  This will generate a file called Tac1.jar as well
+as launch the game and create a directory called "build" which contains all of the compiled class files.  Running 
+"ant clean" will remove build so that the project can be recompiled if you want.
+
+Second: High level description
+
+Neon is my game engine.  Its main class is Application.  An Application is an entire game.  Applications hold a stack of Screens, and a ScreenManager with which to perform useful operations (push, pop, remove, swap elements...).  Screens display Widgets, Screens have access to their parent applciations, and Widgets have access to both their parent screen, and parent application (mostly to perform screen management operations).  Widgets are arranged on the screen by a slice.Node object owned by the Screen.  Extensions of Screen should subclass their slice.Node in order to override its build() method.  A slice.Node itself is the root of a tree of slice.Nodes which cover the screen, and can be considered screen real estate onto which can be pasted Widgets.  A slice.Node can be divided either vertically or horizontally any number of times (and with certain parameters) to create child nodes which are superimposed over it.  A specific way to divide a node is described by a Slice object.  Groups of nodes can be manipulated at once by selecting them with a slice.Selection.  Widget drawing order is controlled by the order in which Widgets are passed to the registerWidget() method of Screen.  To Draw, a Widget should override its onDraw() method.  The Widgets class extends DrawMethods in order to have access to a cleaner drawing API, abstracting calls to Graphics2D methods.  To respond to input, Widgets can override their onDDDEvent() classes.  In general, logic should be performed in Screens while Drawing and Input collection should be performed in Widgets.
+
+New addition to the Game this time is the package iebaker.neon.world which contains classes useful for the creation and viewing of game worlds.  A basic game world is a CellWorld which encapsultates a grid of Cell objects.  Cells are the basic building block of the world, and can be occupied by Entity objects.  Cell extends Vertex, the class used as the vertex nodes in Graph, which provides the functionality of a decoratable graph of Vertex and Edge objects.  Both graph subelements can be decorated with Decoration objects, or with bare String key-value pairs. Graph also has the ability to perform pathfinding operations using A* search (which uses the classes Metric and Heuristic).  For the purposes of procedural generation, a general Perlin noise function generator, PerlinSampler, is provided.  Viewport is the class which is responsible for rendering a useful version of the world to the screen by applying transformations to the Graphics2D object sent with onDraw() and then allowing the CellWorld to render itself in its own coordinate system. 
+
+Third: other stuff
+
+REQUIREMENT SATISFACTION SCAVENGER HUNT!
+
+Game-Specific
+
+World Generation:
+Procedural, because why not? :P
+
+The map is generated using a Perlin Noise function.  This is implemented in PerlinSampler, a class which builds a new noise function based on some input parameters.  To create the world, the function is sampled at the upper left corner of each grid tile and the values are threshholded by Terrain to create regions of deep water, shallow water, sand, dirt, and grass.  The world is populated randomly with Shrub elements which are spawned with probability 40% on grid cells above a certain terrain value (which can be taken to be elevation).  The constraint I chose to satisfy was having coherent noise, i.e. the noise function must transition smoothly from value to value (which is why I opted for Perlin Noise) such that the terrain gently changes with position 
+
+Else
+
+1. "There must be passable and impassable tiles" Shrubs and deep water cannot be traveled through, making for both low and high frequency obstacles which must be navigated around.  This is implemented by setting the active field of these cells to "false", which deactivates edges leading into and out of the cells in the world graph.  
+
+2. "Units may never move onto impassable tiles" Try moving your robot through a shrubbed area!  
+
+3. "The map must be displayed in a way that..." Impassable tiles have either a shrub (circle) drawn on them, or are dark blue to indicate deep water.  These are drawn by the onDraw() methods of the Bush class and the onDraw() method of TacWorld.
+
+4. "The human-controlled units must be displayed on the map..." Your robot is an adorable white circle.  Computer-controlled units (bushes) are displayed as fixed green circles.
+
+5. "The player must be able to pan the game..." Clicking and dragging pans the map around while in the game view 
+
+6. "The player must be able to zoom in and out..." Scrolling the mouse wheel while in the game view zooms the map in and out (center-focused)
+
+7. "The player must be able to select..." Clicking on the robot (white circle) selects it.
+
+8. "Unit selection must be visualized..." A light red square is drawn over the tile holding the selected Entity
+
+9. "The player must be able to command selected human-controlled units..." If the robot is selected, clicking on an unoccupied tile commands the robot to move onto that tile (unless this motion is impossible)
+
+10. "Units must move to their destination tile using..." A* implementation is in Graph.aStarPath().  Must be passed a Heuristic which maps from pairs of vertices to floats, and a Metric which maps from edges to floats.
+
+11. "Units must move smoothly between tiles..." The robot does.
+
+12. "When moving, units may only change direction when..." The robot has a sequence of adjacent (connected by an edge) cells which make up its Plan.  It moves in straight lines to these cells in order, not changing direction (proceeding to the next cell) until it has moved to the current one.
+
+13. "No more than one unit can be allowed to occupy a tile" Robots avoid bushes.  This is implemented in a scattered manner at the moment but it does work.  Better implementation forthcoming.
+
+14. "Units must not overlap at any time" See #13.
+ 
+GLOBAL:
+
+# of hours: Lots.  Really a lot.  The majority of the effort was expended on creating the Viewport and PerlinSampler.  In total, probably about 25 hours of work went into this.
+
+Known bugs: The pathfinding has a quirk where it sometimes adds a kink in what should be a straight path.  Occurs very rarely and mostly on very long paths.  
+
+[UI consideration... not really a bug, but the map can be dragged offscreen easily, which is undersirable from a user experience standpoint.  To be corrected.]
+
+
+
+
