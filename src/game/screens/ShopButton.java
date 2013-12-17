@@ -10,13 +10,11 @@ public class ShopButton extends UIButton {
 	
 	private static final long	serialVersionUID	= 6740786490718563693L;
 	private final int			crystalCount;
-	private boolean				purchased;
 	
 	public ShopButton(String msg, int crystalCount) {
 		super(msg + " (" + crystalCount + ")", Vec2f.ZERO, Vec2f.ZERO, GameWorld.DUSKY_VIOLET, GameWorld.DARK_LAVENDER,
 				GameWorld.DUSKY_VIOLET.darker().darker(), new BasicStroke(0f));
 		this.crystalCount = crystalCount;
-		purchased = false;
 	}
 	
 	/**
@@ -29,11 +27,11 @@ public class ShopButton extends UIButton {
 	}
 	
 	public void setPurchased() {
-		purchased = true;
+		disable(true);
 	}
 	
-	public boolean getPurchased() {
-		return purchased;
+	public boolean isPurchased() {
+		return permanent;
 	}
 	
 }

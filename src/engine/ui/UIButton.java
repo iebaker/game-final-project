@@ -21,8 +21,9 @@ public class UIButton extends Shape {
 	private Vec2f				endCoord;
 	private final UIRoundRect	rect;
 	private final UIText		uiText;
-	private final Color			disabledColor;
+	protected Color				disabledColor;
 	private boolean				enabled;
+	protected boolean			permanent;
 	
 	/**
 	 * Creates a button with a message, start and end coordinate, background color, and stroke
@@ -85,13 +86,32 @@ public class UIButton extends Shape {
 	}
 	
 	/**
-	 * Toggles state of button - enables or disables
+	 * Toggles state of button - enables
 	 */
-	public void toggle() {
-		enabled = !enabled;
-		if(!enabled)
-			rect.setColor(disabledColor);
-		else
+	public void enable() {
+		if (!permanent) {
+			enabled = true;
 			rect.setColor(c);
+		}
+	}
+	
+	/**
+	 * Toggles state of button - disables
+	 * 
+	 * @param b
+	 */
+	public void disable(boolean b) {
+		if (b) permanent = true;
+		enabled = false;
+		rect.setColor(disabledColor);
+	}
+	
+	/**
+	 * Tells whether the button is disabled
+	 * 
+	 * @return
+	 */
+	public boolean isDisabled() {
+		return !enabled;
 	}
 }

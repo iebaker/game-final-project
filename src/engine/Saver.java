@@ -30,8 +30,7 @@ public class Saver {
 				out.close();
 				fileOut.close();
 			} catch (IOException i) {
-				System.err.println("Game couldn't be saved - see stack trace");
-				i.printStackTrace();
+				System.err.println("Game couldn't be saved");
 			}
 		}
 	}
@@ -43,7 +42,20 @@ public class Saver {
 	 *            the file to save to
 	 */
 	public static void saveGame(String fileName, World w) {
-		(new Thread(new SaveGame(fileName, w))).start();
+		Thread t = new Thread(new SaveGame(fileName, w));
+		t.start();
+	}
+	
+	/**
+	 * Checks fileName to see whether there's an existing save file
+	 * 
+	 * @param fileName
+	 *            the filename to check
+	 * @return if there's a file or not
+	 */
+	public static boolean checkForSave(String fileName) {
+		File a = new File(fileName);
+		return a.exists();
 	}
 	
 	/**
@@ -64,16 +76,17 @@ public class Saver {
 			fileIn.close();
 		} catch (IOException i) {
 			System.err.println("I/O issue in loading game: ");
+			i.printStackTrace();
 			return null;
 		} catch (ClassNotFoundException c) {
 			System.err.println("World class not found");
 			return null;
 		}
-		for (Entity e : w.getEntities()) {
+		if (w != null) for (Entity e : w.getEntities()) {
 			e.stopSound();
 		}
 		
-		for (Entity e : w.getPassableEntities()) {
+		if (w != null) for (Entity e : w.getPassableEntities()) {
 			e.stopSound();
 		}
 		
