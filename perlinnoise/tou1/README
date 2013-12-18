@@ -1,0 +1,18 @@
+Requirement fun:
+
+1. All types of collision detection are used.  Collision detection is implemented in Shape.onCollisionCheck() in iebaker.krypton.world.continuous.
+
+2. Compound shapes! The extra health entity is a compound shape made of four square subshapes.  This is implemented in CompoundShape in iebaker.krypton.world.continuous
+
+3. The player controls a freely movable unit! This is implemented in TouGUI, TouWorld, and Entity.  TouGUI collects input, and interacts
+with TouWorld to push the player around.  Entity stores the position and velocity of living entities.
+
+4. The player must be able to fire projectiles! The player unit fires when the space bar is pressed. This is implemented in Player in iebaker.tou.world and the input is collected in TouGUI
+
+5. Entities must spawn on some schedule! TouWorld spawns a variable number of demons every fixed time interval, as well as potentially generating a single ExtraHealth or ExtraBullets entity.
+
+6. The player must be able to fire shots at will! see 4.
+
+7. The collision shapes of entities must be visualized if not obvious!  They are obvious.  
+
+
