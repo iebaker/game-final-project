@@ -26,8 +26,8 @@ public class Player extends Entity {
 	private transient boolean	moveLeft			= false;
 	private transient boolean	moveRight			= false;
 	private float				lightCountdown		= 1;
-	private final float			lightTime			= 1;
-	private int					crystals			= 0;
+	private float			lightTime			= 0.5f;
+	private int					crystals			= 100;
 	private boolean				highJumpUnlocked	= false;
 	private GameWorld			gw;
 	private boolean				inLight				= false;
@@ -177,6 +177,10 @@ public class Player extends Entity {
 	 */
 	public void unlockLaser() {
 		laserUnlocked = true;
+	}
+	
+	public void decreaseLightLoss() {
+		this.lightTime = 0.8f;
 	}
 	
 	/**
