@@ -75,19 +75,16 @@ Game Reqs
 - Start a new game by pressing the new game button when you die, the new game 
   button when you win, or new game on the main menu (get back to it by pressing 
   ESC or Q)
-- The game is just one level, with no win/lose conditions, but it loads and can
-  be played
-- Test saving/loading by hitting 3 and 4 respectively
+- The game is just one level, and you can win by getting all crystals
+- Losing isn't possible, as when you die, you respawn at the save point
 - Test positional sound by moving to the left hand wall
 - Test friction by bouncing around!
+- Saving/loading occurs at spawn point and when you die or start the game respectively
   
 Known Bugs
 ----------
-- With 4 held down (load game), the sounds will reload many times, causing issues 
-  with "No free voices" after awhile. No gameplay affected.
-- Strange buzzing/clicking when game reloaded/game exited but doesn't affect 
-  gameplay
+- Saving doesn't always work because of multithreading - try again and most likely it will
   
 Approximate Number of Hours to Complete
 ---------------------------------------
-15
+25

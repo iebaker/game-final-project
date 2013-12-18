@@ -3,12 +3,15 @@ INSTRUCTIONS
 Welcome to Umbra!
 
 Start game by clicking the new game button or pressing enter. You're 
-the white circle, exploring the world
+the last of your race left on the planet, and everything around you is
+shrouded in darkness. You have some light, but there's only one remaining
+source of light in the world. Explore around to see what you can do to 
+fix that...
 
 - Zoom the view by scrolling with the mouse
 - Move the player by holding left or right arrow keys, or A and D
 - Jump by pressing the space bar or W
-- Shoot bullets with the left mouse button
+- Shoot lasers with the left mouse button
 
 Bounce around and have fun!
   
@@ -17,7 +20,7 @@ Commands
 ESC/Q 		: return to main menu
 R			: start new game
 P			: pause game
+M			: mute music
 ARROWS/A/D	: move left/right
 SPACE/W		: jump
-3			: save game
-4			: load game
+MOUSE		: shoot laser

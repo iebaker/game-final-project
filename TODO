@@ -1,25 +1,3 @@
-Hide crystals while in darkness
-
-
-
-IGNORE STUFF BELOW THIS
-
-
-NECESSARY
-
-Water
-	Swim up and down, no jumping off floor, more of it!
-	
-Light
-	Circles
-	
-DYLAN
-Store
-
-SAWYER
-make unlockables level-editable
-Spawn points for enemies instead of just placing them on the map. Then they can easily be recreated so the game doesn't get boring.
-	
 ----------------------------------------------------
 THINGS THAT COULD BE ADDED (REMOVE ONCE IMPLEMENTED)
 
@@ -32,22 +10,3 @@ Clean up cutscene UI
 	
 Clean up general UI
 	I think the front screen could look a little bit nicer for the final submission. Maybe add a credits page too or something. And "load game" and "new game" options.
-	
-More abilities
-	Digging, flying, being able to move objects by dragging them with the mouse, really anything.
-	Once abilities are there, we can start to introduce them to the game and build content around them.
-	
-Saving
-	Save files to an actual folder instead of just putting it in "home"
-	
-Font
-	Fix weird edges and switching fonts as you load
-
-Water
-	Oxygen countdown?
-
-Lighting
-	Working when no roof/walls on world
-
----------------	
-TEST TEST TEST!
