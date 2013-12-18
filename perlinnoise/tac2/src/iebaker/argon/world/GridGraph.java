@@ -72,9 +72,17 @@ public class GridGraph extends Graph implements Grid {  //LOL
 
 	public Entity addEntity(Place p, Entity e) {
 		Entity prev = this.getEntity(p);
-		my_entities[p.getX()][p.getY()] = e;
-		my_entity_places.add(p);
-		e.bind(this, p);
+		if(prev != null) {
+			e.dealWith(prev);
+			if(!e.selectable()) return prev;
+		} 
+
+		if(!(e.isBullet() && prev != null)) {
+			my_entities[p.getX()][p.getY()] = e;
+			my_entity_places.add(p);
+			e.bind(this, p);
+			if(!e.isPassable()) this.get(p).setActive(false);
+		}
 		return prev;
 	}
 
@@ -83,16 +91,30 @@ public class GridGraph extends Graph implements Grid {  //LOL
 		my_entity_places.remove(p);
 		my_entities[p.getX()][p.getY()] = null;
 		prev.free();
+		this.get(p).setActive(true);
 		return prev;
 	}
 
-	public void updateEntity(Place p, Entity e) {
+	public void updateEntity(Place p, Entity e) { //Oh god the cases....
+		if(p == null || !isRealPlace(p)) {
+			my_entities[e.getPrevPlace().getX()][e.getPrevPlace().getY()] = null;
+			return;
+		}
 		if(e.getPrevPlace() != null) {
 			my_entities[e.getPrevPlace().getX()][e.getPrevPlace().getY()] = null;
-			if(my_entities[p.getX()][p.getY()] != null) e.dealWith(my_entities[p.getX()][p.getY()]);
-			my_entities[p.getX()][p.getY()] = e;
+
+			Entity prev = my_entities[p.getX()][p.getY()];
+			if(prev != null) {
+				e.dealWith(prev);
+			}
+
 			my_entity_places.remove(e.getPrevPlace());
-			my_entity_places.add(p);
+
+			if(!(e.isBullet() && prev != null)) {
+				my_entities[p.getX()][p.getY()] = e;
+				my_entity_places.add(p);
+				if(!e.isPassable()) this.get(p).setActive(false);
+			}
 		}
 	}
 

@@ -7,5 +7,6 @@ import iebaker.argon.world.Sprites;
 public class Ammo extends Entity {
 	public Ammo() {
 		super(Place.Heading.NORTH, Sprites.group("entities").sprite("ammo"));
+		passable = true;
 	}
 }

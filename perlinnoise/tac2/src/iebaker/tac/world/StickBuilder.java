@@ -8,34 +8,37 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-/**
- * Stickbuilders don't work... I dont' fucking know why.  I tried for several hours.  There's something wrong somewhere in Astar or Graph or
- * idk any of the 10000000 other things happening. It's not a requirement so I give up.  I'm losing my mind.  I never want to think about, or
- * be around, or hear about, or see a tactical strategy game ever again in my life.  Platformers ftw.  
- */
+
+
 public class StickBuilder extends TacCreature {
 	
-	private List<Place> path = new ArrayList<Place>();
-	private boolean moved = false;
+	protected List<Place> path = new ArrayList<Place>();
+	protected boolean moved = false;
+	protected boolean atloc = false;
 
 	public StickBuilder() {
 		super(Place.Heading.NORTH, Sprites.group("entities").sprite("stick builder north"));
+		passable = true;
 	}
 
 	@Override
 	public void step() {
-		moved = false;
+		moved = false; atloc = false;
 		if(!target_places.isEmpty()) {
 			if(my_place.equals(target_places.get(0))) {
-				moved = true;
+				atloc = true;
 				target_places.remove(0);
 				if(target_places.isEmpty()) {
 					path.add(my_place.getNextPlace(my_heading));
 				}
 			} 
 			if(path.isEmpty()) {
-				System.out.println("This will either print once, or forever...");
-				setPath(pathTo(target_places.get(0)));
+				List<Place> path = pathTo(target_places.get(0));
+				if(!path.isEmpty()) {
+					setPath(pathTo(target_places.get(0)));
+				} else {
+					target_places.clear();
+				}
 			}
 		}
 		super.step();
@@ -43,7 +46,6 @@ public class StickBuilder extends TacCreature {
 
 	@Override
 	public Place selectNextPlace(List<Place> move_locations) {
-
 		if(path.isEmpty()) {
 			return my_place;
 		} 
@@ -51,6 +53,7 @@ public class StickBuilder extends TacCreature {
 		Place target = path.get(0);
 		if(move_locations.contains(target)) {
 			path.remove(0);
+			moved = true;
 			return target;
 		} else {
 			if(move_locations.isEmpty()) {
@@ -64,7 +67,7 @@ public class StickBuilder extends TacCreature {
 
 	@Override
 	public void spawn() {
-		if(moved) {
+		if(moved && atloc) {
 			my_gridgraph.addEntity(my_prev_place, new StickWall());
 		} 
 	}

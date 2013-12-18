@@ -15,6 +15,7 @@ import iebaker.argon.world.Sprites;
 import iebaker.argon.core.Artist;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
 import java.awt.Color;
 
 public class TacUniverse extends Universe {
@@ -48,7 +49,28 @@ public class TacUniverse extends Universe {
 		dirt_sprite = Sprites.group("terrain").sprite("dirt");
 		grass_sprite = Sprites.group("terrain").sprite("grass");
 
-		makeTerrain();		
+		makeTerrain();	
+		addStoneEntities();	
+	}
+
+	private void addStoneEntities() {
+		Place p;
+		while(true) {
+			p = my_gridgraph.getRandomPlace();
+			if(Terrain.getTerrainType(p).equals(Terrain.DEEP_WATER)) {
+				continue;
+			}
+			break;
+		}
+		addEntity(p, new StoneBuilder());
+		while(true) {
+			p = my_gridgraph.getRandomPlace();
+			if(Terrain.getTerrainType(p).equals(Terrain.DEEP_WATER)) {
+				continue;
+			}
+			break;
+		}
+		addEntity(p, new StickBuilder());
 	}
 
 	private void makeTerrain() {
@@ -116,17 +138,17 @@ public class TacUniverse extends Universe {
 						break;
 				}
 
-				try {
-					a.setTextAlign(a.TOP, a.LEFT);
-					a.setFontSize(50);
-					a.setFillPaint(Color.BLACK);
-					String asp_str = current.decoration("A_STAR_F");
-					if(asp_str != null) {
-						a.text(g, asp_str, (float)x_dp, (float)y_dp);
-					}
-				} catch (NumberFormatException e) {
-					System.err.println("oops");
-				}
+				// try {
+				// 	a.setTextAlign(a.TOP, a.LEFT);
+				// 	a.setFontSize(50);
+				// 	a.setFillPaint(Color.BLACK);
+				// 	String asp_str = current.decoration("A_STAR_F");
+				// 	if(asp_str != null) {
+				// 		a.text(g, asp_str, (float)x_dp, (float)y_dp);
+				// 	}
+				// } catch (NumberFormatException e) {
+				// 	System.err.println("oops");
+				// }
 				y_dp+=gwi;
 			}
 			x_dp+=gwi;
@@ -156,6 +178,13 @@ public class TacUniverse extends Universe {
 		}	
 	}
 
+	public void onKeyPressed(KeyEvent e) {
+		Entity ent = this.getSelectedEntity();
+		if(ent != null && ent instanceof Creature) {
+			((Creature)ent).clearTargets();
+		}
+	}
+
 	@Override
 	public boolean onMouseClicked(Place p, MouseEvent e) {
 		if(e.getButton() == MouseEvent.BUTTON3) {
@@ -169,53 +198,30 @@ public class TacUniverse extends Universe {
 			}
 			return false;
 
-			// Entity ent = this.getSelectedEntity();
-			// if(ent != null && this.getGridGraph().isRealPlace(p)) {
-			// 	java.util.List<Place> plan = this.getGridGraph().aStarPath(
-			// 		ent.getPlace(),		//Starting location
-			// 		p,					//Ending location
-
-			// 		new Metric() {		//Edge metric (all edges worth 1, unless they point to water)
-			// 			@Override
-			// 			public float measure(Edge e) {
-			// 				Place place = my_gridgraph.get((Place)e.getHead());
-			// 				try {
-			// 					float terrain_value = Float.parseFloat(place.decoration("TERRAIN_VALUE"));
-			// 					String terrain_type = Terrain.getTerrainType(terrain_value);
-			// 					if(terrain_type.equals(Terrain.DEEP_WATER)) {
-			// 						return Float.MAX_VALUE;
-			// 					}
-			// 				} catch (NumberFormatException exception) {
-			// 					System.err.println("(measure) A* Pathfinding in TacUniverse.onMouseClicked() failed due to NumberFormatException ");
-			// 					return Float.MAX_VALUE;
-			// 				}
-			// 				return 1f;
-			// 			}
-			// 		},
-
-			// 		new Heuristic() {	//Distance heuristic
-			// 			@Override
-			// 			public float score(Vertex v1, Vertex v2) {
-			// 				Place p1 = my_gridgraph.get((Place) v1);
-			// 				Place p2 = my_gridgraph.get((Place) v2);
-			// 				int x1 = p1.getX();
-			// 				int x2 = p2.getX();
-			// 				int y1 = p1.getY();
-			// 				int y2 = p2.getY();
-			// 				int dist = Math.abs(x2 - x1) + Math.abs(y2 - y1);
-			// 				return (float) dist;
-			// 			}
-			// 		}
-			// 	);
-			// 	if(ent instanceof Creature) {
-			// 		Creature c = (Creature) ent;
-			// 		plan.remove(0);
-			// 		c.setPath(plan);
-			// 	}
-			//}
-			//return false;
 		} else {
 			return super.onMouseClicked(p, e);
 		}
+	}
+
+	public int countStickEntities() {
+		int ret = 0;
+		for(Entity e : my_gridgraph.getAllEntities()) {
+			if(e instanceof TacCreature) {
+				TacCreature t = (TacCreature) e;
+				if(t.getTeam() == "stick") ++ret;
+			}
+		}
+		return ret;
+	}
+
+	public int countStoneEntities() {
+		int ret = 0;
+		for(Entity e : my_gridgraph.getAllEntities()) {
+			if(e instanceof TacCreature) {
+				TacCreature t = (TacCreature) e;
+				if(t.getTeam() == "stone") ++ret;
+			}
+		}
+		return ret;
 	}
 }

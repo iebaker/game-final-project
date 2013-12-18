@@ -12,6 +12,7 @@ import iebaker.argon.world.Entity;
 import iebaker.argon.world.Viewport;
 import iebaker.argon.world.Place;
 import iebaker.tac.world.TacUniverse;
+import iebaker.tac.world.TacCreature;
 import iebaker.tac.world.EntityFactory;
 import iebaker.tac.widgets.EntityMenu;
 import java.awt.Graphics2D;
@@ -89,6 +90,8 @@ public class TacGUI extends Screen {
 	@Override
 	public void onDraw(Graphics2D g) {
 		if(my_tac_universe != null && sister_viewport != null && mouse_in_world != null) {
+
+			//Draw little red box over mouse location
 			AffineTransform preserved = g.getTransform();
 			sister_viewport.setToWorldCoords(g);
 			float gw = my_tac_universe.getGridwidth();
@@ -96,6 +99,19 @@ public class TacGUI extends Screen {
 			a.setFillPaint(new Color(1f, 0f, 0f, 0.5f));
 			a.rect(g, mouse_in_world.x * gw, mouse_in_world.y * gw, gw, gw);
 			g.setTransform(preserved);
+			Entity e = my_tac_universe.getSelectedEntity();
+
+			//Draw on required non-scaling element
+			if(e != null && e.getPlace() != null) {
+				Vec2f loc = new Vec2f((e.getPlace().getX()) * gw, (e.getPlace().getY()) * gw);
+				Vec2f conv = sister_viewport.toScreenCoords(loc);
+				a.setFillPaint(new Color(1f, 1f, 1f, 0.8f));
+				a.roundrect(g, conv.x, conv.y - 35, 100, 30, 10, 10);
+				a.setTextAlign(a.CENTER, a.CENTER);
+				a.setFillPaint(Color.BLACK);
+				if(e instanceof TacCreature) a.text(g, "Health: " + ((TacCreature)e).getHealth(), conv.x + 50, conv.y - 35 + 15);
+			}
+
 			super.onDraw(g);
 		}
 	}

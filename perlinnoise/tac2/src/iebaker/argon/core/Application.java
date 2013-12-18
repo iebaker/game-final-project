@@ -65,6 +65,7 @@ public class Application extends SwingFrontEnd {
 	 */
 	@Override
 	public void onTick(long nanos) {
+		scr_manager.update();
 		for(Screen s : screens) {
 			s.onTick(nanos);
 		}

@@ -7,6 +7,8 @@ public class Entity {
 	protected Place.Heading my_heading;
 	protected boolean animate = true;
 	protected boolean selectable = false;
+	protected boolean passable = false;
+	protected boolean showpath = true;
 	protected Sprite my_sprite;
 
 	public Entity(Place.Heading h, Sprite s) {
@@ -81,5 +83,17 @@ public class Entity {
 
 	public void dealWith(Entity e) {
 		return;
+	}
+
+	public boolean isBullet() {
+		return false;
+	}
+
+	public boolean isPassable() {
+		return passable;
+	}
+
+	public boolean showPath() {
+		return showpath;
 	}
 }

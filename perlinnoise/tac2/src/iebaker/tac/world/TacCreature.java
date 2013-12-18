@@ -61,16 +61,21 @@ public class TacCreature extends Creature {
 				public float measure(Edge e) {
 					Place place = my_gridgraph.get((Place)e.getHead());
 					Entity ent = my_gridgraph.getEntity((Place)e.getHead());
-					boolean passable = (ent instanceof Sticks) || (ent instanceof Stones) || (ent instanceof Ammo) || e == null;
+					//System.out.println(ent);
+					boolean passable = (ent instanceof Sticks) || (ent instanceof Stones) || (ent instanceof Ammo) || ent == null;
+					//System.out.println(passable);
 					try {
 						String terrain_type = Terrain.getTerrainType(place);
+						//System.out.println(terrain_type);
 						if(terrain_type.equals(Terrain.DEEP_WATER) || !passable) {
-							return Float.POSITIVE_INFINITY;
+							//System.out.println("returning 100000");
+							return 100000;
 						}
 					} catch(NumberFormatException exception) {
 						System.err.println("(measure) A* Pathfinding in TacUniverse.onMouseClicked() failed because God hates you");
-			 			return Float.POSITIVE_INFINITY;
+			 			return 100000;
 					}
+					//System.out.println("Returnin 1");
 					return 1f;
 				}
 			},
@@ -88,7 +93,29 @@ public class TacCreature extends Creature {
 				}
 			}
 		);
-		return_val.remove(0);  //LOL NOT LIKE THIS IS A HACK just cause I don't want to touch Astar
+		if(!return_val.isEmpty()) return_val.remove(0);  //LOL NOT LIKE THIS IS A HACK just cause I don't want to touch Astar
 		return return_val;
+	}
+
+	public void damage(int d) {
+		health -= d;
+	}
+
+	public int getHealth() {
+
+		return health;
+	}
+
+	@Override
+	public void step() {
+		if(health < 0) {
+			my_gridgraph.removeEntity(my_place);
+			return;
+		}
+		super.step();
+	}
+
+	public String getTeam() {
+		return "stick";
 	}
 }

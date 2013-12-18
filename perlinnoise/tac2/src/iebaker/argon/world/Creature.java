@@ -51,10 +51,14 @@ public class Creature extends Entity {
 	}
 
 	public void addTargetPlace(Place p) {
-		target_places.add(p);
+		if(my_gridgraph.isRealPlace(p)) target_places.add(p);
 	}
 
 	public List<Place> getTargetPlaces() {
 		return target_places;
+	}
+
+	public void clearTargets() {
+		target_places.clear();
 	}
 }

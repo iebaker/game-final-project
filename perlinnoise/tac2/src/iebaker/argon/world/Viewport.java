@@ -128,6 +128,14 @@ public class Viewport extends Widget {
 		return temp_ml;
 	}
 
+	public Vec2f toScreenCoords(Vec2f v) {
+		Vec2f temp_ml = new Vec2f(v.x, v.y);
+		Vec2f game_upper_left = center_position.minus(new Vec2f(this.attrSize.x/(2 * scale), this.attrSize.y/(2 * scale)));
+		temp_ml = new Vec2f(temp_ml.x * scale, temp_ml.y * scale);
+		temp_ml = new Vec2f(temp_ml.x - game_upper_left.x * scale, temp_ml.y - game_upper_left.y * scale);
+		return temp_ml;
+	}
+
 	public Vec2i getMouseGridPosition() {
 		Vec2f wml = getWorldMouseLocation();
 		Vec2i gridpos = new Vec2i((int)Math.floor(wml.x / rendered_universe.getGridwidth()), (int)Math.floor(wml.y / rendered_universe.getGridwidth()));

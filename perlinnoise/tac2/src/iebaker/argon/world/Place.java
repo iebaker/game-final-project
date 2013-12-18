@@ -33,7 +33,23 @@ public class Place extends Vertex {
 			return this;
 		}
 
+		public static Heading random() {
+			float test = new java.util.Random().nextFloat();
+
+			if(test > 0.75) {
+				return Heading.NORTH;
+			} else if(test > 0.5) {
+				return Heading.SOUTH;
+			} else if(test > 0.25) {
+				return Heading.EAST;
+			} else {
+				return Heading.WEST;
+			}
+		}
+
 		public Heading headingOf(int i) {
+			if(i < 0) i += 360;
+			i = i % 360;
 			switch(i) {
 				case 0:
 					return Heading.EAST;

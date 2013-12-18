@@ -14,7 +14,7 @@ public class TacMainScreen extends Screen {
 	public TacMainScreen(Application a, String id) {
 		super(a, id);
 		BackgroundWidget background = new BackgroundWidget(parent_application, this, "tacmainscreen.background");
-		TitleWidget title = new TitleWidget(parent_application, this, "tacmainscreen.title");
+		TitleWidget title = new TitleWidget(parent_application, this, "tacmainscreen.title", "robots suck.");
 		PlayButton play = new PlayButton(parent_application, this, "tacmainscreen.play");
 		registerWidgets(background, title, play);
 

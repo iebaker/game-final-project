@@ -22,10 +22,10 @@ public class Universe {
 	}
 
 	public Entity addEntity(Place p, Entity e) {
-		if(my_gridgraph.getEntity(p) == null) {
+		//if(my_gridgraph.getEntity(p) == null) {
 			return my_gridgraph.addEntity(p, e);
-		}
-		return null;
+		//}
+		//return null;
 	}
 
 	public void updateEntity(Place p, Entity e) {
@@ -55,7 +55,7 @@ public class Universe {
 			return true;
 		}
 		for(Entity trying : my_gridgraph.getNeighbors(p)) {
-			if(trying != null) {
+			if(trying != null && trying.selectable()) {
 				selected_entity = trying;
 				return true;
 			}
@@ -111,11 +111,13 @@ public class Universe {
 	public void onDraw(Artist a, Graphics2D g) {
 		for(Place place : my_gridgraph.getEntityPlaces()) {
 			Entity e = my_gridgraph.getEntity(place);
+			if(e == null) continue;
 			Place current = e.getPlace();
 			if(e == selected_entity) {
 				a.setFillPaint(new Color(0f,0f,1f,0.5f));
 				a.rect(g, current.getX()*my_gridwidth, current.getY()*my_gridwidth, my_gridwidth, my_gridwidth);
-				if(e.selectable()) {
+
+				if(e.selectable() && e.showPath()) {
 					for(Place p : ((Creature)e).getTargetPlaces()) {
 						a.rect(g, p.getX()*my_gridwidth, p.getY()*my_gridwidth, my_gridwidth, my_gridwidth);
 					}

@@ -11,6 +11,8 @@ import iebaker.argon.world.PerlinSampler;
 import iebaker.tac.world.TacUniverse;
 import iebaker.tac.world.StickSoldier;
 import iebaker.tac.world.StickBuilder;
+import iebaker.tac.world.StoneBuilder;
+import iebaker.tac.world.StoneSoldier;
 import iebaker.tac.widgets.BackgroundWidget;
 import java.awt.event.KeyEvent;
 
@@ -30,6 +32,8 @@ public class TacGameScreen extends Screen {
 		universe = new TacUniverse(graph, 200f, 20);
 		universe.addEntityClass(StickSoldier.class);
 		universe.addEntityClass(StickBuilder.class);
+		universe.addEntityClass(StoneBuilder.class);
+		universe.addEntityClass(StoneSoldier.class);
 
 		BackgroundWidget background = new BackgroundWidget(parent_application, this, "tacgamescreen.background");
 		view = new Viewport(parent_application, this, "tacgamescreen.viewport", universe);
@@ -54,8 +58,22 @@ public class TacGameScreen extends Screen {
 		root_node.build(parent_application.getSize());
 	}
 
-
-
+	@Override 
+	public void onTick(long nanos) {
+		if(universe.countStoneEntities() == 0) {
+			parent_application.getScreenManager().pushScreen(new TacFinishScreen(parent_application, "tac.finish", 1));
+			parent_application.getScreenManager().removeScreen(this);
+			parent_application.getScreenManager().removeScreen(parent_application.getScreenManager().getScreenByID("tac.tacgui"));
+			return;
+		}
+		if(universe.countStickEntities() == 0) {
+			parent_application.getScreenManager().pushScreen(new TacFinishScreen(parent_application, "tac.finish", 0));
+			parent_application.getScreenManager().removeScreen(this);
+			parent_application.getScreenManager().removeScreen(parent_application.getScreenManager().getScreenByID("tac.tacgui"));
+			return;
+		}
+		super.onTick(nanos);
+	}
 
 	@Override
 	public void onKeyTyped(KeyEvent e) {
@@ -66,4 +84,9 @@ public class TacGameScreen extends Screen {
 			this.setActive(true);
 		}
 	}	
+
+	@Override
+	public void onKeyPressed(KeyEvent e) {
+		universe.onKeyPressed(e);
+	}
 }

@@ -1,16 +1,18 @@
-New instructions.
+TAC 2 instructions!
 
-Sorry I didn't have time this time to write up a cute story about a lonely robot.
+There are two teams: sticks and stones (sticks are brown, stones are gray but really the gray looks almost brown, too :( ).  For the purposes of demosntrating, the user can place entities of both types.
 
-Click in the menu at the left to select a type of entity to place
+STICK entities:
+StickBuilder: click to place, click to select.  When selected, right click elsewhere to enqueue build locations.  The builder will then move to those locations and build StickWall entities there.
 
-Left click on the screen to place an entity.
+StickSoldier: click to place, click to select.  When selected, right click elsewhere to enqueue patrol locations.  The soldier will loop between these places firing bullets at random.
 
-The first three types will random walk.  
+STONE entities:
+StoneBuilder: click to place, click to select.  Will not accept enqueued locations.  AI tells these to first build a 5 long wall, then a 1 long wall, then a 20 long wall at random locations.
 
-The fourth can be instructed to move to anywhere on the screen by first clicking on it and then right clicking somewhere else
+StoneSoldier: click etc... the AI creates different patrol locations based on the terrain type the Soldier is on.
 
-Scroll to zoom, drag to pan
+All the other stuff -- there are "Sticks" and "Stones" and "Ammo" entities that appear randomly in the world... In a young and naive time I envisioned a resource-based gameplay mechanic but this fell by the wayside :(
 
 
 

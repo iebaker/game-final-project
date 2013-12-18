@@ -1,3 +1,38 @@
+//TAC2 SUBMISSION STUFF!
+
+Engine req's:
+Sprites are in two separate sprite sheets (terrain.png, spritesheet.png) and individual sprites are defined by sprites.xml.  Sprites which need animation have multiple frames.  The xml is parsed in Sprites.init().  Actually drawing sprites is done in Universe.onDraw().  Behavior Trees are in package ai.
+
+Animated Sprites:
+Sprites which need animation are created with more than one frame in 
+lib/sprites.xml.  Drawing animated sprites is handled in Universe.onDraw();
+Test this out by adding StickBuilder/StoneBuilder/StickSoldier/StoneSoldier
+
+Animations stop when stopped:
+Also handled by Universe.onDraw().
+
+Units on opposite teams damage each other:
+All damage-able entities start out with health = 5.  Bullet strikes of opposing bullets cause -1 health.  This is handled by Bullet.dealWith() and TacCreature.damage()
+
+Units on same team don't damage each other:
+Handled in Bullet.dealWith()
+
+When units become reasonable damaged, they are removed:
+Having negative health causes entity removal.  This is handled in TacCreature.step()
+
+Behavior Trees:
+Package ai contains all the Behavior Tree classes.  StoneBuilder and StoneSoldier contain actual populated behavior trees.  StoneBuilder contains a sequence with 3 Behavior nodes. StoneSoldier contains a Selector with three conditions and three behavior nodes. Place StoneBuilders and StoneSoldiers to see them behavior according to their behavior trees.
+
+UI element on top of Viewport
+Click on an entity to see its Health bar.  This does not scale with the view and moves with the entity.  Handled in TacGUI.onDraw()
+
+Win if eliminate all enemies:
+Handled in TacGameScreen.onTick()
+
+Possible to start a new game from end:
+When at the result screen, hit any key to spawn anew game.  Handled in TacFinishScreen.onKeyPressed
+
+
 // The following is relevant to my retry submission for Tac1:
 
 I've been messing with the A* pathfinding for forever now and the strange bug persists.  What I've been able to determine so far is that:  It most often involves a one to three grid square detour which occurs most frequently at the very end (but sometimes up to a few grid squares before) of the path.  I really don't know how to approach this one -- I've rewritten it several times now with a few different heuristics (I've tried Manhattan distance, Euclidean distance, and Max(X-dist, Y-dist) and each time it has the same performance flaw.  I've made sure I clean up the graph decorations at the end of a pathfinding iteration in case old A_STAR_PREVIOUS decorations were messing with it, but that is (almost) for sure not the case.  I also tried splitting up the heuristic and distance calculations into two separate decorations in case they were somehow interfering with each other (???).  I've also determined It is not caused by entity persistence in grid squares while being drawn elsewhere.  I've tried to make sure everywhere that position updates affect both the Entity's Place field (which is a reference to a Vertex in the GridGraph itself) as well as its poisition in the Entity[][] array. it is implemented in Graph.aStarPath().  GridGraph has aversion as well which returns a list of Place objects as opposed to Vertex objects, but no logic is performed in that one.

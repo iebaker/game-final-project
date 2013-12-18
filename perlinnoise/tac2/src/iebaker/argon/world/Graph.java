@@ -391,6 +391,10 @@ public class Graph {
 		return my_edge_map.get(v1.decoration("ID") + ":" + v2.decoration("ID")) != null;
 	}
 
+	public Edge getEdge(Vertex v1, Vertex v2) {
+		return my_edge_map.get(v1.decoration("ID") + ":" + v2.decoration("ID"));
+	}
+
 
 	/**
 	 * Returns a string representation of thie Graph object
