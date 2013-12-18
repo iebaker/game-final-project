@@ -3,22 +3,36 @@ package iebaker.krypton.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 /**
- * ScreenManager is a class which exposes functionality
- * for manipulating the stack (list) of screens owned by the
- * parent application.  The ScreenManager has a reference to the
- * parent application, as well as reference to the parent's list
- * of screens.  The ScreenManager maintains a dictionary which
- * indexes all currently owned screens by their ScreenID attribute
- * so that a single screen can be retrieved if desired. Pushing/
- * Pumping a screen adds it to the dictionary, Popping/Dropping a
- * screen removes it from the dictionary.
+ * ScreenManager is a class which exposes functionality for manipulating the stack (list) of screens owned by the parent 
+ * Application.  The ScreenManager has a reference to the parent application, as well as the parent's list of screens.
+ * The ScreenManager also maintains a dictionary which indexes all the currently owned screens by their ScreenID attribute
+ * so that a single screen can be retrieved by name if desired.  Pushing/Pumping a screen adds it to the dictionary.  Popping/
+ * dropping a screen removes it from the dictionary.
  */
 public class ScreenManager {
-	private java.util.List<Screen> screens;
-	private java.util.Map<String, Screen> screen_dict;
-	private Application parent;
+	private java.util.List<Screen> my_screens;
+	private java.util.List<ScreenAction> my_actions;
+	private java.util.Map<String, Screen> my_screen_dict;
+	private Application my_app;
 
+	public enum Op {
+		ROTATE_UP, ROTATE_DOWN, CLEAR_SCREENS,
+		POP_SCREEN,	DROP_SCREEN, REMOVE_SCREEN,
+		PUSH_SCREEN, PUMP_SCREEN, SWAP_SCREENS,
+	}
+
+	private class ScreenAction {
+		public Screen screen = null;
+		public int index1 = -1;
+		public int index2 = -1;
+		public Op op = null;
+
+		public ScreenAction(Op o) { op = o; }
+		public ScreenAction(Op o, Screen s) { op = o; screen = s; }
+		public ScreenAction(Op o, int i1, int i2) { op = o; index1 = i1; index2 = i2; }
+	}
 
 	/**
 	 * Constructor.  Takes a reference to the parent application, as 
@@ -28,170 +42,122 @@ public class ScreenManager {
 	 * @param s 	the parent application's list of screens
 	 */
 	public ScreenManager(Application a, java.util.List<Screen> s) {
-		parent = a;
-		screens = s;
-		screen_dict = new HashMap<String, Screen>();
+		my_app = a;
+		my_screens = s;
+		my_screen_dict = new HashMap<String, Screen>();
+		my_actions = new ArrayList<ScreenAction>();
 	}
 
+	public void update() {
+		for(ScreenAction sa : my_actions) {
+			switch(sa.op) {
+				case CLEAR_SCREENS:
+					my_screens.clear();
+					my_screen_dict.clear();
+					break;
+					
+				case ROTATE_UP:
+					my_screens.add(0, my_screens.remove(my_screens.size() - 1));
+					break;
 
-	/**
-	 * Increments the indices of the screens in the list 
-	 * (modulo the length of the list).
-	 */
+				case ROTATE_DOWN:
+					my_screens.add(my_screens.size() - 1, my_screens.remove(0));
+					break;
+
+				case POP_SCREEN:
+					Screen popped = my_screens.remove(my_screens.size() - 1);
+					my_screen_dict.remove(popped.attrScreenID);
+					break;
+
+				case DROP_SCREEN:
+					Screen dropped = my_screens.remove(0);
+					my_screen_dict.remove(dropped.attrScreenID);
+					break;
+
+				case REMOVE_SCREEN:
+					my_screen_dict.remove(sa.screen.attrScreenID);
+					my_screens.remove(sa.screen);
+					break;
+
+				case PUSH_SCREEN:
+					my_screen_dict.put(sa.screen.attrScreenID, sa.screen);
+					my_screens.add(sa.screen);
+					break;
+
+				case PUMP_SCREEN:
+					my_screen_dict.put(sa.screen.attrScreenID, sa.screen);
+					my_screens.add(0, sa.screen);
+					break;
+
+				case SWAP_SCREENS:
+					java.util.Collections.swap(my_screens, sa.index1, sa.index2);
+					break;
+			}
+		}
+		my_actions = new ArrayList<ScreenAction>();
+	}
+
 	public void rotateUp() {
-		screens.add(0, screens.remove(screens.size() - 1));
+		my_actions.add(new ScreenAction(Op.ROTATE_UP));
+	}
+
+	public void rotateDown() {
+		my_actions.add(new ScreenAction(Op.ROTATE_DOWN));
+	}
+
+	public void popScreen() {
+		my_actions.add(new ScreenAction(Op.POP_SCREEN));
+	}
+
+	public void dropScreen() {
+		my_actions.add(new ScreenAction(Op.DROP_SCREEN));
+	}
+
+	public void pushScreen(Screen s) {
+		my_actions.add(new ScreenAction(Op.PUSH_SCREEN, s));
+	}
+
+	public void pumpScreen(Screen s) {
+		my_actions.add(new ScreenAction(Op.PUMP_SCREEN, s));
+	}
+
+	public void removeScreen(Screen s) {
+		my_actions.add(new ScreenAction(Op.REMOVE_SCREEN, s));
+	}
+
+	public void swapScreens(int index1, int index2) {
+		my_actions.add(new ScreenAction(Op.SWAP_SCREENS, index1, index2));
 	}
 
 	public void clearScreens() {
-		screens = new ArrayList<Screen>();
-		screen_dict = new HashMap<String, Screen>();
+		my_actions.add(new ScreenAction(Op.CLEAR_SCREENS));
 	}
 
-
-	/**
-	 * Decrements the indices of the screens in the list
-	 * (modulo the length of the list).
-	 */
-	public void rotateDown() {
-		screens.add(screens.size() - 1, screens.remove(0));
-	}
-
-
-	/**
-	 * Removes the screen at the top of the list as well
-	 * as clearing the entry for that screen in the
-	 * dictionary.
-	 *
-	 * @return 		the screen removed
-	 */
-	public Screen popScreen() {
-		Screen popped = screens.remove(screens.size() - 1);
-		screen_dict.remove(popped.attrScreenID);
-		return popped;
-	}
-
-
-	/**
-	 * Removes the screen at the bottom of the stack, as
-	 * well as clearing the entry for that screen in the
-	 * dictionary
-	 *
-	 * @return 		the screen removed
-	 */
-	public Screen dropScreen() {
-		Screen dropped = screens.remove(0);
-		screen_dict.remove(dropped.attrScreenID);
-		return dropped;
-	}
-
-
-	/**
-	 * Removes a specific screen from the stack, as well
-	 * as clearing that screen's entry from the dictionary.
-	 *
-	 * @param s 	the screen to be removed
-	 */
-	public void removeScreen(Screen s) {
-		screen_dict.remove(s.attrScreenID);
-		screens.remove(s);
-	}
-	
-
-	/**
-	 * Adds a screen to the top of the stack and indexes
-	 * that screen in the dictionary by its ScreenID
-	 *
-	 * @param s 	the Screen to be added
-	 */
-	public void pushScreen(Screen s) {
-		screen_dict.put(s.attrScreenID, s);
-		screens.add(s);
-	}
-
-
-	/**
-	 * Adds a screen to the bottom of the stack and indexes 
-	 * that screen in the dictionary by its ScreenID
-	 *
-	 * @param s 	the Screen to be added
-	 */
-	public void pumpScreen(Screen s) {
-		screen_dict.put(s.attrScreenID, s);
-		screens.add(0, s);
-	}
-
-
-	/**
-	 * Swaps the indices of two screens in the stack
-	 *
-	 * @param index1 	The index of one screen
-	 * @param index2 	The index of another screen
-	 */
-	public void swapScreens(int index1, int index2) {
-		java.util.Collections.swap(screens, index1, index2);
-	}
-
-
-	/**
-	 * Retrieval method for a screen indexed at a
-	 * specific position in the stack.
-	 *
-	 * @param index 	the index of the screen to be retrieved
-	 * @return 			the Screen at that index
-	 */
 	public Screen getScreenByIndex(int index) {
-		return screens.get(index);
+		return my_screens.get(index);
 	}
 
-
-	/**
-	 * Retrieval method for a screen indexed by a 
-	 * specific ScreenID in the dictionary
-	 *
-	 * @param id 	the ScreenID of the screen to be retrieved
-	 * @return 		the Screen with that ScreenID
-	 */
 	public Screen getScreenByID(String id) {
-		return screen_dict.get(id);
+		return my_screen_dict.get(id);
 	}
 
-
-	/**
-	 * Retrieval method for all screens, because the parent application
-	 * does not expose them.
-	 *
-	 * @return 		The list of screens
-	 */
 	public java.util.List<Screen> getScreens() {
-		return screens;
+		return my_screens;
 	}
 
-
-	/**
-	 * Retrieval method for just active screens.
-	 *
-	 * @return 		a list containing all sctive screens
-	 */
 	public java.util.List<Screen> getActiveScreens() {
 		java.util.List<Screen> return_value = new ArrayList<Screen>();
-		for(Screen s : screens) {
+		for(Screen s : my_screens) {
 			if(s.isActive()) return_value.add(s);
 		}
-		return return_value;
+		return return_value;		
 	}
 
-
-	/**
-	 * Retrieval method for just visible screens.
-	 *
-	 * @return 		a list containing all visible screens
-	 */
 	public java.util.List<Screen> getVisibleScreens() {
 		java.util.List<Screen> return_value = new ArrayList<Screen>();
-		for(Screen s : screens) {
+		for(Screen s : my_screens) {
 			if(s.isVisible()) return_value.add(s);
 		}
 		return return_value;
 	}
-}	
-
+}

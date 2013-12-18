@@ -1,4 +1,16 @@
+TOU2:
+
+There is totally a boss entity! It's the big black thing that shows up
+after a while!! 
+
+Also now you can restart the game without it crashing due to concurrent
+modification! :)
+
+Love, Izaak
+
 Requirement fun:
+
+
 
 1. All types of collision detection are used.  Collision detection is implemented in Shape.onCollisionCheck() in iebaker.krypton.world.continuous.
 

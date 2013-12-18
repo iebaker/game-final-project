@@ -12,6 +12,7 @@ import iebaker.krypton.slice.ChildNotFoundException;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
 import java.awt.Paint;
 
 import cs195n.Vec2i;
@@ -24,7 +25,7 @@ public class TouEndScreen extends Screen {
 		background.setBGPaint(Color.BLACK);
 
 		TextLabel title = new TextLabel(parent_application, this, "touendscreen.title");
-		title.setText("SCORE: " + score).setFontSize(40).setBGPaint(Color.GRAY);
+		title.setText("You died :(").setFontSize(40).setBGPaint(Color.GRAY);
 
 		TextButton play = new TextButton(parent_application, this, "touendscreen.play") {
 			@Override
@@ -34,7 +35,7 @@ public class TouEndScreen extends Screen {
 				application.getScreenManager().pushScreen(new TouMainScreen(application, "tou.mainscreen"));
 			}
 		};
-		play.setText("Replay!").setFontSize(40).setNormalPaint(Color.GRAY).setHighlightPaint(Color.RED);
+		play.setText("any key to continue").setFontSize(40).setNormalPaint(Color.GRAY).setHighlightPaint(Color.RED);
 
 		registerWidgets(background, title, play);
 
@@ -69,5 +70,14 @@ public class TouEndScreen extends Screen {
 		}};
 
 		root_node.build(parent_application.getSize());
+	}
+
+
+	@Override
+	public void onKeyPressed(KeyEvent e) {
+		parent_application.getScreenManager().clearScreens();
+		parent_application.getScreenManager().pushScreen(new TouMainScreen(parent_application, "tou.main"));
+		//parent_application.getScreenManager().removeScreen(this);
+		//parent_application.getScreenManager().removeScreen(parent_application.getScreenManager().getScreenByID("tou.tougui"));
 	}
 }
