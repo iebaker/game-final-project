@@ -105,6 +105,16 @@ public class ShopScreen extends Screen {
 					player.unlockHighJump();
 					ShopScreen.buttons[i].setPurchased();
 				}
+				else if (i == 1 && !ShopScreen.buttons[i].isDisabled()
+						&& player.spendCrystals(ShopScreen.buttons[i].requiredCrystals())) {
+					player.decreaseLightLoss();
+					ShopScreen.buttons[i].setPurchased();
+				}
+				else if (i == 2 && !ShopScreen.buttons[i].isDisabled()
+						&& player.spendCrystals(ShopScreen.buttons[i].requiredCrystals())) {
+					player.unlockLaser();
+					ShopScreen.buttons[i].setPurchased();
+				}
 			}
 		}
 	}
