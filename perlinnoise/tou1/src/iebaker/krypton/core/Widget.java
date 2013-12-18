@@ -48,6 +48,13 @@ public class Widget extends SliceElement {
 		this.a = new Artist();
 	}
 
+	public Widget(Screen s, String id) {
+		attrWidgetID = id;
+		my_screen = s;
+		my_application = s.getApplication();
+		this.a = new Artist();
+	}
+
 	//ON functions.  Should be overridden if needed.  I don't feel like documenting these all :(
 	public void onTick(long nanos) {}
 	public void onDraw(Graphics2D g) {}

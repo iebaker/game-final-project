@@ -247,5 +247,9 @@ public class Screen {
 	public void setLayout(Node ln) {
 		root_node = ln;
 	}
+
+	public Application getApplication() {
+		return parent_application;
+	}
 }
 

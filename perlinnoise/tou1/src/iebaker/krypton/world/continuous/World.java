@@ -3,11 +3,12 @@ package iebaker.krypton.world.continuous;
 import java.util.HashSet;
 import java.awt.Graphics2D;
 import iebaker.krypton.core.Artist;
+import iebaker.krypton.core.Viewable;
 import java.awt.Color;
 
 import cs195n.Vec2f;
 
-public class World {
+public class World implements Viewable {
 	private java.util.Set<Entity> born = new HashSet<Entity>();
 	private java.util.Set<Entity> my_entities = new HashSet<Entity>();
 	private java.util.Set<Entity> dead = new HashSet<Entity>();
@@ -37,10 +38,12 @@ public class World {
 		return my_size;
 	}		
 
-	public void onDraw(Graphics2D g) {
+	public void render(Artist a, Graphics2D g) {
 		//Artist a = new Artist();
 		//a.setFillPaint(Color.RED);
 		//a.ellipse(g, 25, 25, 100, 100);
+		a.setFillPaint(Color.WHITE);
+		a.rect(g, 0, 0, my_size.x, my_size.y);
 		for(Entity pe : my_entities) {
 			pe.onDraw(g);
 		}
@@ -81,5 +84,12 @@ public class World {
 		return new Vec2f(x, y);
 	}
 
+	public float getInitialScale() {
+		return 1f;
+	}
+
+	public Vec2f getInitialCenter() {
+		return new Vec2f(my_size.x / 2, my_size.y / 2);
+	}
 
 }
