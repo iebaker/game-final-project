@@ -144,11 +144,8 @@ public class GameWorld extends World implements LightWorld {
 		// Shop buttons for later
 		ShopScreen.buttons = new ShopButton[3];
 		ShopScreen.buttons[0] = new ShopButton("Jump", 5);
-		//ShopScreen.buttons[1] = new ShopButton("Aura", 10);
 		ShopScreen.buttons[1] = new ShopButton("Light Loss", 10);
 		ShopScreen.buttons[2] = new ShopButton("Laser", 30);
-	//	ShopScreen.buttons[4] = new ShopButton("Armor", 20);
-		//ShopScreen.buttons[5] = new ShopButton("???", 999);
 		
 		newGame();
 	}
